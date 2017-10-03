@@ -11,7 +11,7 @@ std::vector<std::vector<cv::Rect> > Hog::detect(std::vector<cv::Mat> frames)
     if (frames.empty())
         return found_filtered;
     fflush(stdout);
-    for (int x = 0; x < frames.size(); x++) {
+    for (uint x = 0; x < frames.size(); x++) {
         std::vector<cv::Rect> rRect;
         std::vector<cv::Rect> found;
         //cv::Mat test  = frames[x].croppedImg;

@@ -15,13 +15,15 @@ std::string VideoStream::openFile(std::string fileName)
     if (!capture.isOpened()) {
         return "Could not open reference ";
     }
-    int durable = int(capture.get(cv::CAP_PROP_FRAME_COUNT));
-    for(int i = 0; i < durable; i++){
-        cv::Mat temp;
+    cv::Mat temp;
+    for( ;; ){
         capture >> temp;
+        if(temp.empty())
+            break;
         videoFrames.push_back(temp);
     }
-    MainWindow::setTotalFrames(durable);
+    MainWindow::setTotalFrames(videoFrames.size());
     MainWindow::setFps(int(capture.get(cv::CAP_PROP_FPS)));
+    capture.release();
     return fileName+ " loaded.";
 }

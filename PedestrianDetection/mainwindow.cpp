@@ -43,6 +43,7 @@ void MainWindow::on_buttonOpenVidImg_clicked()
         text = QString::fromUtf8(videoStream->openFile(fileName[0].toUtf8().constData()).c_str());
     }
     else {
+        isVideo = false;
         mediaFile = new MediaFile(fileName);
         text = QString::number(fileName.size()) + " file(s) loaded.";
     }
@@ -77,9 +78,14 @@ void MainWindow::on_buttonStartDetect_clicked()
     //settings.trainHog = ui->;
     appendBackLog("START Detection");
 
-    if(isVideo)
+    if(isVideo) {
+        appendBackLog("VIDEO");
         pipeline.chooseType(1, videoStream->getFrames());
-    pipeline.chooseType(1, mediaFile->getFrames());
+    }
+    else {
+        appendBackLog("IMAGE");
+        pipeline.chooseType(1, mediaFile->getFrames());
+    }
     appendBackLog(QString::number(settings.hogThreshold));
     appendBackLog(QString::number(settings.mogThreshold));
     appendBackLog(QString::number(settings.algorithm));
@@ -90,6 +96,7 @@ void MainWindow::on_buttonStartDetect_clicked()
     appendBackLog("Total frames: " + QString::number(MainWindow::totalFrames));
     //appendBackLog("Time: " + QString::number(totalTime));
     appendBackLog("FPS : " + QString::number(MainWindow::fps));
+    appendBackLog("DONE");
 
 
 
