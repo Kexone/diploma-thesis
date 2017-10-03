@@ -39,6 +39,7 @@ void MainWindow::on_buttonOpenVidImg_clicked()
          tr("Open Video/Image"), "", tr("Supported Files (*.png *.jpg *.bmp *.pgm *.seq *.avi *.mp4)"));
     if(fileName[0].contains(".mp4") || fileName[0].contains(".avi") || fileName[0].contains(".seq")) {
         videoStream = new VideoStream();
+        isVideo = true;
         text = QString::fromUtf8(videoStream->openFile(fileName[0].toUtf8().constData()).c_str());
     }
     else {
@@ -75,6 +76,10 @@ void MainWindow::on_buttonStartDetect_clicked()
     settings.positiveFrames = ui->inputOthPosFrames->text().toInt();
     //settings.trainHog = ui->;
     appendBackLog("START Detection");
+
+    if(isVideo)
+        pipeline.chooseType(1, videoStream->getFrames());
+    pipeline.chooseType(1, mediaFile->getFrames());
     appendBackLog(QString::number(settings.hogThreshold));
     appendBackLog(QString::number(settings.mogThreshold));
     appendBackLog(QString::number(settings.algorithm));

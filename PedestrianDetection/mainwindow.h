@@ -5,7 +5,7 @@
 #include "mediafile.h"
 #include "videostream.h"
 #include "settings.h"
-
+#include "pipeline.h"
 namespace Ui {
 class MainWindow;
 }
@@ -32,6 +32,7 @@ private slots:
     void on_buttonStartDetect_clicked();
 
 private:
+    bool isVideo = false;
     Ui::MainWindow *ui;
     void appendBackLog(QString text);
     MediaFile *mediaFile;
@@ -41,6 +42,7 @@ private:
     double startTime = 0;
     double endTime = 0;
     static float fps;
+    Pipeline pipeline;
 };
 
 #endif // MAINWINDOW_H

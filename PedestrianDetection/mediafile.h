@@ -12,6 +12,7 @@ class MediaFile
 public:
     MediaFile(QStringList mediaList);
     ~MediaFile();
+    std::vector<cv::Mat> getFrames();
 
 private:
     std::vector<cv::Mat> origPictures;

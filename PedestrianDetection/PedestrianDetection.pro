@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     hog.cpp \
     mog.cpp \
     videostream.cpp \
-    mediafile.cpp
+    mediafile.cpp \
+    pipeline.cpp
 
 HEADERS  += mainwindow.h \
     convexhull.h \
@@ -26,7 +27,8 @@ HEADERS  += mainwindow.h \
     mog.h \
     videostream.h \
     mediafile.h \
-    settings.h
+    settings.h \
+    pipeline.h
 
 FORMS    += mainwindow.ui
 

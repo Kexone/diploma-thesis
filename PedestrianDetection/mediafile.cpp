@@ -19,3 +19,8 @@ MediaFile::~MediaFile() {
     //delete grayedPictures;
     delete this;
 }
+
+std::vector<cv::Mat> MediaFile::getFrames()
+{
+   return origPictures;
+}
