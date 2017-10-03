@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "mediafile.h"
+#include "videostream.h"
 #include "settings.h"
 
 namespace Ui {
@@ -16,6 +17,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static void setFps(float nFps);
+    static void setTotalFrames(int allFrames);
 
 private slots:
     void on_buttonOpenVidImg_clicked();
@@ -28,17 +31,16 @@ private slots:
 
     void on_buttonStartDetect_clicked();
 
-    void on_comboBox_currentIndexChanged(int index);
-
 private:
     Ui::MainWindow *ui;
     void appendBackLog(QString text);
     MediaFile *mediaFile;
+    VideoStream *videoStream;
     Settings settings;
-    int totalFrames = 0;
+    static int totalFrames;
     double startTime = 0;
     double endTime = 0;
-    double fps = 0;
+    static float fps;
 };
 
 #endif // MAINWINDOW_H

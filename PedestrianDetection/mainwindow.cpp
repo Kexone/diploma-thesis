@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <QString>
 
+int MainWindow::totalFrames = 0;
+float MainWindow::fps  = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,12 +22,30 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::setTotalFrames(int allFrames)
+{
+    MainWindow::totalFrames = allFrames;
+}
+
+void MainWindow::setFps(float nFps)
+{
+    MainWindow::fps = nFps;
+}
+
 void MainWindow::on_buttonOpenVidImg_clicked()
 {
+    QString text = "Error in loading";
     QStringList fileName = QFileDialog::getOpenFileNames(this,
-         tr("Open Video/Image"), "", tr("Supported Files (*.png *.jpg *.bmp *pgm *seq)"));
-    mediaFile = new MediaFile(fileName);
-    appendBackLog(QString::number(fileName.size()) + " file(s) loaded.");
+         tr("Open Video/Image"), "", tr("Supported Files (*.png *.jpg *.bmp *.pgm *.seq *.avi *.mp4)"));
+    if(fileName[0].contains(".mp4") || fileName[0].contains(".avi") || fileName[0].contains(".seq")) {
+        videoStream = new VideoStream();
+        text = QString::fromUtf8(videoStream->openFile(fileName[0].toUtf8().constData()).c_str());
+    }
+    else {
+        mediaFile = new MediaFile(fileName);
+        text = QString::number(fileName.size()) + " file(s) loaded.";
+    }
+    appendBackLog(text);
 }
 
 void MainWindow::on_buttonOpenWebcam_clicked()
@@ -61,18 +81,13 @@ void MainWindow::on_buttonStartDetect_clicked()
     appendBackLog(QString::number(settings.positiveFrames));
 
     endTime = (double)cv::getTickCount() - startTime;
-    double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
-    appendBackLog("Total frames: " + totalFrames);
-    appendBackLog("Time: " + QString::number(totalTime));
-    appendBackLog("FPS : " + QString::number(fps));
+    //double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
+    appendBackLog("Total frames: " + QString::number(MainWindow::totalFrames));
+    //appendBackLog("Time: " + QString::number(totalTime));
+    appendBackLog("FPS : " + QString::number(MainWindow::fps));
 
 
 
-}
-
-void MainWindow::on_comboBox_currentIndexChanged(int index)
-{
-    appendBackLog("Selected alg: " + QString::number(index));
 }
 
 void MainWindow::appendBackLog(QString text)
