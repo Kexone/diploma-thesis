@@ -609,7 +609,7 @@ webcam</string>
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>icons/webcam.ico</normaloff>icons/webcam.ico</iconset>
+       <normaloff>icons/old/webcam.ico</normaloff>icons/old/webcam.ico</iconset>
      </property>
     </widget>
    </widget>

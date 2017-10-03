@@ -20,7 +20,7 @@ std::string VideoStream::openFile(std::string fileName)
         capture >> temp;
         if(temp.empty())
             break;
-        videoFrames.push_back(temp);
+        videoFrames.push_back(temp.clone());
     }
     MainWindow::setTotalFrames(videoFrames.size());
     MainWindow::setFps(int(capture.get(cv::CAP_PROP_FPS)));

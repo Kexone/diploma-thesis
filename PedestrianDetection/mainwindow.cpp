@@ -92,10 +92,11 @@ void MainWindow::on_buttonStartDetect_clicked()
     appendBackLog(QString::number(settings.positiveFrames));
 
     endTime = (double)cv::getTickCount() - startTime;
-    //double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
+    double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
     appendBackLog("Total frames: " + QString::number(MainWindow::totalFrames));
-    //appendBackLog("Time: " + QString::number(totalTime));
+    appendBackLog("Time: " + QString::number(totalTime));
     appendBackLog("FPS : " + QString::number(MainWindow::fps));
+    appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
     appendBackLog("DONE");
 
 
