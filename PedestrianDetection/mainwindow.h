@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "mediafile.h"
-#include "videostream.h"
+//#include "videostream.h"
 #include "settings.h"
 #include "pipeline.h"
 namespace Ui {
@@ -19,6 +19,7 @@ public:
     ~MainWindow();
     static void setFps(float nFps);
     static void setTotalFrames(int allFrames);
+    bool isVideo;
 
 private slots:
     void on_buttonOpenVidImg_clicked();
@@ -32,11 +33,11 @@ private slots:
     void on_buttonStartDetect_clicked();
 
 private:
-    bool isVideo = false;
     Ui::MainWindow *ui;
     void appendBackLog(QString text);
+    std::vector<std::string> convertQstring(QStringList files);
     MediaFile *mediaFile;
-    VideoStream *videoStream;
+    //VideoStream *videoStream;
     Settings settings;
     static int totalFrames;
     double startTime = 0;

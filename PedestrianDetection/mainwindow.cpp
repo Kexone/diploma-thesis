@@ -1,9 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "videostream.h"
+//#include "videostream.h"
 #include <QFileDialog>
 #include <QStringList>
 #include <QString>
+#include <QThread>
 
 int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
@@ -35,17 +36,22 @@ void MainWindow::setFps(float nFps)
 void MainWindow::on_buttonOpenVidImg_clicked()
 {
     QString text = "Error in loading";
-    QStringList fileName = QFileDialog::getOpenFileNames(this,
+    QStringList files = QFileDialog::getOpenFileNames(this,
          tr("Open Video/Image"), "", tr("Supported Files (*.png *.jpg *.bmp *.pgm *.seq *.avi *.mp4)"));
-    if(fileName[0].contains(".mp4") || fileName[0].contains(".avi") || fileName[0].contains(".seq")) {
-        videoStream = new VideoStream();
+   // std::vector<std::string> fileName{std::begin(files), std::end(files)};
+    std::vector<std::string> fileName = convertQstring(files);
+    std::string suffix = fileName[0].substr(fileName[0].find_last_of(".") + 1);
+    if(suffix == "mp4" || suffix == ".avi" || suffix == ".seq") {
+        this->thread()->sleep(1);
         isVideo = true;
-        text = QString::fromUtf8(videoStream->openFile(fileName[0].toUtf8().constData()).c_str());
+        mediaFile = new MediaFile(isVideo);
+        text = QString::fromStdString(mediaFile->openFile(fileName));
     }
     else {
+        this->thread()->sleep(1);
         isVideo = false;
-        mediaFile = new MediaFile(fileName);
-        text = QString::number(fileName.size()) + " file(s) loaded.";
+        mediaFile = new MediaFile(isVideo);
+        text = QString::fromStdString(mediaFile->openFile(fileName));
     }
     appendBackLog(text);
 }
@@ -80,7 +86,7 @@ void MainWindow::on_buttonStartDetect_clicked()
 
     if(isVideo) {
         appendBackLog("VIDEO");
-        pipeline.chooseType(1, videoStream->getFrames());
+        pipeline.chooseType(1, mediaFile->getFrames());
     }
     else {
         appendBackLog("IMAGE");
@@ -106,4 +112,13 @@ void MainWindow::on_buttonStartDetect_clicked()
 void MainWindow::appendBackLog(QString text)
 {
     ui->textBackLog->append(text);
+}
+
+std::vector<std::string> MainWindow::convertQstring(QStringList files)
+{
+    std::vector<std::string> temp;
+    for(QString file : files) {
+        temp.emplace_back(file.toUtf8().constData());
+    }
+    return temp;
 }
