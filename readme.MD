@@ -1,3 +1,3 @@
-#Pedestrian Detection
+Pedestrian Detection
 ====================
-##Diploma thesis of Pedestrian Detection on ARM
+Diploma thesis of Pedestrian Detection on ARM
