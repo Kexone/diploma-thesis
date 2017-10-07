@@ -16,7 +16,7 @@ class Hog
 public:
     Hog();
     //std::vector<std::vector<cv::Rect>> detect(std::vector<CroppedImage>& frame);
-    std::vector<std::vector<cv::Rect>> detect(std::vector<cv::Mat> frames);
+    std::vector<cv::Rect> detect(cv::Mat frames);
     //cv::Mat resizeImage(const cv::Mat img, cv::Size target_size);
 private:
     cv::HOGDescriptor hog;
