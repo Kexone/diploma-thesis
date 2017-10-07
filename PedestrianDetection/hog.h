@@ -9,13 +9,15 @@
 #include "opencv2/objdetect.hpp"
 #include <opencv2/video/background_segm.hpp>
 #include <opencv2/bgsegm.hpp>
+
+#include "croppedimage.h"
 #include <iostream>
 
 class Hog
 {
 public:
     Hog();
-    //std::vector<std::vector<cv::Rect>> detect(std::vector<CroppedImage>& frame);
+    std::vector<std::vector<cv::Rect>> detect(std::vector<CroppedImage>& frame);
     std::vector<cv::Rect> detect(cv::Mat frames);
     //cv::Mat resizeImage(const cv::Mat img, cv::Size target_size);
 private:

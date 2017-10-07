@@ -8,6 +8,13 @@
 
 int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
+double Settings::hogThreshold = 0;
+double Settings::mogThreshold = 0;
+int Settings::algorithm = 0;
+cv::Size Settings::convexHullSize = cv::Size(0, 0);
+cv::Size Settings::convexHUllDeviation = cv::Size(0, 0);
+bool Settings::showVideoFrames = false;
+int Settings::positiveFrames = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,6 +60,7 @@ void MainWindow::on_buttonOpenVidImg_clicked()
         mediaFile = new MediaFile(isVideo);
         text = QString::fromStdString(mediaFile->openFile(fileName));
     }
+    fileName.clear();
     appendBackLog(text);
 }
 
@@ -74,13 +82,13 @@ void MainWindow::on_buttonTrainNegSet_clicked()
 void MainWindow::on_buttonStartDetect_clicked()
 {
     startTime = (double)cv::getTickCount();
-    settings.hogThreshold = ui->inputHogTresh->text().toFloat();
-    settings.mogThreshold = ui->inputMogTresh->text().toFloat();
-    settings.algorithm = ui->comboBoxTypeAlg->currentIndex();
-    settings.convexHullSize = cv::Size(ui->inputCHSizeMin->text().toFloat(), ui->inputCHSizeMax->text().toFloat());
-    settings.convexHUllDeviation = cv::Size(ui->inputCHDevMin->text().toFloat(), ui->inputCHDevMax->text().toFloat());
-    settings.showVideoFrames = ui->checkBoxShowVideoFrames->isChecked();
-    settings.positiveFrames = ui->inputOthPosFrames->text().toInt();
+    Settings::hogThreshold = ui->inputHogTresh->text().toDouble();
+    Settings::mogThreshold = ui->inputMogTresh->text().toDouble();
+    Settings::algorithm = ui->comboBoxTypeAlg->currentIndex();
+    Settings::convexHullSize = cv::Size(ui->inputCHSizeMin->text().toDouble(), ui->inputCHSizeMax->text().toDouble());
+    Settings::convexHUllDeviation = cv::Size(ui->inputCHDevMin->text().toDouble(), ui->inputCHDevMax->text().toDouble());
+    Settings::showVideoFrames = ui->checkBoxShowVideoFrames->isChecked();
+    Settings::positiveFrames = ui->inputOthPosFrames->text().toInt();
     //settings.trainHog = ui->;
     appendBackLog("START Detection");
 

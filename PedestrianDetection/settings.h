@@ -6,14 +6,14 @@
 
 struct Settings
 {
-    float mogThreshold;
-    cv::Size convexHullSize;
-    cv::Size convexHUllDeviation;
-    float hogThreshold;
-    bool showVideoFrames;
-    bool trainHog;
-    int algorithm;
-    int positiveFrames;
+    static double mogThreshold;
+    static cv::Size convexHullSize;
+    static cv::Size convexHUllDeviation;
+    static double hogThreshold;
+    static bool showVideoFrames;
+    static bool trainHog;
+    static int algorithm;
+    static int positiveFrames;
 
 };
 

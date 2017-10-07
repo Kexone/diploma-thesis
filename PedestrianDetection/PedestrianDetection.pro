@@ -28,7 +28,8 @@ HEADERS  += mainwindow.h \
     videostream.h \
     mediafile.h \
     settings.h \
-    pipeline.h
+    pipeline.h \
+    croppedimage.h
 
 FORMS    += mainwindow.ui
 

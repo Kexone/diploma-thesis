@@ -20,7 +20,7 @@ public:
     static void setFps(float nFps);
     static void setTotalFrames(int allFrames);
     bool isVideo;
-
+    static Settings settings;
 private slots:
     void on_buttonOpenVidImg_clicked();
 
@@ -38,7 +38,7 @@ private:
     std::vector<std::string> convertQstring(QStringList files);
     MediaFile *mediaFile;
     //VideoStream *videoStream;
-    Settings settings;
+
     static int totalFrames;
     double startTime = 0;
     double endTime = 0;

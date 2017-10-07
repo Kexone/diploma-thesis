@@ -45,8 +45,10 @@ bool MediaFile::openVideo(std::string fileName)
         capture >> temp;
         if(temp.empty())
             break;
-        origFrames.push_back(temp.clone());
+       // cv::resize(temp,temp,cv::Size(temp.cols/2, temp.rows/2));
+        origFrames.emplace_back(temp.clone());
     }
+    temp.release();
     MainWindow::setTotalFrames(origFrames.size());
     MainWindow::setFps(int(capture.get(cv::CAP_PROP_FPS)));
     capture.release();
@@ -56,7 +58,7 @@ bool MediaFile::openVideo(std::string fileName)
 bool MediaFile::openImage(std::vector<std::string> mediaList)
 {
     origFrames.clear();
-    for(int i = 0; i < mediaList.size(); i++) {
+    for(uint i = 0; i < mediaList.size(); i++) {
         std::string fileLocation = mediaList[i];
         cv::Mat temp, grayTemp;
         //temp =

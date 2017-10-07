@@ -6,6 +6,7 @@
 #include "mog.h"
 #include "hog.h"
 #include "convexhull.h"
+#include "croppedimage.h"
 
 class Pipeline
 {
@@ -15,7 +16,7 @@ public:
 private:
     Mog mog;
     Hog hog;
-    ConvexHull ch;
+    ConvexHull *ch;
 
 
 };
