@@ -47,6 +47,7 @@ void MainWindow::on_buttonOpenVidImg_clicked()
     QStringList files = QFileDialog::getOpenFileNames(this,
          tr("Open Video/Image"), "", tr("Supported Files (*.png *.jpg *.bmp *.pgm *.seq *.avi *.mp4)"));
    // std::vector<std::string> fileName{std::begin(files), std::end(files)};
+    if(files.empty()) {
     std::vector<std::string> fileName = convertQstring(files);
     std::string suffix = fileName[0].substr(fileName[0].find_last_of(".") + 1);
     if(suffix == "mp4" || suffix == ".avi" || suffix == ".seq") {
@@ -63,6 +64,7 @@ void MainWindow::on_buttonOpenVidImg_clicked()
     }
     fileName.clear();
     appendBackLog(text);
+    }
 }
 
 void MainWindow::on_buttonOpenWebcam_clicked()
