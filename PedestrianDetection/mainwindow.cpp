@@ -114,6 +114,7 @@ void MainWindow::on_buttonStartDetect_clicked()
         appendBackLog("IMAGE");
         pipeline.execute(mediaFile->getFrames());
     }
+    report();
 }
 
 void MainWindow::appendBackLog(QString text)

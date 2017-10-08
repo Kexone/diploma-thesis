@@ -8,7 +8,7 @@ ConvexHull::ConvexHull()
 
 }
 
-ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray, int thresh) {
+ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray) {
     src.copyTo(this->src);
     src_gray.copyTo(this->src_gray);
     this->thresh = Settings::mogThreshold;

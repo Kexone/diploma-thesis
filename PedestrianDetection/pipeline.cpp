@@ -84,7 +84,7 @@ void Pipeline::draw2mat(std::vector<CroppedImage> croppedImages)
 
 void Pipeline::executeConvexHull(cv::Mat frame)
 {
-    ch = new ConvexHull(localFrame, frame, 0);
+    ch = new ConvexHull(localFrame, frame);
     rect = ch->thresh_callback(0, 0);
     delete ch;
 }
