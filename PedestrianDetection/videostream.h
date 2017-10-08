@@ -15,11 +15,14 @@ class VideoStream
 {
 //private:
     //std::vector<cv::Mat> videoFrames;
-    //cv::VideoCapture capture;
+    cv::VideoCapture capture;
+    int camera;
 
 
 public:
-    VideoStream();
+    VideoStream(int cam);
+    cv::Mat getFrame();
+    void openCamera();
     //std::vector<cv::Mat> getFrames();
     //std::string openFile(std::vector<std::string> fileName);
 

@@ -7,8 +7,7 @@
 #include <QString>
 #include <QThread>
 #include <QCameraInfo>
-#include <QCamera>
-#include <QCameraControl>
+
 int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
 double Settings::hogThreshold = 0;
@@ -25,7 +24,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->textBackLog->clear();
-
 }
 
 MainWindow::~MainWindow()
@@ -81,7 +79,7 @@ void MainWindow::on_buttonOpenWebcam_clicked()
         std::string webcam  = text.toUtf8().constData();
         std::string position = webcam.substr(webcam.find("/dev/video")+10,webcam.find("/dev/video")-9);
         appendBackLog("Webcam selected: " + text);
-        QCamera *cam = new QCamera(cameras.at(std::stoi(position.erase(position.length()-1))));
+        this->cameraFeed = std::stoi(position.erase(position.length()-1));
     }
     webcams.clear();
     text.clear();
@@ -99,40 +97,21 @@ void MainWindow::on_buttonTrainNegSet_clicked()
 
 void MainWindow::on_buttonStartDetect_clicked()
 {
-    startTime = (double)cv::getTickCount();
-    Settings::hogThreshold = ui->inputHogTresh->text().toDouble();
-    Settings::mogThreshold = ui->inputMogTresh->text().toDouble();
-    Settings::algorithm = ui->comboBoxTypeAlg->currentIndex();
-    Settings::convexHullSize = cv::Size(ui->inputCHSizeMin->text().toDouble(), ui->inputCHSizeMax->text().toDouble());
-    Settings::convexHUllDeviation = cv::Size(ui->inputCHDevMin->text().toDouble(), ui->inputCHDevMax->text().toDouble());
-    Settings::showVideoFrames = ui->checkBoxShowVideoFrames->isChecked();
-    Settings::positiveFrames = ui->inputOthPosFrames->text().toInt();
-    //settings.trainHog = ui->;
+    setSettings();
     appendBackLog("START Detection");
-
-    if(isVideo) {
+    startTime = (double)cv::getTickCount();
+    if(cameraFeed != 99) {
+        appendBackLog("WEBCAM");
+        pipeline.execute(cameraFeed);
+    }
+    else if(isVideo) {
         appendBackLog("VIDEO");
-        pipeline.chooseType(1, mediaFile->getFrames());
+        pipeline.execute(mediaFile->getFrames());
     }
     else {
         appendBackLog("IMAGE");
-        pipeline.chooseType(1, mediaFile->getFrames());
+        pipeline.execute(mediaFile->getFrames());
     }
-    appendBackLog(QString::number(settings.hogThreshold));
-    appendBackLog(QString::number(settings.mogThreshold));
-    appendBackLog(QString::number(settings.algorithm));
-    appendBackLog(QString::number(settings.positiveFrames));
-
-    endTime = (double)cv::getTickCount() - startTime;
-    double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
-    appendBackLog("Total frames: " + QString::number(MainWindow::totalFrames));
-    appendBackLog("Time: " + QString::number(totalTime));
-    appendBackLog("FPS : " + QString::number(MainWindow::fps));
-    appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
-    appendBackLog("DONE");
-
-
-
 }
 
 void MainWindow::appendBackLog(QString text)
@@ -147,4 +126,33 @@ std::vector<std::string> MainWindow::convertQstring(QStringList files)
         temp.emplace_back(file.toUtf8().constData());
     }
     return temp;
+}
+
+void MainWindow::setSettings()
+{
+    Settings::hogThreshold = ui->inputHogTresh->text().toDouble();
+    Settings::mogThreshold = ui->inputMogTresh->text().toDouble();
+    Settings::algorithm = ui->comboBoxTypeAlg->currentIndex();
+    Settings::convexHullSize = cv::Size(ui->inputCHSizeMin->text().toDouble(), ui->inputCHSizeMax->text().toDouble());
+    Settings::convexHUllDeviation = cv::Size(ui->inputCHDevMin->text().toDouble(), ui->inputCHDevMax->text().toDouble());
+    Settings::showVideoFrames = ui->checkBoxShowVideoFrames->isChecked();
+    Settings::positiveFrames = ui->inputOthPosFrames->text().toInt();
+    //settings.trainHog = ui->;
+}
+
+void MainWindow::report()
+{
+    // DEBUG
+    appendBackLog(QString::number(settings.hogThreshold));
+    appendBackLog(QString::number(settings.mogThreshold));
+    appendBackLog(QString::number(settings.algorithm));
+    appendBackLog(QString::number(settings.positiveFrames));
+
+    endTime = (double)cv::getTickCount() - startTime;
+    double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
+    appendBackLog("Total frames: " + QString::number(MainWindow::totalFrames));
+    appendBackLog("Time: " + QString::number(totalTime));
+    appendBackLog("FPS : " + QString::number(MainWindow::fps));
+    appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
+    appendBackLog("DONE");
 }

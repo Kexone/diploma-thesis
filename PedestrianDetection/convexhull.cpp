@@ -1,6 +1,8 @@
 #include "convexhull.h"
 #include "settings.h"
-#include "mainwindow.h".h"
+#include "mainwindow.h"
+
+
 ConvexHull::ConvexHull()
 {
 
