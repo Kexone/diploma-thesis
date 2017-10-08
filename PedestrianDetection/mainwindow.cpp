@@ -2,10 +2,13 @@
 #include "ui_mainwindow.h"
 //#include "videostream.h"
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QStringList>
 #include <QString>
 #include <QThread>
-
+#include <QCameraInfo>
+#include <QCamera>
+#include <QCameraControl>
 int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
 double Settings::hogThreshold = 0;
@@ -66,7 +69,22 @@ void MainWindow::on_buttonOpenVidImg_clicked()
 
 void MainWindow::on_buttonOpenWebcam_clicked()
 {
-
+    QStringList webcams;
+    const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    for(QCameraInfo cam : cameras) {
+        webcams.push_back(cam.description() + " (" + cam.deviceName() + ")");
+    }
+    bool ok;
+    QString text = QInputDialog::getItem(this, tr("Select video stream"),
+                                         tr("Webcam:"),webcams,0,false, &ok);
+    if (ok && !text.isEmpty()) {
+        std::string webcam  = text.toUtf8().constData();
+        std::string position = webcam.substr(webcam.find("/dev/video")+10,webcam.find("/dev/video")-9);
+        appendBackLog("Webcam selected: " + text);
+        QCamera *cam = new QCamera(cameras.at(std::stoi(position.erase(position.length()-1))));
+    }
+    webcams.clear();
+    text.clear();
 }
 
 void MainWindow::on_buttonTrainPosSet_clicked()
