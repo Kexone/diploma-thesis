@@ -29,7 +29,7 @@ std::vector<std::vector<cv::Rect>> ConvexHull::thresh_callback(int, void*)
     std::vector<cv::Vec4i> hierarchy;
 
     /// Detect edges using Threshold
-    cv::cvtColor(src,src_gray, CV_BGR2GRAY);
+    //cv::cvtColor(src,src_gray, CV_BGR2GRAY);
     assert(!src_gray.empty());
     cv::threshold(src_gray, threshold_output, 180, 255, cv::THRESH_BINARY);
     /// Find contours

@@ -14,9 +14,24 @@ void Pipeline::execute(std::vector<cv::Mat> frames)
         if(frame.empty()) {
             break;
         }
-        process(frame);
+        //debug
+//        cv::Mat blured;
+//        cv::blur(frame, blured, cv::Size(5, 5));
+//       // cv::Sobel(blured, blured,3,0,0,3,1,0);
+//        frame = mog.processMat(blured);
+//        //cv::blur(frame, localFrame, cv::Size(10, 10));
+//        cv::imshow("MOG-test", frame);
+//        //
+
+       process(frame);
+
+        //debug
+//        cv::waitKey(5);
+//        frame.release();
+//        blured.release();
+        //
     }
-    cv::destroyWindow("Test");
+    cv::destroyWindow("Result");
 }
 
 void Pipeline::execute(int cameraFeed = 99)
@@ -32,8 +47,12 @@ void Pipeline::execute(int cameraFeed = 99)
         if(frame.empty()) {
             break;
         }
-        cv::imshow("Test", frame);
-        //process(frame);
+       // cv::blur(frame, frame, cv::Size(5, 5));
+       // cv::Sobel(blured, blured,3,0,0,3,1,0);
+        //frame = mog.processMat(frame);
+        //cv::imshow("Test", frame);
+        process(frame);
+        //cv::waitKey(5);
         frame.release();
     }
   //  cv::destroyWindow("Test");
@@ -43,26 +62,23 @@ void Pipeline::process(cv::Mat frame)
 {
     localFrame = frame.clone();
     cv::Mat blured = frame.clone();
-    cv::blur(frame, blured, cv::Size(10, 10));
-    frame = mog.processMat(localFrame);
-    cv::blur(frame, blured, cv::Size(10, 10));
-    executeConvexHull(frame);
+    cv::blur(frame, blured, cv::Size(5, 5));
+    frame = mog.processMat(blured);
+    cv::blur(frame, blured, cv::Size(5, 5));
+    executeConvexHull(blured);
 
     std::vector<CroppedImage> croppedImages;
     if(rect.size() != 0) {
-        cv::Mat croppedMat;
         for (uint j = 0; j < rect.size(); j++) {
             for (uint i = 0; i < rect[j].size(); i++) {
-                croppedMat = frame.clone();
-                croppedImages.emplace_back(CroppedImage(i,frame, rect[j][i]));
+                croppedImages.emplace_back(CroppedImage(i,localFrame.clone(), rect[j][i]));
             }
         }
-        croppedMat.release();
     }
     found_filtered = hog.detect(croppedImages);
     draw2mat(croppedImages);
     if(Settings::showVideoFrames)
-        cv::imshow("Test", localFrame);
+    cv::imshow("Result", localFrame);
     cv::waitKey(20);
     frame.release();
     blured.release();
