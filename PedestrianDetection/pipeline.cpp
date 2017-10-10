@@ -5,6 +5,12 @@ Pipeline::Pipeline()
 
 }
 
+Pipeline::~Pipeline()
+{
+    delete vs;
+    delete this;
+}
+
 void Pipeline::execute(std::vector<cv::Mat> frames)
 {
     mog = Mog();
@@ -35,6 +41,7 @@ void Pipeline::execute(std::vector<cv::Mat> frames)
 
 void Pipeline::execute(int cameraFeed = 99)
 {
+    interrupt = false;
     mog = Mog();
     hog = Hog();
     vs = new VideoStream(cameraFeed);
@@ -43,7 +50,7 @@ void Pipeline::execute(int cameraFeed = 99)
     // TODO turn off alg
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
-        if(frame.empty()) {
+        if(frame.empty() || interrupt) {
             break;
         }
         cv::blur(frame, frame, cv::Size(5, 5));
@@ -59,6 +66,7 @@ void Pipeline::execute(int cameraFeed = 99)
 
 void Pipeline::execute(std::string cameraFeed)
 {
+    this->interrupt = false;
     mog = Mog();
     hog = Hog();
     vs = new VideoStream(cameraFeed);
@@ -68,7 +76,7 @@ void Pipeline::execute(std::string cameraFeed)
     // TODO turn off alg
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
-        if(frame.empty()) {
+        if(frame.empty() || interrupt) {
             break;
         }
         debugMog(frame);
@@ -76,7 +84,7 @@ void Pipeline::execute(std::string cameraFeed)
         cv::waitKey(5);
         frame.release();
     }
-  //  cv::destroyWindow("Test");
+     cv::destroyWindow("Test");
 }
 
 void Pipeline::process(cv::Mat frame)
@@ -124,9 +132,14 @@ void Pipeline::draw2mat(std::vector<CroppedImage> croppedImages)
 
 void Pipeline::executeConvexHull(cv::Mat frame)
 {
-    ch = new ConvexHull(localFrame, frame);
-    rect = ch->thresh_callback(0, 0);
-    delete ch;
+    ch = ConvexHull(localFrame, frame);
+    rect = ch.wrapObjects(localFrame, frame);
+    //delete ch;
+}
+
+void Pipeline::interruptDetection()
+{
+    this->interrupt = true;
 }
 
 void Pipeline::debugMog(cv::Mat frame)

@@ -11,7 +11,7 @@ class ConvexHull
 public:
     ConvexHull();
     ConvexHull(cv::Mat src, cv::Mat src_gray);
-    std::vector<std::vector<cv::Rect>> thresh_callback(int, void*);
+    std::vector<std::vector<cv::Rect>> wrapObjects(cv::Mat src, cv::Mat src_gray);
 
 private:
     cv::Mat src;

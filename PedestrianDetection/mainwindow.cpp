@@ -60,8 +60,8 @@ void MainWindow::on_buttonOpenVidImg_clicked()
     else {
         this->thread()->sleep(1);
         isVideo = false;
-        mediaFile = new MediaFile();
-        text = QString::fromStdString(mediaFile->openFile(fileName));
+        mediaFile = MediaFile();
+        text = QString::fromStdString(mediaFile.openFile(fileName));
     }
     fileName.clear();
     appendBackLog(text);
@@ -103,22 +103,31 @@ void MainWindow::on_buttonTrainNegSet_clicked()
 
 void MainWindow::on_buttonStartDetect_clicked()
 {
-    setSettings();
-    appendBackLog("START Detection");
-    startTime = (double)cv::getTickCount();
-    if(cameraFeed != 99) {
-        appendBackLog("WEBCAM");
-        pipeline.execute(cameraFeed);
+    if(ui->buttonStartDetect->text() == "Stop detect") {
+        pipeline.interruptDetection();
+        //stopDetect();
+        ui->buttonStartDetect->setText("Start detect");
+        return;
     }
-    else if(isVideo) {
-        appendBackLog("VIDEO");
-        pipeline.execute(fileFeed);
+    if( !mediaFile.getFrames().empty() || !fileFeed.empty() || cameraFeed != 99) {
+        ui->buttonStartDetect->setText("Stop detect");
+        setSettings();
+        appendBackLog("START Detection");
+        startTime = (double)cv::getTickCount();
+        if(cameraFeed != 99) {
+            appendBackLog("WEBCAM");
+            pipeline.execute(cameraFeed);
+        }
+        else if(isVideo) {
+            appendBackLog("VIDEO");
+            pipeline.execute(fileFeed);
+        }
+        else {
+            appendBackLog("IMAGE");
+            pipeline.execute(mediaFile.getFrames());
+        }
+        report();
     }
-    else {
-        appendBackLog("IMAGE");
-        pipeline.execute(mediaFile->getFrames());
-    }
-    report();
 }
 
 void MainWindow::appendBackLog(QString text)
@@ -148,6 +157,11 @@ void MainWindow::setSettings()
     //settings.trainHog = ui->;
 }
 
+void MainWindow::stopDetect()
+{
+
+}
+
 void MainWindow::report()
 {
     // DEBUG
@@ -163,4 +177,5 @@ void MainWindow::report()
     appendBackLog("FPS : " + QString::number(MainWindow::fps));
     appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
     appendBackLog("DONE");
+    ui->buttonStartDetect->setText("Start detect");
 }

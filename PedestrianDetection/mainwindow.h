@@ -35,18 +35,18 @@ private slots:
 private:
     Ui::MainWindow *ui;
     void appendBackLog(QString text);
-    std::vector<std::string> convertQstring(QStringList files);
     void setSettings();
+    void stopDetect();
     void report();
-    MediaFile *mediaFile;
-    //VideoStream *videoStream;
-    int cameraFeed = 99;
+    std::vector<std::string> convertQstring(QStringList files);
     std::string fileFeed;
+    MediaFile mediaFile;
+    Pipeline pipeline;
+    int cameraFeed = 99;
     static int totalFrames;
     double startTime = 0;
     double endTime = 0;
     static float fps;
-    Pipeline pipeline;
 };
 
 #endif // MAINWINDOW_H

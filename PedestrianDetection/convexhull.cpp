@@ -16,7 +16,7 @@ ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray) {
 
 
 /** @function thresh_callback */
-std::vector<std::vector<cv::Rect>> ConvexHull::thresh_callback(int, void*)
+std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat src_gray)
 {
     cv::RNG rng(12345);
     cv::Mat threshold_output;
