@@ -12,9 +12,6 @@ ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray) {
     src.copyTo(this->src);
     src_gray.copyTo(this->src_gray);
     this->thresh = Settings::mogThreshold;
-    int max_thresh = 255;
-    //cv::createTrackbar(" Threshold:", "Source", &thresh, max_thresh, thresh_callback);
-
 }
 
 
@@ -22,15 +19,11 @@ ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray) {
 std::vector<std::vector<cv::Rect>> ConvexHull::thresh_callback(int, void*)
 {
     cv::RNG rng(12345);
-    //cv::Mat src_copy = src.clone();
-    //cv::Mat orig = src.clone();
     cv::Mat threshold_output;
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 
     /// Detect edges using Threshold
-
-    //cv::cvtColor(src,src_gray, CV_BGR2GRAY);
     assert(!src_gray.empty());
     threshold_output = src_gray.clone();
     //cv::threshold(src_gray, threshold_output, 180, 255, cv::THRESH_BINARY);
@@ -88,8 +81,6 @@ std::vector<std::vector<cv::Rect>> ConvexHull::thresh_callback(int, void*)
 
     /// Show in a window
     imshow("Hull demo", threshold_output);
-   // src_copy.release();
-    //orig.release();
     threshold_output.release();
     return react;
 }
