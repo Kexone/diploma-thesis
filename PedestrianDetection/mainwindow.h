@@ -40,7 +40,8 @@ private:
     void report();
     MediaFile *mediaFile;
     //VideoStream *videoStream;
-    int cameraFeed;
+    int cameraFeed = 99;
+    std::string fileFeed;
     static int totalFrames;
     double startTime = 0;
     double endTime = 0;

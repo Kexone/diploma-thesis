@@ -7,6 +7,7 @@
 struct Settings
 {
     static double mogThreshold;
+    static int mogHistory;
     static cv::Size convexHullSize;
     static cv::Size convexHUllDeviation;
     static double hogThreshold;

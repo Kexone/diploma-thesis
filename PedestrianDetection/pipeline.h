@@ -15,6 +15,7 @@ public:
     Pipeline();
     void execute(std::vector<cv::Mat> frames);
     void execute(int cameraFeed);
+    void execute(std::string cameraFeed);
 private:
     Mog mog;
     Hog hog;

@@ -3,7 +3,10 @@
 VideoStream::VideoStream(int cam)
 {
     this->camera = cam;
-
+}
+VideoStream::VideoStream(std::string camSource)
+{
+    this->camSource = camSource;
 }
 
 cv::Mat VideoStream::getFrame()
@@ -17,9 +20,8 @@ cv::Mat VideoStream::getFrame()
 
 void VideoStream::openCamera()
 {
-    capture.open(camera);
-    if (!capture.isOpened())
-        std::cout << "err";
+    if(camera !=99)
+        capture.open(camera);
     else
-        std::cout << "ok";
+        capture.open(camSource);
 }

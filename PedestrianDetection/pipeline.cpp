@@ -15,20 +15,19 @@ void Pipeline::execute(std::vector<cv::Mat> frames)
             break;
         }
         //debug
-//        cv::Mat blured;
-//        cv::blur(frame, blured, cv::Size(5, 5));
-//       // cv::Sobel(blured, blured,3,0,0,3,1,0);
-//        frame = mog.processMat(blured);
-//        //cv::blur(frame, localFrame, cv::Size(10, 10));
-//        cv::imshow("MOG-test", frame);
+        //cv::Mat blured;
+        //cv::blur(frame, blured, cv::Size(5, 5));
+        //frame = mog.processMat(blured);
+        //cv::blur(frame, localFrame, cv::Size(10, 10));
+        //cv::imshow("MOG-test", frame);
 //        //
 
        process(frame);
 
         //debug
-//        cv::waitKey(5);
-//        frame.release();
-//        blured.release();
+       // cv::waitKey(5);
+        //frame.release();
+        //blured.release();
         //
     }
     cv::destroyWindow("Result");
@@ -58,12 +57,33 @@ void Pipeline::execute(int cameraFeed = 99)
   //  cv::destroyWindow("Test");
 }
 
+void Pipeline::execute(std::string cameraFeed)
+{
+    mog = Mog();
+    hog = Hog();
+    vs = new VideoStream(cameraFeed);
+    vs->openCamera();
+   // cv::namedWindow("Test",1);
+    // TODO turn off alg
+    for( ; ; ) {
+        cv::Mat frame = vs->getFrame();
+        if(frame.empty()) {
+            break;
+        }
+        process(frame);
+        cv::waitKey(5);
+        frame.release();
+    }
+  //  cv::destroyWindow("Test");
+}
+
 void Pipeline::process(cv::Mat frame)
 {
     localFrame = frame.clone();
-    cv::Mat blured = frame.clone();
-    cv::blur(frame, blured, cv::Size(9, 9));
+    cv::Mat blured;
+    cv::blur(frame, blured, cv::Size(5, 5));
     frame = mog.processMat(blured);
+    cv::imshow("mog", frame);
    // cv::blur(frame, blured, cv::Size(5, 5));
     executeConvexHull(blured);
 
@@ -79,7 +99,7 @@ void Pipeline::process(cv::Mat frame)
     draw2mat(croppedImages);
     if(Settings::showVideoFrames)
     cv::imshow("Result", localFrame);
-    cv::waitKey(20);
+    cv::waitKey(5);
     frame.release();
     blured.release();
 }

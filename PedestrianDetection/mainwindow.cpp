@@ -12,6 +12,7 @@ int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
 double Settings::hogThreshold = 0;
 double Settings::mogThreshold = 0;
+int Settings::mogHistory = 0;
 int Settings::algorithm = 0;
 cv::Size Settings::convexHullSize = cv::Size(0, 0);
 cv::Size Settings::convexHUllDeviation = cv::Size(0, 0);
@@ -53,13 +54,13 @@ void MainWindow::on_buttonOpenVidImg_clicked()
     if(suffix == "mp4" || suffix == ".avi" || suffix == ".seq") {
         this->thread()->sleep(1);
         isVideo = true;
-        mediaFile = new MediaFile(isVideo);
-        text = QString::fromStdString(mediaFile->openFile(fileName));
+        fileFeed = fileName[0];
+        text = QString::fromStdString(fileName[0] + " loaded.");
     }
     else {
         this->thread()->sleep(1);
         isVideo = false;
-        mediaFile = new MediaFile(isVideo);
+        mediaFile = new MediaFile();
         text = QString::fromStdString(mediaFile->openFile(fileName));
     }
     fileName.clear();
@@ -92,7 +93,7 @@ void MainWindow::on_buttonOpenWebcam_clicked()
 
 void MainWindow::on_buttonTrainPosSet_clicked()
 {
-    this->thread()->quit();
+    this->thread()->exit();
 }
 
 void MainWindow::on_buttonTrainNegSet_clicked()
@@ -111,7 +112,7 @@ void MainWindow::on_buttonStartDetect_clicked()
     }
     else if(isVideo) {
         appendBackLog("VIDEO");
-        pipeline.execute(mediaFile->getFrames());
+        pipeline.execute(fileFeed);
     }
     else {
         appendBackLog("IMAGE");
@@ -138,6 +139,7 @@ void MainWindow::setSettings()
 {
     Settings::hogThreshold = ui->inputHogTresh->text().toDouble();
     Settings::mogThreshold = ui->inputMogTresh->text().toDouble();
+    Settings::mogHistory = ui->inputMogHistory->text().toInt();
     Settings::algorithm = ui->comboBoxTypeAlg->currentIndex();
     Settings::convexHullSize = cv::Size(ui->inputCHSizeMin->text().toDouble(), ui->inputCHSizeMax->text().toDouble());
     Settings::convexHUllDeviation = cv::Size(ui->inputCHDevMin->text().toDouble(), ui->inputCHDevMax->text().toDouble());

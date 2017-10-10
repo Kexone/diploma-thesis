@@ -399,7 +399,54 @@ QGroupBox::title
       <string/>
      </property>
      <property name="text">
-      <string>155</string>
+      <string>16</string>
+     </property>
+     <property name="maxLength">
+      <number>3</number>
+     </property>
+     <property name="frame">
+      <bool>false</bool>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+     <property name="cursorMoveStyle">
+      <enum>Qt::LogicalMoveStyle</enum>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelHistoryMog">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>81</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>History:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="inputMogHistory">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>40</y>
+       <width>31</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="text">
+      <string>200</string>
      </property>
      <property name="maxLength">
       <number>3</number>
