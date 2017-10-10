@@ -63,6 +63,7 @@ void Pipeline::execute(std::string cameraFeed)
     hog = Hog();
     vs = new VideoStream(cameraFeed);
     vs->openCamera();
+
    // cv::namedWindow("Test",1);
     // TODO turn off alg
     for( ; ; ) {
@@ -70,7 +71,8 @@ void Pipeline::execute(std::string cameraFeed)
         if(frame.empty()) {
             break;
         }
-        process(frame);
+        debugMog(frame);
+        //process(frame);
         cv::waitKey(5);
         frame.release();
     }
@@ -82,10 +84,12 @@ void Pipeline::process(cv::Mat frame)
     localFrame = frame.clone();
     cv::Mat blured;
     cv::blur(frame, blured, cv::Size(5, 5));
+//    blured.convertTo(blured, CV_32SC1);
+    cv::cvtColor(blured,blured, CV_BGR2GRAY);
     frame = mog.processMat(blured);
     cv::imshow("mog", frame);
    // cv::blur(frame, blured, cv::Size(5, 5));
-    executeConvexHull(blured);
+    executeConvexHull(frame);
 
     std::vector<CroppedImage> croppedImages;
     if(rect.size() != 0) {
@@ -123,4 +127,14 @@ void Pipeline::executeConvexHull(cv::Mat frame)
     ch = new ConvexHull(localFrame, frame);
     rect = ch->thresh_callback(0, 0);
     delete ch;
+}
+
+void Pipeline::debugMog(cv::Mat frame)
+{
+    cv::blur(frame, frame, cv::Size(5, 5));
+   // cv::Sobel(blured, blured,3,0,0,3,1,0);
+    frame = mog.processMat(frame);
+    cv::imshow("Test", frame);
+    cv::waitKey(5);
+    frame.release();
 }

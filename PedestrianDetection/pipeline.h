@@ -27,6 +27,7 @@ private:
     void process(cv::Mat frame);
     void draw2mat(std::vector<CroppedImage> croppedImages);
     void executeConvexHull(cv::Mat frame);
+    void debugMog(cv::Mat frame);
 
 };
 
