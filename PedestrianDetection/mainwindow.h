@@ -40,7 +40,7 @@ private:
     void report();
     MediaFile *mediaFile;
     //VideoStream *videoStream;
-    int cameraFeed = 99;
+    int cameraFeed;
     static int totalFrames;
     double startTime = 0;
     double endTime = 0;

@@ -78,10 +78,13 @@ void MainWindow::on_buttonOpenWebcam_clicked()
     QString text = QInputDialog::getItem(this, tr("Select video stream"),
                                          tr("Webcam:"),webcams,0,false, &ok);
     if (ok && !text.isEmpty()) {
-        std::string webcam  = text.toUtf8().constData();
-        std::string position = webcam.substr(webcam.find("/dev/video")+10,webcam.find("/dev/video")-9);
-        appendBackLog("Webcam selected: " + text);
-        this->cameraFeed = std::stoi(position.erase(position.length()-1));
+        for(int i = 0; i < webcams.size(); i++) {
+            if(QString::compare(text,webcams[i],Qt::CaseInsensitive) == 0 ){
+                this->cameraFeed = i;
+                break;
+            }
+        }
+        appendBackLog("Webcam selected: " + text.mid(0,text.indexOf("(")));
     }
     webcams.clear();
     text.clear();

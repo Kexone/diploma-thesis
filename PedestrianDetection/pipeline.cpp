@@ -47,12 +47,12 @@ void Pipeline::execute(int cameraFeed = 99)
         if(frame.empty()) {
             break;
         }
-       // cv::blur(frame, frame, cv::Size(5, 5));
+        cv::blur(frame, frame, cv::Size(5, 5));
        // cv::Sobel(blured, blured,3,0,0,3,1,0);
-        //frame = mog.processMat(frame);
-        //cv::imshow("Test", frame);
-        process(frame);
-        //cv::waitKey(5);
+        frame = mog.processMat(frame);
+        cv::imshow("Test", frame);
+        //process(frame);
+        cv::waitKey(5);
         frame.release();
     }
   //  cv::destroyWindow("Test");
@@ -62,9 +62,9 @@ void Pipeline::process(cv::Mat frame)
 {
     localFrame = frame.clone();
     cv::Mat blured = frame.clone();
-    cv::blur(frame, blured, cv::Size(5, 5));
+    cv::blur(frame, blured, cv::Size(9, 9));
     frame = mog.processMat(blured);
-    cv::blur(frame, blured, cv::Size(5, 5));
+   // cv::blur(frame, blured, cv::Size(5, 5));
     executeConvexHull(blured);
 
     std::vector<CroppedImage> croppedImages;

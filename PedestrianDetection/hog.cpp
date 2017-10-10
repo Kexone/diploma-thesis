@@ -20,7 +20,7 @@ std::vector<cv::Rect> Hog::detect(cv::Mat frame)
         //cv::Size size(64, 128);
         cv::resize(src_frame, src_frame, cv::Size(64,128),0,0,1);
         //hog.detectMultiScale(test, found, 0, cv::Size(6, 6), cv::Size(32, 32), 1.05, 2);
-        hog.detectMultiScale(src_frame, found, 0, cv::Size(4, 4), cv::Size(32,32), 1.05, 2);
+        hog.detectMultiScale(src_frame, found, 0, cv::Size(8, 8), cv::Size(32,32), 1.05, 0);
         if (found.empty()) {
             return found_filtered;
         }
