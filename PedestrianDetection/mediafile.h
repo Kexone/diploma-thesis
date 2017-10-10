@@ -12,7 +12,6 @@ class MediaFile
 {
 public:
     MediaFile();
-    ~MediaFile();
     std::vector<cv::Mat> getFrames();
     std::string openFile(std::vector<std::string> mediaList);
 

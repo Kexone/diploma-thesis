@@ -8,7 +8,6 @@ Pipeline::Pipeline()
 Pipeline::~Pipeline()
 {
     delete vs;
-    delete this;
 }
 
 void Pipeline::execute(std::vector<cv::Mat> frames)
@@ -77,6 +76,8 @@ void Pipeline::execute(std::string cameraFeed)
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
         if(frame.empty() || interrupt) {
+            vs->closeCamera();
+            delete vs;
             break;
         }
         debugMog(frame);
@@ -147,6 +148,7 @@ void Pipeline::debugMog(cv::Mat frame)
     cv::blur(frame, frame, cv::Size(5, 5));
    // cv::Sobel(blured, blured,3,0,0,3,1,0);
     frame = mog.processMat(frame);
+    cv::Canny(frame, frame, 10, 130, 3);
     cv::imshow("Test", frame);
     cv::waitKey(5);
     frame.release();

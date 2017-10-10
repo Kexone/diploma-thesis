@@ -4,9 +4,6 @@ MediaFile::MediaFile()
 {
 }
 
-MediaFile::~MediaFile() {
-    delete this;
-}
 
 std::vector<cv::Mat> MediaFile::getFrames()
 {

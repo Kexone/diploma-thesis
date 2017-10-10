@@ -39,7 +39,7 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     }
 
     std::vector<std::vector<cv::Point>>filteredHulls;
-    int minThresholdArea = 5 * 100 , maxThresholdArea = 20 * 400; //max 400 * 400
+    int minThresholdArea = 5 * 100 , maxThresholdArea = 200 * 400; //max 400 * 400
 
     for (uint i = 0; i < hull.size(); i++) {
         int minX = INT_MAX, minY = INT_MAX, maxY = 0, maxX = 0;
@@ -66,21 +66,21 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     {
         int minX = INT_MAX, minY = INT_MAX, maxY = 0, maxX = 0;
         for (auto &p : filteredHulls[i]) {
-            if (p.x <= minX) minX = p.x;
-            if (p.y <= minY) minY = p.y;
-            if (p.x >= maxX) maxX = p.x;
-            if (p.y >= maxY) maxY = p.y;
+            if (p.x <= minX) minX = p.x + 20;
+            if (p.y <= minY) minY = p.y + 20;
+            if (p.x >= maxX) maxX = p.x + 20;
+            if (p.y >= maxY) maxY = p.y + 20;
         }
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-        cv::drawContours(threshold_output, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-        cv::drawContours(threshold_output, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+        cv::drawContours(src, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+        cv::drawContours(src, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
        // drawContours(drawing, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
         cv::Rect rectangle = cv::Rect(cv::Point(minX, minY), cv::Point(maxX, maxY));
         react[i].push_back(rectangle);
     }
 
     /// Show in a window
-    imshow("Hull demo", threshold_output);
+    imshow("Hull demo", src);
     threshold_output.release();
     return react;
 }

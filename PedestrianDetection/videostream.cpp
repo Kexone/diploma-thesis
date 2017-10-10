@@ -25,3 +25,10 @@ void VideoStream::openCamera()
     else
         capture.open(camSource);
 }
+
+void VideoStream::closeCamera()
+{
+    if(capture.isOpened())
+        capture.open(0);
+        capture.release();
+}
