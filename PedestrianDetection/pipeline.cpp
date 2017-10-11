@@ -98,6 +98,7 @@ void Pipeline::process(cv::Mat frame)
     frame = mog.processMat(blured);
     cv::imshow("mog", frame);
    // cv::blur(frame, blured, cv::Size(5, 5));
+    cv::Canny(frame, frame, 10, 130, 3);
     executeConvexHull(frame);
 
     std::vector<CroppedImage> croppedImages;
