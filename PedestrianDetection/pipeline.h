@@ -15,9 +15,9 @@ public:
     Pipeline();
     ~Pipeline();
     void interruptDetection();
-    void execute(std::vector<cv::Mat> frames);
-    void execute(int cameraFeed);
-    void execute(std::string cameraFeed);
+    int execute(std::vector<cv::Mat> frames);
+    int execute(int cameraFeed);
+    int execute(std::string cameraFeed);
 private:
     bool interrupt;
     Mog mog;
@@ -29,8 +29,9 @@ private:
     std::vector<std::vector<cv::Rect>> rect;
     void process(cv::Mat frame);
     void draw2mat(std::vector<CroppedImage> croppedImages);
-    void executeConvexHull(cv::Mat frame);
+    void set();
     void debugMog(cv::Mat frame);
+    int allDetections = 0;
 
 
 };

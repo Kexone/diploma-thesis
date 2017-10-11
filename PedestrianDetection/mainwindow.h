@@ -37,7 +37,7 @@ private:
     void appendBackLog(QString text);
     void setSettings();
     void stopDetect();
-    void report();
+    void report(int results);
     std::vector<std::string> convertQstring(QStringList files);
     std::string fileFeed;
     MediaFile mediaFile;

@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui multimedia
-QT_DEBUG_PLUGINS += 1
 CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

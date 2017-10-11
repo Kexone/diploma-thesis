@@ -2,20 +2,10 @@
 #include "settings.h"
 #include "mainwindow.h"
 
-
-ConvexHull::ConvexHull()
-{
-
-}
-
-ConvexHull::ConvexHull(cv::Mat src, cv::Mat src_gray) {
-    src.copyTo(this->src);
-    src_gray.copyTo(this->src_gray);
+ConvexHull::ConvexHull() {
     this->thresh = Settings::mogThreshold;
 }
 
-
-/** @function thresh_callback */
 std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat src_gray)
 {
     cv::RNG rng(12345);
@@ -39,10 +29,10 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     }
 
     std::vector<std::vector<cv::Point>>filteredHulls;
-    int minThresholdArea = 5 * 100 , maxThresholdArea = 200 * 400; //max 400 * 400
+    int minThresholdArea = 5 * 100 , maxThresholdArea = 200 * 300; //max 400 * 400
 
     for (uint i = 0; i < hull.size(); i++) {
-        int minX = INT_MAX, minY = INT_MAX, maxY = 0, maxX = 0;
+        int minX = src.cols, minY = src.rows, maxY = 0, maxX = 0;
 
         for (auto &p : hull[i]) {
             if (p.x <= minX) minX = p.x;
@@ -66,21 +56,37 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     {
         int minX = INT_MAX, minY = INT_MAX, maxY = 0, maxX = 0;
         for (auto &p : filteredHulls[i]) {
-            if (p.x <= minX) minX = p.x - 0;
-            if (p.y <= minY) minY = p.y - 0;
-            if (p.x >= maxX) maxX = p.x + 0;
-            if (p.y >= maxY) maxY = p.y + 0;
+            if (p.x <= minX) minX = p.x;
+            if (p.y <= minY) minY = p.y;
+            if (p.x >= maxX) maxX = p.x;
+            if (p.y >= maxY) maxY = p.y;
+        }
+        int size = 10;
+        for(int s = 0; s < 3; s++) {
+        if(minX >= src.cols - size) minX -= size;
+        if(minY >= src.rows - size) minY -= size;
+        if(maxX <= src.cols - size) maxX += size;
+        if(maxY <= src.rows - size) maxY += size;
+        size +=10;
         }
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-        cv::drawContours(src, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-        cv::drawContours(src, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+//        //
+//        std::stringstream ss;
+//        ss << minX << " " << minY << " " << maxX << maxY;
+//        std::string text = ss.str();
+//        cv::Size textSize = cv::getTextSize(text, cv::FONT_HERSHEY_SCRIPT_SIMPLEX,1, 2, 0);
+//        cv::Point textOrg((src.cols - textSize.width)/2-150,(src.rows + textSize.height)/2);
+//        cv::putText(src_gray,text,textOrg,cv::FONT_HERSHEY_SCRIPT_SIMPLEX,2,color,1);
+//        //
+        cv::drawContours(src_gray, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+        cv::drawContours(src_gray, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
        // drawContours(drawing, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
         cv::Rect rectangle = cv::Rect(cv::Point(minX, minY), cv::Point(maxX, maxY));
         react[i].push_back(rectangle);
     }
 
     /// Show in a window
-    //imshow("Hull demo", src);
+    imshow("Hull demo", src_gray);
     threshold_output.release();
     return react;
 }

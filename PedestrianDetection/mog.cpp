@@ -2,7 +2,7 @@
 #include "settings.h"
 Mog::Mog()
 {
-    //pMOG1 = cv::bgsegm::createBackgroundSubtractorMOG(); //MOG approach
+    pMOG1 = cv::bgsegm::createBackgroundSubtractorMOG(150,13,0.1,1); //MOG approach
     pMOG2 = cv::createBackgroundSubtractorMOG2(Settings::mogHistory,Settings::mogThreshold, false); //MOG2 approach
 }
 
@@ -12,8 +12,8 @@ cv::Mat Mog::processMat(cv::Mat &frame)
     if (frame.empty()) {
         exit(EXIT_FAILURE);
     }
-    pMOG2->apply(frame, fgMaskMOG);
-    //pMOG1->apply(frame, fgMaskMOG);
+    //pMOG2->apply(frame, fgMaskMOG);
+    pMOG1->apply(frame, fgMaskMOG);
     return fgMaskMOG;
 }
 

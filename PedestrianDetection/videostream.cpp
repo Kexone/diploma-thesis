@@ -1,5 +1,5 @@
 #include "videostream.h"
-
+#include "mainwindow.h"
 VideoStream::VideoStream(int cam)
 {
     this->camera = cam;
@@ -22,13 +22,10 @@ void VideoStream::openCamera()
 {
     if(camera !=99)
         capture.open(camera);
-    else
+    else  {
         capture.open(camSource);
+        MainWindow::setTotalFrames(int(capture.get(cv::CAP_PROP_FRAME_COUNT)));
+        MainWindow::setFps(int(capture.get(cv::CAP_PROP_FPS)));
+    }
 }
 
-void VideoStream::closeCamera()
-{
-    if(capture.isOpened())
-        capture.open(0);
-        capture.release();
-}

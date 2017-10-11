@@ -103,6 +103,7 @@ void MainWindow::on_buttonTrainNegSet_clicked()
 
 void MainWindow::on_buttonStartDetect_clicked()
 {
+    fileFeed = "C:/Users/Jakub/Source/diploma-thesis/build-PedestrianDetection-Desktop_Qt_5_9_0_MSVC2015_32bit-Ladu011bnu00ed/cctv4.mp4";
     if(ui->buttonStartDetect->text() == "Stop detect") {
         pipeline.interruptDetection();
         //stopDetect();
@@ -114,19 +115,20 @@ void MainWindow::on_buttonStartDetect_clicked()
         setSettings();
         appendBackLog("START Detection");
         startTime = (double)cv::getTickCount();
+        int results = 0;
         if(cameraFeed != 99) {
             appendBackLog("WEBCAM");
-            pipeline.execute(cameraFeed);
+            results = pipeline.execute(cameraFeed);
         }
         else if(isVideo) {
             appendBackLog("VIDEO");
-            pipeline.execute(fileFeed);
+            results = pipeline.execute(fileFeed);
         }
         else {
             appendBackLog("IMAGE");
-            pipeline.execute(mediaFile.getFrames());
+            results = pipeline.execute(mediaFile.getFrames());
         }
-        report();
+        report(results);
     }
 }
 
@@ -162,7 +164,7 @@ void MainWindow::stopDetect()
 
 }
 
-void MainWindow::report()
+void MainWindow::report(int results)
 {
     // DEBUG
     appendBackLog(QString::number(settings.hogThreshold));
@@ -176,6 +178,7 @@ void MainWindow::report()
     appendBackLog("Time: " + QString::number(totalTime));
     appendBackLog("FPS : " + QString::number(MainWindow::fps));
     appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
+    appendBackLog("Reliability: " + QString::number(results / 728.0 * 100.0 ));
     appendBackLog("DONE");
     ui->buttonStartDetect->setText("Start detect");
 }

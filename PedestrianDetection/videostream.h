@@ -22,7 +22,6 @@ public:
     VideoStream(std::string camSource);
     cv::Mat getFrame();
     void openCamera();
-    void closeCamera();
 
 };
 
