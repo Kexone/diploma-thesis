@@ -66,8 +66,8 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     {
         int minX = INT_MAX, minY = INT_MAX, maxY = 0, maxX = 0;
         for (auto &p : filteredHulls[i]) {
-            if (p.x <= minX) minX = p.x + 20;
-            if (p.y <= minY) minY = p.y + 20;
+            if (p.x <= minX) minX = p.x - 20;
+            if (p.y <= minY) minY = p.y - 20;
             if (p.x >= maxX) maxX = p.x + 20;
             if (p.y >= maxY) maxY = p.y + 20;
         }
@@ -80,7 +80,7 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     }
 
     /// Show in a window
-    imshow("Hull demo", src);
+    //imshow("Hull demo", src);
     threshold_output.release();
     return react;
 }

@@ -80,8 +80,8 @@ void Pipeline::execute(std::string cameraFeed)
             delete vs;
             break;
         }
-        debugMog(frame);
-        //process(frame);
+        //debugMog(frame);
+        process(frame);
         cv::waitKey(5);
         frame.release();
     }

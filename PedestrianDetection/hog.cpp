@@ -49,7 +49,7 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             std::vector<cv::Rect> rRect;
             std::vector<cv::Rect> found;
             cv::Mat test  = frames[x].croppedImg;
-
+            assert(!test.empty());
             cv::resize(test, test, cv::Size(64,128),0,0,1);
             cv::imshow("test", test);
             //cv::Mat test = resizeImage(frames[x].croppedImg, cv::Size(64, 128));
