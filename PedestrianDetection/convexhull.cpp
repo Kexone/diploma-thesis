@@ -62,12 +62,12 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
             if (p.y >= maxY) maxY = p.y;
         }
         int size = 10;
-        for(int s = 0; s < 3; s++) {
-        if(minX >= src.cols - size) minX -= size;
-        if(minY >= src.rows - size) minY -= size;
+        for(int s = 0; s < 0; s++) {
+        if(minX >= 0 + size) minX -= size;
+        if(minY >= 0 + size) minY -= size;
         if(maxX <= src.cols - size) maxX += size;
         if(maxY <= src.rows - size) maxY += size;
-        size +=10;
+        size += 10;
         }
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 //        //
@@ -81,7 +81,12 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
         cv::drawContours(src_gray, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
         cv::drawContours(src_gray, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
        // drawContours(drawing, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-        cv::Rect rectangle = cv::Rect(cv::Point(minX, minY), cv::Point(maxX, maxY));
+        cv::Rect rectangle(cv::Point(minX, minY), cv::Point(maxX, maxY));
+        if(rectangle.height / rectangle.width < 2) {
+            int oldH = rectangle.height;
+            rectangle.height = rectangle.width * 2;
+            rectangle.y = rectangle.y -  ((rectangle.height - oldH) / 2);
+        }
         react[i].push_back(rectangle);
     }
 

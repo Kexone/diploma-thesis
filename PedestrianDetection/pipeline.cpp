@@ -1,14 +1,10 @@
 #include "pipeline.h"
-
+#include <sstream>
 Pipeline::Pipeline()
 {
 
 }
 
-Pipeline::~Pipeline()
-{
-    delete vs;
-}
 
 int Pipeline::execute(std::vector<cv::Mat> frames)
 {
@@ -51,15 +47,21 @@ int Pipeline::execute(std::string cameraFeed)
     set();
     vs = new VideoStream(cameraFeed);
     vs->openCamera();
+    int i = 0;
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
         if(frame.empty() || interrupt) {
-            delete vs;
             break;
+            delete vs;
         }
         debugMog(frame);
         //process(frame);
         frame.release();
+       // std::stringstream ss;
+       // ss <<  "../img/mat_" << i << ".jpg";
+       // cv::imwrite(ss.str(),localFrame);
+        localFrame.release();
+        i++;
     }
      cv::destroyWindow("Test");
      return allDetections;
@@ -103,7 +105,7 @@ void Pipeline::draw2mat(std::vector<CroppedImage> croppedImages)
             r.y += cvRound(croppedImages[j].offsetY);
             r.height = cvRound(croppedImages[j].croppedImg.rows);
             cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
-            allDetections += 1;
+            allDetections += found_filtered[j].size();
         }
     }
 }
@@ -126,13 +128,24 @@ void Pipeline::debugMog(cv::Mat frame)
     char k;
     localFrame = frame.clone();
     cv::cvtColor(frame,frame,CV_BGR2GRAY);
-    cv::threshold(frame, frame, 50, 250, cv::THRESH_BINARY);
-   // cv::Canny(frame, frame, 90, 130, 3);
-    cv::imshow("1 Tresh + canny", frame);
     cv::blur(frame, frame, cv::Size(5, 5));
     cv::imshow("Blur", frame);
+//    cv::threshold(frame, frame, 90, 255, cv::THRESH_BINARY);
+   // cv::imshow("Thresh", frame);
+   // cv::Sobel(frame,frame,0,0,1,5,3,0,cv::BORDER_DEFAULT);
+   // cv::Scharr(frame,frame,0,0,1,5,0, cv::BORDER_DEFAULT);
+    //cv::Canny(frame, frame, 25, 40, 5);
+    cv::imshow("canny", frame);
     frame = mog.processMat(frame);
     cv::imshow("MOG", frame);
+    debugCHHOG(frame);
+    cv::waitKey(5);
+   // k=cvWaitKey(0);
+    frame.release();
+}
+
+void Pipeline::debugCHHOG(cv::Mat frame)
+{
     rect = ch.wrapObjects(localFrame, frame);
 
     std::vector<CroppedImage> croppedImages;
@@ -147,8 +160,4 @@ void Pipeline::debugMog(cv::Mat frame)
     draw2mat(croppedImages);
     if(Settings::showVideoFrames)
     cv::imshow("Result", localFrame);
-//    cv::imshow("MOG Canny", frame);
-    cv::waitKey(5);
-   // k=cvWaitKey(0);
-    frame.release();
 }

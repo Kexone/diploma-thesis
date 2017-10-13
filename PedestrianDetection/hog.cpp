@@ -18,7 +18,7 @@ std::vector<cv::Rect> Hog::detect(cv::Mat frame)
         std::vector<cv::Rect> found;
         //cv::Mat test  = frames[x].croppedImg;
         //cv::Size size(64, 128);
-        cv::resize(src_frame, src_frame, cv::Size(64,128),0,0,1);
+        cv::resize(src_frame, src_frame, cv::Size(64,128));
         //hog.detectMultiScale(test, found, 0, cv::Size(6, 6), cv::Size(32, 32), 1.05, 2);
         hog.detectMultiScale(src_frame, found, 0, cv::Size(8, 8), cv::Size(32,32), 1.05, 0);
         if (found.empty()) {
@@ -50,10 +50,14 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             std::vector<cv::Rect> found;
             cv::Mat test  = frames[x].croppedImg;
             assert(!test.empty());
-            cv::resize(test, test, cv::Size(64,128),0,0,1);
+            cv::resize(test, test, cv::Size(64,128));
             cv::imshow("test", test);
+            test.convertTo(test,CV_8UC1);
             //cv::Mat test = resizeImage(frames[x].croppedImg, cv::Size(64, 128));
-            hog.detectMultiScale(test, found, 0, cv::Size(6, 6), cv::Size(32, 32), 1.05, 2);
+           // hog.blockStride = cv::Size(test.cols/4, test.rows/8);
+            //hog.blockSize = cv::Size(test.cols/4, test.rows/8);
+            hog.winSize = cv::Size(test.cols, test.rows);
+            hog.detectMultiScale(test, found, 0, cv::Size(8,8), cv::Size(16,16), 1.05, 2);
           //  hog.detectMultiScale(test, found, 0, cv::Size(4, 4), cv::Size(32,32), 1.05, 2);
 
             if (found.empty()) {

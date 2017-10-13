@@ -13,7 +13,6 @@ class Pipeline
 {
 public:
     Pipeline();
-    ~Pipeline();
     void interruptDetection();
     int execute(std::vector<cv::Mat> frames);
     int execute(int cameraFeed);
@@ -23,14 +22,15 @@ private:
     Mog mog;
     Hog hog;
     ConvexHull ch;
-    cv::Mat localFrame;
     VideoStream *vs;
+    cv::Mat localFrame;
     std::vector<std::vector<cv::Rect>> found_filtered;
     std::vector<std::vector<cv::Rect>> rect;
     void process(cv::Mat frame);
     void draw2mat(std::vector<CroppedImage> croppedImages);
     void set();
     void debugMog(cv::Mat frame);
+    void debugCHHOG(cv::Mat frame);
     int allDetections = 0;
 
 
