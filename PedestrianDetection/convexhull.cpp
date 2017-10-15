@@ -29,7 +29,7 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     }
 
     std::vector<std::vector<cv::Point>>filteredHulls;
-    int minThresholdArea = 5 * 100 , maxThresholdArea = 200 * 300; //max 400 * 400
+    int minThresholdArea = 10 * 100 , maxThresholdArea = 200 * 300; //max 400 * 400
 
     for (uint i = 0; i < hull.size(); i++) {
         int minX = src.cols, minY = src.rows, maxY = 0, maxX = 0;

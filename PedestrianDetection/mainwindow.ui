@@ -54,11 +54,14 @@
      </rect>
     </property>
     <property name="text">
-     <string>Start detect</string>
+     <string>Start detect (D)</string>
     </property>
     <property name="icon">
      <iconset>
       <normaloff>icons/detect-pedestrian.png</normaloff>icons/detect-pedestrian.png</iconset>
+    </property>
+    <property name="shortcut">
+     <string>D</string>
     </property>
    </widget>
    <widget class="QTextEdit" name="textBackLog">
@@ -399,10 +402,10 @@ QGroupBox::title
       <string/>
      </property>
      <property name="text">
-      <string>16</string>
+      <string>13</string>
      </property>
      <property name="maxLength">
-      <number>3</number>
+      <number>5</number>
      </property>
      <property name="frame">
       <bool>false</bool>
@@ -446,10 +449,10 @@ QGroupBox::title
       <string/>
      </property>
      <property name="text">
-      <string>200</string>
+      <string>350</string>
      </property>
      <property name="maxLength">
-      <number>3</number>
+      <number>4</number>
      </property>
      <property name="frame">
       <bool>false</bool>

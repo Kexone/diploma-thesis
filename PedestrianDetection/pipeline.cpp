@@ -57,9 +57,9 @@ int Pipeline::execute(std::string cameraFeed)
         debugMog(frame);
         //process(frame);
         frame.release();
-       // std::stringstream ss;
-       // ss <<  "../img/mat_" << i << ".jpg";
-       // cv::imwrite(ss.str(),localFrame);
+        std::stringstream ss;
+        ss <<  "../img/mat_" << i << ".jpg";
+        cv::imwrite(ss.str(),localFrame);
         localFrame.release();
         i++;
     }
@@ -113,6 +113,7 @@ void Pipeline::draw2mat(std::vector<CroppedImage> croppedImages)
 void Pipeline::set()
 {
     interrupt = false;
+    allDetections = 0;
     mog = Mog();
     hog = Hog();
     ch = ConvexHull();
@@ -128,8 +129,8 @@ void Pipeline::debugMog(cv::Mat frame)
     char k;
     localFrame = frame.clone();
     cv::cvtColor(frame,frame,CV_BGR2GRAY);
-    cv::blur(frame, frame, cv::Size(5, 5));
     cv::imshow("Blur", frame);
+    cv::blur(frame, frame, cv::Size(6,6));
 //    cv::threshold(frame, frame, 90, 255, cv::THRESH_BINARY);
    // cv::imshow("Thresh", frame);
    // cv::Sobel(frame,frame,0,0,1,5,3,0,cv::BORDER_DEFAULT);
@@ -137,6 +138,8 @@ void Pipeline::debugMog(cv::Mat frame)
     //cv::Canny(frame, frame, 25, 40, 5);
     cv::imshow("canny", frame);
     frame = mog.processMat(frame);
+    cv::blur(frame, frame, cv::Size(9,9));
+    //cv::threshold(frame, frame, 90, 255, cv::THRESH_BINARY);
     cv::imshow("MOG", frame);
     debugCHHOG(frame);
     cv::waitKey(5);

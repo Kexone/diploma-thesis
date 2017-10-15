@@ -171,6 +171,7 @@ void MainWindow::report(int results)
     appendBackLog(QString::number(settings.mogThreshold));
     appendBackLog(QString::number(settings.algorithm));
     appendBackLog(QString::number(settings.positiveFrames));
+    appendBackLog("All results: " + QString::number(results));
 
     endTime = (double)cv::getTickCount() - startTime;
     double totalTime = roundf((endTime / cv::getTickFrequency())*100)/100;
@@ -178,7 +179,7 @@ void MainWindow::report(int results)
     appendBackLog("Time: " + QString::number(totalTime));
     appendBackLog("FPS : " + QString::number(MainWindow::fps));
     appendBackLog("Video duration: " + QString::number(MainWindow::totalFrames / MainWindow::fps));
-    appendBackLog("Reliability: " + QString::number(results / 728.0 * 100.0 ));
+    appendBackLog("Reliability: " + QString::number((results / 728.0) * 100.0 ));
     appendBackLog("DONE");
     ui->buttonStartDetect->setText("Start detect");
 }
