@@ -101,9 +101,9 @@ void Pipeline::draw2mat(std::vector<CroppedImage> croppedImages)
         for (uint i = 0; i < found_filtered[j].size(); i++) {
             cv::Rect r = found_filtered[j][i];
             r.x += cvRound(croppedImages[j].offsetX);
-            r.width = cvRound(croppedImages[j].croppedImg.cols);
+            //r.width = cvRound(croppedImages[j].croppedImg.cols);
             r.y += cvRound(croppedImages[j].offsetY);
-            r.height = cvRound(croppedImages[j].croppedImg.rows);
+            //r.height = cvRound(croppedImages[j].croppedImg.rows);
             cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
             allDetections += found_filtered[j].size();
         }

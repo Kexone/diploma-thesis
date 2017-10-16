@@ -62,7 +62,7 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
             if (p.y >= maxY) maxY = p.y;
         }
         int size = 10;
-        for(int s = 0; s < 0; s++) {
+        for(int s = 0; s < 4; s++) {
         if(minX >= 0 + size) minX -= size;
         if(minY >= 0 + size) minY -= size;
         if(maxX <= src.cols - size) maxX += size;
@@ -82,11 +82,11 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
         cv::drawContours(src_gray, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
        // drawContours(drawing, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
         cv::Rect rectangle(cv::Point(minX, minY), cv::Point(maxX, maxY));
-        if(rectangle.height / rectangle.width < 2) {
-            int oldH = rectangle.height;
-            rectangle.height = rectangle.width * 2;
-            rectangle.y = rectangle.y -  ((rectangle.height - oldH) / 2);
-        }
+//        if(rectangle.height / rectangle.width < 2) {
+//            int oldH = rectangle.height;
+//            rectangle.height = rectangle.width * 2;
+//            rectangle.y = rectangle.y -  ((rectangle.height - oldH) / 2);
+//        }
         react[i].push_back(rectangle);
     }
 

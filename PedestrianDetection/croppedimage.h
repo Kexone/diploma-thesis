@@ -10,12 +10,11 @@ struct CroppedImage
 public:
     int id;
     cv::Mat croppedImg;
-    cv::Size defaultSize;
     int offsetX;
     int offsetY;
 
     CroppedImage(int i, cv::Mat frame, cv::Rect cropping) : id(i), croppedImg(frame(cropping)),
-        defaultSize(cv::Size(frame.cols, frame.rows)), offsetX(cropping.x), offsetY(cropping.y) {}
+        offsetX(cropping.x), offsetY(cropping.y) {}
 };
 
 #endif // CROPPEDIMAGE_H
