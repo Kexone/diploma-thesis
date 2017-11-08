@@ -3,7 +3,11 @@
 
 Hog::Hog()
 {
-    hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+    cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::load("96_16_8_8_9_01.yml");
+    std::vector< float > hogDetector;
+    getSvmDetector(svm,hogDetector);
+    hog.setSVMDetector(hogDetector);
+    //hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
 }
 
 std::vector<cv::Rect> Hog::detect(cv::Mat frame)
@@ -80,4 +84,24 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             //found.clear();
         }
         return found_filtered;
+}
+
+void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector )
+{
+    // get the support vectors
+    cv::Mat sv = svm->getSupportVectors();
+    const int sv_total = sv.rows;
+    // get the decision function
+    cv::Mat alpha, svidx;
+    double rho = svm->getDecisionFunction( 0, alpha, svidx );
+
+    //CV_Assert( alpha.total() == 1 && svidx.total() == 1 && sv_total == 1 );
+    //CV_Assert( (alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
+      //         (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f) );
+    //CV_Assert( sv.type() == CV_32F );
+    hog_detector.clear();
+
+    hog_detector.resize(sv.cols + 1);
+    memcpy( &hog_detector[0], sv.ptr(), sv.cols*sizeof( hog_detector[0] ) );
+    hog_detector[sv.cols] = (float)-rho;
 }

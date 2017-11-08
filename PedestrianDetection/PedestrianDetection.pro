@@ -35,7 +35,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD${OpenCV_dir}/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_objdetect -lopencv_ml320d
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../OpenCV/lib/ -lopencv_core320d -lopencv_highgui320d -lopencv_bgsegm320d -lopencv_imgproc320d -lopencv_video320d -lopencv_videoio320d -lopencv_imgcodecs320d -lopencv_objdetect320d -lopencv_ml320d
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$(OpenCV)/lib/ -lopencv_core320d -lopencv_highgui320d -lopencv_bgsegm320d -lopencv_imgproc320d -lopencv_video320d -lopencv_videoio320d -lopencv_imgcodecs320d -lopencv_objdetect320d -lopencv_ml320d
 unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../openCV/debug/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect -lopencv_ml320d
 else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../openCV/release/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect -lopencv_ml320d
 
