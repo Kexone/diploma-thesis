@@ -6,6 +6,7 @@
 //#include "videostream.h"
 #include "settings.h"
 #include "pipeline.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -26,18 +27,20 @@ private slots:
 
     void on_buttonOpenWebcam_clicked();
 
-    void on_buttonTrainPosSet_clicked();
-
-    void on_buttonTrainNegSet_clicked();
-
     void on_buttonStartDetect_clicked();
+
+    void on_buttonTrainHOG_clicked();
+
+    void on_buttonLoadSVM_clicked();
 
 private:
     Ui::MainWindow *ui;
     void appendBackLog(QString text);
     void setSettings();
+    void trainnHog();
     void stopDetect();
     void report(int results);
+    QStringList loadSamples(QString folderPath);
     std::vector<std::string> convertQstring(QStringList files);
     std::string fileFeed;
     MediaFile mediaFile;

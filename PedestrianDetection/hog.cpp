@@ -36,7 +36,7 @@ std::vector<cv::Rect> Hog::detect(cv::Mat frame)
         }
         found.clear();
     //}
-    return found_filtered;
+        return found_filtered;
 }
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {

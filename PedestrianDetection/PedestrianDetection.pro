@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     mog.cpp \
     videostream.cpp \
     mediafile.cpp \
-    pipeline.cpp
+    pipeline.cpp \
+    trainhog.cpp
 
 HEADERS  += mainwindow.h \
     convexhull.h \
@@ -28,14 +29,15 @@ HEADERS  += mainwindow.h \
     mediafile.h \
     settings.h \
     pipeline.h \
-    croppedimage.h
+    croppedimage.h \
+    trainhog.h
 
 FORMS    += mainwindow.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD${OpenCV_dir}/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_objdetect
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../OpenCV/lib/ -lopencv_core320d -lopencv_highgui320d -lopencv_bgsegm320d -lopencv_imgproc320d -lopencv_video320d -lopencv_videoio320d -lopencv_imgcodecs320d -lopencv_objdetect320d
-unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../openCV/debug/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect
-else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../openCV/release/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD${OpenCV_dir}/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_objdetect -lopencv_ml320d
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../../OpenCV/lib/ -lopencv_core320d -lopencv_highgui320d -lopencv_bgsegm320d -lopencv_imgproc320d -lopencv_video320d -lopencv_videoio320d -lopencv_imgcodecs320d -lopencv_objdetect320d -lopencv_ml320d
+unix:!macx:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../openCV/debug/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect -lopencv_ml320d
+else:unix:!macx:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../openCV/release/lib/ -lopencv_core -lopencv_highgui -lopencv_bgsegm -lopencv_imgproc -lopencv_video -lopencv_videoio -lopencv_imgcodecs -lopencv_objdetect -lopencv_ml320d
 
 win32:INCLUDEPATH += $$PWD/../../../../../../OpenCV/include
 win32:DEPENDPATH += $$PWD/../../../../../../OpenCV/include

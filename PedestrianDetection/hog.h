@@ -19,7 +19,6 @@ public:
     Hog();
     std::vector<std::vector<cv::Rect>> detect(std::vector<CroppedImage>& frame);
     std::vector<cv::Rect> detect(cv::Mat frame);
-    //cv::Mat resizeImage(const cv::Mat img, cv::Size target_size);
 private:
     cv::HOGDescriptor hog;
 };

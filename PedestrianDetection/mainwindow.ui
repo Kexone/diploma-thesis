@@ -871,7 +871,7 @@ QGroupBox::title
     <property name="checkable">
      <bool>false</bool>
     </property>
-    <widget class="QPushButton" name="buttonTrainPosSet">
+    <widget class="QPushButton" name="buttonLoadSVM">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -884,15 +884,15 @@ QGroupBox::title
       <enum>Qt::DefaultContextMenu</enum>
      </property>
      <property name="text">
-      <string>Load 
-Positive set</string>
+      <string>Load trained
+ SVM</string>
      </property>
      <property name="icon">
       <iconset>
        <normaloff>icons/pedestrian.png</normaloff>icons/pedestrian.png</iconset>
      </property>
     </widget>
-    <widget class="QPushButton" name="buttonTrainNegSet">
+    <widget class="QPushButton" name="buttonTrainHOG">
      <property name="geometry">
       <rect>
        <x>110</x>
@@ -905,8 +905,8 @@ Positive set</string>
       <enum>Qt::DefaultContextMenu</enum>
      </property>
      <property name="text">
-      <string>Load 
-Negative set</string>
+      <string>Load dataset 
+for train hog</string>
      </property>
      <property name="icon">
       <iconset>

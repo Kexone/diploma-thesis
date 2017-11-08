@@ -1,12 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 //#include "videostream.h"
+#include "trainhog.h"
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QStringList>
 #include <QString>
 #include <QThread>
 #include <QCameraInfo>
+#include <QDirIterator>
+#include <QDir>
+#include <QDebug>
 
 int MainWindow::totalFrames = 0;
 float MainWindow::fps  = 0;
@@ -91,16 +95,6 @@ void MainWindow::on_buttonOpenWebcam_clicked()
     text.clear();
 }
 
-void MainWindow::on_buttonTrainPosSet_clicked()
-{
-    this->thread()->exit();
-}
-
-void MainWindow::on_buttonTrainNegSet_clicked()
-{
-
-}
-
 void MainWindow::on_buttonStartDetect_clicked()
 {
     fileFeed = "C:/Users/Jakub/Source/diploma-thesis/build-PedestrianDetection-Desktop_Qt_5_9_0_MSVC2015_32bit-Ladu011bnu00ed/cctv4.mp4";
@@ -159,6 +153,29 @@ void MainWindow::setSettings()
     //settings.trainHog = ui->;
 }
 
+void MainWindow::trainnHog()
+{
+    TrainHog th;
+    QString text = "Error in loading";
+    QString posSamples = QFileDialog::getExistingDirectory(this, tr("Select folder with POSITIVE dataset"));
+    QString negSamples = QFileDialog::getExistingDirectory(this, tr("Select folder with NEGATIVE dataset"));
+   // std::vector<std::string> fileName{std::begin(files), std::end(files)};
+    if(!posSamples.isEmpty()) {
+        std::vector<std::string> data = convertQstring(loadSamples(posSamples));
+        th.fillVectors(data);
+    }
+    if(!negSamples.isEmpty()) {
+        std::vector<std::string> data = convertQstring(loadSamples(negSamples));
+        th.fillVectors(data,true);
+    }
+    if(!posSamples.isEmpty() || !negSamples.isEmpty()) {
+        appendBackLog("START TRAINING");
+        if(th.train()) {
+            appendBackLog("TRAINING HOG COMPLETED");
+        }
+    }
+}
+
 void MainWindow::stopDetect()
 {
 
@@ -182,4 +199,26 @@ void MainWindow::report(int results)
     appendBackLog("Reliability: " + QString::number((results / 728.0) * 100.0 ));
     appendBackLog("DONE");
     ui->buttonStartDetect->setText("Start detect");
+}
+
+QStringList MainWindow::loadSamples(QString folderPath)
+{
+    QDirIterator it(folderPath, QStringList() << "*.jpg" << "*.png",QDir::NoFilter, QDirIterator::Subdirectories);
+    QStringList data;
+    while (it.hasNext()) {
+        QFile f(it.next());
+        if (QFileInfo(it.filePath()).isFile())
+            data.append(f.fileName());
+    }
+    return data;
+}
+
+void MainWindow::on_buttonTrainHOG_clicked()
+{
+  trainnHog();
+}
+
+void MainWindow::on_buttonLoadSVM_clicked()
+{
+
 }
