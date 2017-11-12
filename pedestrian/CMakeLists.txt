@@ -14,6 +14,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 include_directories(${OpenCV}/include)
 link_directories(${OpenCV}/lib)
 
-add_executable(Pedestrian main.cpp source/pipeline.cpp alg/convexhull.cpp alg/hog.cpp alg/mog.cpp media/videostream.cpp train/trainhog.cpp )
+add_executable(Pedestrian main.cpp source/pipeline.cpp alg/convexhull.cpp alg/hog.cpp alg/mog.cpp alg/cascadeClass.cpp media/videostream.cpp train/trainhog.cpp )
 target_link_libraries(Pedestrian opencv_core opencv_highgui opencv_bgsegm
 opencv_imgproc opencv_video opencv_videoio opencv_objdetect)
