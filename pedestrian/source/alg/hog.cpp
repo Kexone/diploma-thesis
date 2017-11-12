@@ -62,16 +62,21 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             std::vector<cv::Rect> rRect;
             std::vector<cv::Rect> found;
             cv::Mat test  = frames[x].croppedImg;
-            assert(!test.empty());
-            //cv::resize(test, test, cv::Size(64,128));
 
+            assert(!test.empty());
             test.convertTo(test,CV_8UC1);
-            //cv::Mat test = resizeImage(frames[x].croppedImg, cv::Size(64, 128));
-           // hog.blockStride = cv::Size(test.cols/4, test.rows/8);
-            //hog.blockSize = cv::Size(test.cols/4, test.rows/8);
-            //hog.winSize = cv::Size(test.cols, test.rows);
-            hog.detectMultiScale(test, found, 0, cv::Size(8,8), cv::Size(0,0), 1.05, 2);
-          //  hog.detectMultiScale(test, found, 0, cv::Size(4, 4), cv::Size(32,32), 1.05, 2);
+			cv::cvtColor(test, test, CV_BGR2GRAY);
+			cv::equalizeHist(test, test);
+            hog.detectMultiScale(
+            						test,					// testing img
+            						found,					// foundLocation <rect>
+            						0,						// hitThreshold = 0
+            						cv::Size(8,8),			// winStride size(8, 8)
+            						cv::Size(0,0),			// padding size(0, 0)
+            						0.05,					// scale = 1,05
+            						2,						// finalThreshold = 2
+									false					// use meanshift grouping = false
+            				    );
 
             if (found.empty()) {
                 continue;
