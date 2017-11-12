@@ -69,10 +69,11 @@ void train()
 
 void printResults(clock_t timer)
 {
-	std::cout << VideoStream::fps << std::endl;
-	std::cout << VideoStream::totalFrames << std::endl;
-	std::cout << VideoStream::fps / static_cast<float>(VideoStream::totalFrames) << std::endl;
+	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
+	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
+	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
+	std::cout << "Possibly detection: " << Pipeline::allDetections << " frames." << std::endl;
 }
 
 
