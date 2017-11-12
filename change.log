@@ -26,4 +26,4 @@
  03-10-2017 - GUI created, loading img/video to mat, some bugfixes
  07-10-2017 - Initializec Convex Hull, MOG, HOG, connected (without HOG)
  09-11-2017 - Train HOG
- 12-11-2017 - App was ported to native C++ console
+ 12-11-2017 - App was ported to native C++ console, implement Cascade Classifier
