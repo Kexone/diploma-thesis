@@ -1,12 +1,14 @@
 #include "pipeline.h"
 #include <sstream>
 
+int Pipeline::allDetections = 0;
+
 Pipeline::Pipeline()
 {
 
 }
 
-int Pipeline::execute(std::vector<cv::Mat> frames)
+void Pipeline::execute(std::vector<cv::Mat> frames)
 {
 	allDetections = 0;
 
@@ -18,10 +20,9 @@ int Pipeline::execute(std::vector<cv::Mat> frames)
        frame.release();
     }
     cv::destroyWindow("Result");
-    return allDetections;
 }
 
-int Pipeline::execute(int cameraFeed = 99)
+void Pipeline::execute(int cameraFeed = 99)
 {
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
@@ -31,16 +32,13 @@ int Pipeline::execute(int cameraFeed = 99)
         if(frame.empty()) {
             break;
         }
-        //debugMog(frame);
         process(frame);
         frame.release();
     }
   //  cv::destroyWindow("Test");
-    return allDetections;
-
 }
 
-int Pipeline::execute(std::string cameraFeed)
+void Pipeline::execute(std::string cameraFeed)
 {
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
@@ -52,7 +50,6 @@ int Pipeline::execute(std::string cameraFeed)
 			delete vs;
 			break;
         }
-		//debugMog(frame);
         process(frame);
         frame.release();
         std::stringstream ss;
@@ -63,7 +60,6 @@ int Pipeline::execute(std::string cameraFeed)
 		cv::waitKey(5);
     }
      cv::destroyWindow("Test");
-     return allDetections;
 }
 
 void Pipeline::process(cv::Mat frame)
@@ -75,8 +71,24 @@ void Pipeline::process(cv::Mat frame)
 	frame = mog.processMat(frame);
 	cv::blur(frame, frame, cv::Size(9, 9));
 	//cv::imshow("MOG", frame);
-	debugCHHOG(frame);
+	std::vector< std::vector< cv::Rect > > rect = ch.wrapObjects(localFrame, frame);
+
+	std::vector< CroppedImage > croppedImages;
+	if (rect.size() != 0) {
+		for (uint j = 0; j < rect.size(); j++) {
+			for (uint i = 0; i < rect[j].size(); i++) {
+				croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[j][i]));
+			}
+		}
+	}
+	//found_filtered = hog.detect(croppedImages);
+	found_filtered = cc.detect(croppedImages);
+	draw2mat(croppedImages);
+	// if(Settings::showVideoFrames)
+	cv::imshow("Result", localFrame);
 	frame.release();
+	rect.clear();
+	found_filtered.clear();
 }
 
 void Pipeline::draw2mat(std::vector< CroppedImage > croppedImages)
@@ -89,39 +101,7 @@ void Pipeline::draw2mat(std::vector< CroppedImage > croppedImages)
             r.y += cvRound(croppedImages[j].offsetY);
             //r.height = cvRound(croppedImages[j].croppedImg.rows);
             cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
-            allDetections += found_filtered[j].size();
         }
+		allDetections += found_filtered[j].size();
     }
-}
-
-
-void Pipeline::debugMog(cv::Mat frame)
-{
-    localFrame = frame.clone();
-    cv::cvtColor(frame,frame,CV_BGR2GRAY);
-    cv::blur(frame, frame, cv::Size(6,6));
-	cv::imshow("Blur", frame);
-    frame = mog.processMat(frame);
-    cv::blur(frame, frame, cv::Size(9,9));
-    //cv::imshow("MOG", frame);
-    debugCHHOG(frame);
-    frame.release();
-}
-
-void Pipeline::debugCHHOG(cv::Mat frame)
-{
-    rect = ch.wrapObjects(localFrame, frame);
-
-    std::vector< CroppedImage > croppedImages;
-    if(rect.size() != 0) {
-        for (uint j = 0; j < rect.size(); j++) {
-            for (uint i = 0; i < rect[j].size(); i++) {
-                croppedImages.emplace_back(CroppedImage(i,localFrame.clone(), rect[j][i]));
-            }
-        }
-    }
-    found_filtered = hog.detect(croppedImages);
-    draw2mat(croppedImages);
-	// if(Settings::showVideoFrames)
-    cv::imshow("Result", localFrame);
 }

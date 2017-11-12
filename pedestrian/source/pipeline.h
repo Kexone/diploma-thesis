@@ -9,26 +9,29 @@
 #include "media/croppedimage.h"
 #include "settings.h"
 #include "media/videostream.h"
+#include "alg/cascadeClass.h"
+
 class Pipeline
 {
 public:
     Pipeline();
-    int execute(std::vector<cv::Mat> frames);
-    int execute(int cameraFeed);
-    int execute(std::string cameraFeed);
+    void execute(std::vector<cv::Mat> frames);
+    void execute(int cameraFeed);
+    void execute(std::string cameraFeed);
+
+	static int allDetections;
+
 private:
     Mog mog;
     Hog hog;
+	CascadeClass cc;
     ConvexHull ch;
     VideoStream *vs;
     cv::Mat localFrame;
     std::vector<std::vector<cv::Rect>> found_filtered;
-    std::vector<std::vector<cv::Rect>> rect;
+
     void process(cv::Mat frame);
     void draw2mat(std::vector<CroppedImage> croppedImages);
-    void debugMog(cv::Mat frame);
-    void debugCHHOG(cv::Mat frame);
-    int allDetections = 0;
 
 
 };

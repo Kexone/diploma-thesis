@@ -57,6 +57,9 @@
     <ClCompile Include="source\pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\alg\cascadeClass.cpp">
+      <Filter>Source Files\alg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -85,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="source\pipeline.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\alg\cascadeClass.h">
+      <Filter>Header Files\alg</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
