@@ -30,8 +30,8 @@ void VideoStream::openCamera()
         capture.open(camera);
     else  {
         capture.open(camSource);
-		VideoStream::fps = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_COUNT));
-        VideoStream::totalFrames = static_cast<int>(capture.get(cv::CAP_PROP_FPS));
+		VideoStream::totalFrames = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_COUNT));
+        VideoStream::fps = static_cast<int>(capture.get(cv::CAP_PROP_FPS));
     }
 }
 
