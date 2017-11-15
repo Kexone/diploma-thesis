@@ -21,46 +21,13 @@ Hog::Hog()
 	
 }
 
-std::vector<cv::Rect> Hog::detect(cv::Mat frame)
-{
-    std::vector<cv::Rect> found_filtered;
-    cv::Mat src_frame = frame.clone();
-    if (frame.empty())
-        return found_filtered;
-    fflush(stdout);
-    //for (uint x = 0; x < frames.size(); x++) {
-        std::vector<cv::Rect> rRect;
-        std::vector<cv::Rect> found;
-        //cv::Mat test  = frames[x].croppedImg;
-        //cv::Size size(64, 128);
-        //cv::resize(src_frame, src_frame, cv::Size(64,128));
-        //hog.detectMultiScale(test, found, 0, cv::Size(6, 6), cv::Size(32, 32), 1.05, 2);
-        hog.detectMultiScale(src_frame, found, 1, cv::Size(8, 8), cv::Size(32,32), 1.05, 0);
-        if (found.empty()) {
-            return found_filtered;
-        }
-        size_t i, j;
-        for (i = 0; i<found.size(); i++)
-        {
-            cv::Rect r = found[i];
-            for (j = 0; j<found.size(); j++)
-                if (j != i && (r & found[j]) == r)
-                    break;
-                if (j == found.size())
-                    found_filtered.push_back(r);
-        }
-        found.clear();
-    //}
-        return found_filtered;
-}
-
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
 
-	std::cout << "PIC size: " << frames.size() << std::endl;
+	//std::cout << "PIC size: " << frames.size() << std::endl;
 	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
     if (frames.empty())
         return found_filtered;
-        fflush(stdout);
+       // fflush(stdout);
         for (uint x = 0; x < frames.size(); x++) {
             std::vector<cv::Rect> rRect;
             std::vector<cv::Rect> found;
@@ -69,14 +36,15 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             assert(!test.empty());
             test.convertTo(test,CV_8UC1);
 			cv::cvtColor(test, test, CV_BGR2GRAY);
-			cv::equalizeHist(test, test);
+			//cv::equalizeHist(test, test);
+			//cv::imshow("test", test);
             hog.detectMultiScale(
             						test,					// testing img
             						found,					// foundLocation <rect>
             						1,						// hitThreshold = 0 // 1
-            						cv::Size(8,8),			// winStride size(8, 8)
+            						cv::Size(8, 8),			// winStride size(8, 8)
             						cv::Size(0,0),			// padding size(0, 0)
-            						1.05,					// scale = 1,05
+            						1.051111,					// scale = 1,05
             						2,						// finalThreshold = 2 // 0
 									false					// use meanshift grouping = false
             				    );
@@ -97,7 +65,7 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 					//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
                     cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
             }
-            cv::imshow("test", test);
+          //  cv::imshow("test", test);
             //found.clear();
         }
         return found_filtered;

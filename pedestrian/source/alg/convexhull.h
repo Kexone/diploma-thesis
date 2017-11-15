@@ -10,14 +10,16 @@ class ConvexHull
 {
 public:
     ConvexHull();
-    std::vector<std::vector<cv::Rect>> wrapObjects(cv::Mat src, cv::Mat src_gray);
+    std::vector< cv::Rect > wrapObjects(cv::Mat src, cv::Mat src_gray);
 
 private:
-    cv::Mat src;
-    cv::Mat src_gray;
+	cv::Mat convexHullImage;
     double thresh;
-	int extension;
-	void filterContours(std::vector< std::vector< cv::Point > > &hulls, std::vector< std::vector< cv::Point > > &filteredHulls);
+	int extensionSize;
+	int extensionTimes;
+	void filterByArea(std::vector< std::vector< cv::Point > > &hulls, std::vector< std::vector< cv::Point > > &filteredHulls);
+	cv::Rect extendContours(std::vector< cv::Point > &hull);
+	void clearInSameRegion(std::vector< cv::Rect > &rects);
 };
 
 #endif // CONVEXHULL_H

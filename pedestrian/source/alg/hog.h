@@ -12,7 +12,7 @@ class Hog
 public:
     Hog();
     std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frame);
-    std::vector < cv::Rect > detect(cv::Mat frame);
+
 private:
     void getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector );
     cv::HOGDescriptor hog;
