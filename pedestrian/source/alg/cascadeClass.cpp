@@ -1,7 +1,7 @@
 ﻿#include "cascadeClass.h"
 CascadeClass::CascadeClass()
 {
-	clasifier = cv::CascadeClassifier("C:/Users/Jakub/Source/diploma-thesis/pedestrian/source/cascades/haarcascades/haarcascade_fullbody.xml");
+	clasifier = cv::CascadeClassifier("C:/Users/Jakub/Source/diploma-thesis/pedestrian/source/cascades/lbpcascades/case.xml");
 }
 
 std::vector<std::vector<cv::Rect>> CascadeClass::detect(std::vector<CroppedImage>& frames)

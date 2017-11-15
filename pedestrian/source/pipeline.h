@@ -31,6 +31,7 @@ private:
     std::vector<std::vector<cv::Rect>> found_filtered;
 
     void process(cv::Mat frame);
+	void preprocessing(cv::Mat &frame);
     void draw2mat(std::vector<CroppedImage> croppedImages);
 
 

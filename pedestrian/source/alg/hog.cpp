@@ -11,9 +11,11 @@ Hog::Hog()
 		std::vector< float > hogDetector;
 		getSvmDetector(svm, hogDetector);
 		hog.svmDetector = hogDetector;
+		hog.gammaCorrection = true;
 	}
 	else
 	{
+		hog.gammaCorrection = true;
 		hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
 	}
 	
@@ -54,7 +56,8 @@ std::vector<cv::Rect> Hog::detect(cv::Mat frame)
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
 
-    std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
+	std::cout << "PIC size: " << frames.size() << std::endl;
+	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
     if (frames.empty())
         return found_filtered;
         fflush(stdout);
@@ -70,11 +73,11 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             hog.detectMultiScale(
             						test,					// testing img
             						found,					// foundLocation <rect>
-            						0,						// hitThreshold = 0
+            						1,						// hitThreshold = 0 // 1
             						cv::Size(8,8),			// winStride size(8, 8)
             						cv::Size(0,0),			// padding size(0, 0)
-            						0.05,					// scale = 1,05
-            						2,						// finalThreshold = 2
+            						1.05,					// scale = 1,05
+            						2,						// finalThreshold = 2 // 0
 									false					// use meanshift grouping = false
             				    );
 
@@ -86,10 +89,10 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             {
                 cv::Rect r = found[i];
 
-                //for (j = 0; j<found.size(); j++)
-                //    if (j != i && (r & found[j]) == r)
-                //        break;
-                //if (j == found.size())
+                for (j = 0; j<found.size(); j++)
+                    if (j != i && (r & found[j]) == r)
+                        break;
+                if (j == found.size())
                     found_filtered[x].push_back(r);
 					//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
                     cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);

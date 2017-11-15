@@ -13,6 +13,7 @@ void TrainHog::fillVectors(std::string &path, bool isNeg)
 	while (sampleFile >> oSample) {
 
 		frame = cv::imread(oSample, CV_32FC3);
+		if (frame.empty()) std::cout << "fail" << std::endl;
 		cv::resize(frame, frame, cv::Size(winSize, winSize));
 		data.emplace_back(frame.clone());
 		if (!isNeg) {
@@ -80,7 +81,7 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
     double epsilon = 1.e-6;
     svm->setTermCriteria(cv::TermCriteria(CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, iterat, epsilon));
     svm->setGamma(0.1);
-    svm->setKernel(cv::ml::SVM::INTER);
+    svm->setKernel(cv::ml::SVM::INTER);//linear
     svm->setNu(0.1);
     //svm->setP(0.1);
     svm->setC(0.1);

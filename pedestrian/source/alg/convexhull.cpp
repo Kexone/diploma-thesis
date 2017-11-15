@@ -18,17 +18,17 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     //cv::threshold(src_gray, threshold_output, 180, 255, cv::THRESH_BINARY);
     /// Find contours
     assert(!threshold_output.empty());
-    cv::findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, cv::Point(0,0));
+    cv::findContours(src_gray, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
 
     /// Find the convex hull object for each contour
     std::vector<std::vector<cv::Point> >hull(contours.size());
     for (uint i = 0; i < contours.size(); i++)
     {
-        convexHull(cv::Mat(contours[i]), hull[i], false);
+        convexHull(cv::Mat(contours[i]), hull[i], true);
     }
 
     std::vector<std::vector<cv::Point>>filteredHulls;
-    int minThresholdArea = 10 * 100 , maxThresholdArea = 200 * 300; //max 400 * 400
+    int minThresholdArea = 10 * 50 , maxThresholdArea = 200 * 300; //max 400 * 400
 
     for (uint i = 0; i < hull.size(); i++) {
         int minX = src.cols, minY = src.rows, maxY = 0, maxX = 0;
@@ -62,11 +62,11 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
         }
         int size = 10;
         for(int s = 0; s < 4; s++) {
-        if(minX >= 0 + size) minX -= size;
-        if(minY >= 0 + size) minY -= size;
-        if(maxX <= src.cols - size) maxX += size;
-        if(maxY <= src.rows - size) maxY += size;
-        size += 10;
+			if(minX >= 0 + size) minX -= size;
+			if(minY >= 0 + size) minY -= size;
+			if(maxX <= src.cols - size) maxX += size;
+			if(maxY <= src.rows - size) maxY += size;
+			size += 10;
         }
         cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 //        //
@@ -92,5 +92,11 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     /// Show in a window
     imshow("Hull demo", src_gray);
     threshold_output.release();
+	std::cout << " CH size: " << react.size() << std::endl;
     return react;
+}
+
+void ConvexHull::filterContours(std::vector<std::vector<cv::Point>>& hull, std::vector<std::vector<cv::Point>>& filteredHulls)
+{
+
 }

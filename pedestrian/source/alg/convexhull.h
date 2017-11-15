@@ -16,6 +16,8 @@ private:
     cv::Mat src;
     cv::Mat src_gray;
     double thresh;
+	int extension;
+	void filterContours(std::vector< std::vector< cv::Point > > &hulls, std::vector< std::vector< cv::Point > > &filteredHulls);
 };
 
 #endif // CONVEXHULL_H
