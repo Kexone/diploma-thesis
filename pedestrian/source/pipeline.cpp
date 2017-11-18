@@ -83,7 +83,7 @@ void Pipeline::process(cv::Mat frame)
 	//found_filtered = cc.detect(croppedImages);
 	draw2mat(croppedImages);
 	// if(Settings::showVideoFrames)
-	cv::imshow("Result", localFrame);
+	//cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
 	found_filtered.clear();
@@ -98,7 +98,7 @@ void Pipeline::preprocessing(cv::Mat& frame)
 	//cv::bilateralFilter(frame, dst, 10, 1.5, 1.5, cv::BORDER_DEFAULT);
 	//cv::GaussianBlur(frame, frame, cv::Size(9, 9), 2,4 , cv::BORDER_DEFAULT);
 	//cv::blur(frame, frame, cv::Size(6, 6)); //medianBlur
-	cv::imshow("Blur", frame);
+	//cv::imshow("Blur", frame);
 }
 
 void Pipeline::draw2mat(std::vector< CroppedImage > croppedImages)

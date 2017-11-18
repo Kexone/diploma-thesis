@@ -90,9 +90,9 @@ std::vector<std::vector<cv::Rect>> ConvexHull::wrapObjects(cv::Mat src, cv::Mat 
     }
 
     /// Show in a window
-    imshow("Hull demo", src_gray);
+ //   imshow("Hull demo", src_gray);
     threshold_output.release();
-	std::cout << " CH size: " << react.size() << std::endl;
+//	std::cout << " CH size: " << react.size() << std::endl;
     return react;
 }
 

@@ -12,6 +12,7 @@ Hog::Hog()
 		getSvmDetector(svm, hogDetector);
 		hog.svmDetector = hogDetector;
 		hog.gammaCorrection = true;
+		std::cout << "Initialized custom SVM" << std::endl;
 	}
 	else
 	{
@@ -56,7 +57,7 @@ std::vector<cv::Rect> Hog::detect(cv::Mat frame)
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
 
-	std::cout << "PIC size: " << frames.size() << std::endl;
+//	std::cout << "PIC size: " << frames.size() << std::endl;
 	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
     if (frames.empty())
         return found_filtered;
@@ -97,7 +98,7 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 					//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
                     cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
             }
-            cv::imshow("test", test);
+            //cv::imshow("test", test);
             //found.clear();
         }
         return found_filtered;
