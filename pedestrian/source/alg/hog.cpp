@@ -71,10 +71,11 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             test.convertTo(test,CV_8UC1);
 			cv::cvtColor(test, test, CV_BGR2GRAY);
 			cv::equalizeHist(test, test);
-            hog.detectMultiScale(
+			//cv::imshow("test", test);
+			hog.detectMultiScale(
             						test,					// testing img
             						found,					// foundLocation <rect>
-            						1,						// hitThreshold = 0 // 1
+            						0,						// hitThreshold = 0 // 1
             						cv::Size(8,8),			// winStride size(8, 8)
             						cv::Size(0,0),			// padding size(0, 0)
             						1.05,					// scale = 1,05

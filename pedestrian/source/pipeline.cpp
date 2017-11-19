@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include <sstream>
+#include <ctime>
 
 int Pipeline::allDetections = 0;
 
@@ -79,11 +80,16 @@ void Pipeline::process(cv::Mat frame)
 			}
 		}
 	}
+	clock_t timer;
+	timer = clock();
 	found_filtered = hog.detect(croppedImages);
+	timer = clock() - timer;
+	std::cout << "HOG took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
+
 	//found_filtered = cc.detect(croppedImages);
 	draw2mat(croppedImages);
 	// if(Settings::showVideoFrames)
-	//cv::imshow("Result", localFrame);
+	cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
 	found_filtered.clear();
