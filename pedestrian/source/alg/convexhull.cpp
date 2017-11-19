@@ -44,7 +44,7 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat src_gray)
         rects.push_back(rectangle);
     }
     /// Show in a window
-  //  imshow("Hull demo", convexHullImage);
+    imshow("Hull demo", convexHullImage);
 
 	convexHullImage.release();
 
@@ -98,7 +98,7 @@ cv::Rect ConvexHull::extendContours(std::vector<cv::Point>& hull)
 		if (minY >= 0 + extS) minY -= extS;
 		if (maxX <= convexHullImage.cols - extS) maxX += extS;
 		if (maxY <= convexHullImage.rows - extS) maxY += extS;
-		extS += extS;
+		extS += extensionSize;
 	}
 	return cv::Rect (cv::Point(minX, minY), cv::Point(maxX, maxY));
 }

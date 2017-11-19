@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include <sstream>
+#include <ctime>
 
 int Pipeline::allDetections = 0;
 
@@ -26,7 +27,8 @@ void Pipeline::execute(int cameraFeed = 99)
 {
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
-    vs->openCamera();
+	std::cout << "Camera initialized." << std::endl;
+	vs->openCamera();
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
         if(frame.empty()) {
@@ -34,6 +36,7 @@ void Pipeline::execute(int cameraFeed = 99)
         }
         process(frame);
         frame.release();
+		cv::waitKey(5);
     }
   //  cv::destroyWindow("Test");
 }
@@ -43,6 +46,7 @@ void Pipeline::execute(std::string cameraFeed)
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
     vs->openCamera();
+	std::cout << "Videostream initialized." << std::endl;
     int i = 0;
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
@@ -68,20 +72,20 @@ void Pipeline::process(cv::Mat frame)
 	preprocessing(frame);
 	frame = mog.processMat(frame);
 	//cv::blur(frame, frame, cv::Size(9, 9));
-	//cv::imshow("MOG", frame);
+	cv::imshow("MOG", frame);
 	std::vector< cv::Rect > rect = ch.wrapObjects(localFrame, frame);
 
-	std::vector< CroppedImage > croppedImages;
 	if (rect.size() != 0) {
+		std::vector< CroppedImage > croppedImages;
 		for (uint i = 0; i < rect.size(); i++) {
 			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
 		}
+		found_filtered = hog.detect(croppedImages);
+		//found_filtered = cc.detect(croppedImages);
+		draw2mat(croppedImages);
 	}
-	found_filtered = hog.detect(croppedImages);
-	//found_filtered = cc.detect(croppedImages);
-	draw2mat(croppedImages);
 	// if(Settings::showVideoFrames)
-//	cv::imshow("Result", localFrame);
+	cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
 	found_filtered.clear();
@@ -89,9 +93,10 @@ void Pipeline::process(cv::Mat frame)
 
 void Pipeline::preprocessing(cv::Mat& frame)
 {
-	//cv::cvtColor(frame, frame, CV_BGR2GRAY);
-	//frame.convertTo(frame, CV_8UC1);
+	cv::cvtColor(frame, frame, CV_BGR2GRAY);
+	frame.convertTo(frame, CV_8UC1);
 	cv::medianBlur(frame, frame, 3);
+	
 	//cv::Mat dst(frame.rows, frame.cols, CV_8UC1);
 	//cv::bilateralFilter(frame, dst, 10, 1.5, 1.5, cv::BORDER_DEFAULT);
 	//cv::GaussianBlur(frame, frame, cv::Size(9, 9), 2,4 , cv::BORDER_DEFAULT);

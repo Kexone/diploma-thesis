@@ -28,26 +28,27 @@ void printResults(clock_t timer);
 
 int main(int argc, char *argv[])
 {
-	Pipeline pl;
 	if( argc > 1)
 	{
 		if (std::strcmp(argv[1], "train") == 0)
 		{
-			std::cout << "training";
+			std::cout << "training" << std::endl;
 			train();
 		}
 		else if(std::strcmp(argv[1], "camera") == 0)
 		{
-			std::cout << "camera";
-			pl.execute(0);
+			Pipeline pl;
+			std::cout << "camera" << std::endl;
+			pl.execute(1);
 		}
 		else
 		{
-			std::cout << "Bad params";
+			std::cout << "Bad params" << std::endl;
 		}
 	}
 	else
 	{
+		Pipeline pl;
 		clock_t timer;
 		timer = clock();
 		pl.execute(filename);
@@ -62,14 +63,16 @@ int main(int argc, char *argv[])
 void train()
 {
 	TrainHog th;
-	th.fillVectors(posSamples);
-	th.fillVectors(negSamples, true);
-	th.train();
+	//th.fillVectors(posSamples);
+	//th.fillVectors(negSamples, true);
+	//th.train(false);
+	th.trainFromMat("test.yml", "labels.txt");
 }
 
 void printResults(clock_t timer)
 {
 	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
+	std::cout << "Algorithm FPS: " << VideoStream::totalFrames / (static_cast<float>(timer) / CLOCKS_PER_SEC) << "." << std::endl;
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
 	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
