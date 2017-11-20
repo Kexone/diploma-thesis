@@ -11,18 +11,34 @@ private:
     void extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst);
     void trainSvm(cv::Mat &trainMat, const std::vector< int > &labels);
     void convertSamples2Mat(const std::vector< cv::Mat > &trainSamples, cv::Mat &trainData );
-	void saveMatWithLabs(cv::Mat data);
+	void saveLabeledMat(cv::Mat data);
+
     std::vector< cv::Mat > posSamples;
     std::vector< cv::Mat > negSamples;
     std::vector< int > labels;
-    std::string classifierName = "96_48_16_8_8_9_01.yml";
+    std::string classifierName;
 	cv::Size pedestrianSize;
     int blockSize = 16;
     int cellSize = 8;
     int strideSize = 8;
 
+	int maxIterations;
+	int termCriteria;
+	int kernel;
+	int type;
+	double epsilon;
+	double coef0;
+	int degree;
+	double gamma;
+	double nu;
+	double p;
+	double c;
+
 public:
-    TrainHog();
+	TrainHog();
+	TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
+		int degree, double gamma, double nu, double p, double c, std::string classifierName);
+	void printSettings();
     void fillVectors(std::string &samplesListPath, bool isNeg = false);
 	void trainFromMat(std::string path, std::string labelsPath);
     void train(bool saveData);

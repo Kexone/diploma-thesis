@@ -7,7 +7,6 @@
 void TrainHog::fillVectors(std::string &path, bool isNeg)
 {
     assert(!path.empty());
-	pedestrianSize = cv::Size(48,96);
     std::vector<cv::Mat> data;
     int counter =0;
     cv::Mat frame;
@@ -63,7 +62,7 @@ void TrainHog::train(bool saveData)
     convertSamples2Mat(gradientLst, trainMat);
 	gradientLst.clear();
 
-	if (saveData) saveMatWithLabs(trainMat);
+	if (saveData) saveLabeledMat(trainMat);
 
     trainSvm(trainMat, labels);
 }
@@ -97,20 +96,20 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 {
     std::cout << "START training ..." << std::endl;
 	clock_t timer = clock();
+
     cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
-    svm->setCoef0(0.0);
-    svm->setDegree(3);
-    int iterat = 3300;
-    double epsilon = 1.e-6; //6
-    svm->setTermCriteria(cv::TermCriteria(CV_TERMCRIT_ITER+CV_TERMCRIT_EPS, iterat, epsilon));
-    svm->setGamma(0.1); //0,1
-    svm->setKernel(cv::ml::SVM::INTER);//linear
-    svm->setNu(0.1); //0.1
-    svm->setP(0.1);
-    svm->setC(0.1); //0,1
-    svm->setType(cv::ml::SVM::NU_SVC);
-    svm->train(trainMat, cv::ml::ROW_SAMPLE, cv::Mat(labels));
-    svm->save(classifierName);
+
+	svm->setCoef0(coef0);
+	svm->setDegree(degree);
+	svm->setTermCriteria(cv::TermCriteria(termCriteria, maxIterations, epsilon));
+	svm->setGamma(gamma);
+	svm->setKernel(kernel);//linear
+	svm->setNu(nu);
+	svm->setP(p);
+	svm->setC(c);
+	svm->setType(type);
+	svm->train(trainMat, cv::ml::ROW_SAMPLE, cv::Mat(labels));
+	svm->save(classifierName);
 
 	timer = clock() - timer;
     std::cout << "training DONE ..."<< static_cast<float>(timer) / (CLOCKS_PER_SEC*60) << " min" <<  std::endl;
@@ -138,7 +137,7 @@ void TrainHog::convertSamples2Mat(const std::vector<cv::Mat> &trainSamples, cv::
 	
 }
 
-void TrainHog::saveMatWithLabs(cv::Mat data)
+void TrainHog::saveLabeledMat(cv::Mat data)
 {
 	cv::FileStorage fs("test.yml", cv::FileStorage::WRITE);
 	fs << "samples"<< data;
@@ -150,5 +149,54 @@ void TrainHog::saveMatWithLabs(cv::Mat data)
 
 TrainHog::TrainHog()
 {
+	this->maxIterations = 3300;
+	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
+	this->kernel = cv::ml::SVM::LINEAR;
+	this->type = cv::ml::SVM::NU_SVC;
+	this->epsilon = 1.e-6;
+	this->coef0 = 0.0;
+	this->degree = 3;
+	this->gamma = 0.1;
+	this->nu = 0.1;
+	this->p = 0.1;
+	this->c = 0.1;
+	this->classifierName = "96_16_8_8_9_01.yml";
+	pedestrianSize = cv::Size(48, 96);
 
+}
+
+TrainHog::TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
+	int degree, double gamma, double nu, double p, double c, std::string classifierName)
+{
+	this->maxIterations = maxIterations;
+	this->termCriteria = termCriteria;
+	this->kernel = kernel;
+	this->type = type;
+	this->epsilon = epsilon;
+	this->coef0 = coef0;
+	this->degree = degree;
+	this->gamma = gamma;
+	this->nu = nu;
+	this->p = p;
+	this->c = c;
+	this->classifierName = classifierName;
+	pedestrianSize = cv::Size(48, 96);
+}
+
+void TrainHog::printSettings()
+{
+	std::cout << std::setw(10) << std::setfill('_') << std::endl;
+	std::cout << "SVM SETTING" << std::endl;
+	std::cout << "MAX ITER: " << this->maxIterations << std::endl;
+	std::cout << "TERM CRIT: " << this->termCriteria << std::endl;
+	std::cout << "KERNEL: " << this->kernel << std::endl;
+	std::cout << "TYPE SVM: " << this->type << std::endl;
+	std::cout << "EPSILON: " << this->epsilon << std::endl;
+	std::cout << "COEF0:" << this->coef0 << std::endl;
+	std::cout << "DEGREE: " << this->degree << std::endl;
+	std::cout << "GAMMA: " << this->gamma << std::endl;
+	std::cout << "NU: " << this->nu << std::endl;
+	std::cout << "P: " << this->p << std::endl;
+	std::cout << "C: " << this->c << std::endl;
+	std::cout << std::setw(10) << std::setfill('_') << std::endl;
 }

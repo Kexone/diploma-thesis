@@ -2,24 +2,19 @@
 
 Hog::Hog()
 {
-	std::string name = "96_48_16_8_8_9_01.yml";
-	struct stat buffer;
-	if (stat(name.c_str(), &buffer) == 0)
-	{
-		cv::Ptr<cv::ml::SVM> svm = cv::Algorithm::load<cv::ml::SVM>(name);
-		std::vector< float > hogDetector;
-		getSvmDetector(svm, hogDetector);
-		hog.svmDetector = hogDetector;
-		hog.gammaCorrection = true;
-		std::cout << "Initialized custom SVM" << std::endl;
-	}
-	else
-	{
-		hog.gammaCorrection = true;
-		hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
-		std::cout << "Initialized default people detector" << std::endl;
-	}
-	
+	hog.gammaCorrection = true;
+	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+	std::cout << "Initialized default people detector" << std::endl;
+}
+
+Hog::Hog(std::string svmPath)
+{
+	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
+	std::vector< float > hogDetector;
+	getSvmDetector(svm, hogDetector);
+	hog.svmDetector = hogDetector;
+	hog.gammaCorrection = true;
+	std::cout << "Initialized custom SVM" << std::endl;
 }
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
@@ -70,6 +65,28 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             //found.clear();
         }
         return found_filtered;
+}
+
+void Hog::detect(std::vector<cv::Mat> &testLst, int &nTrue, int &nFalse, bool pedestrian = true)
+{
+	std::vector< cv::Point > location;
+	std::vector< float > descriptors;
+	for(auto &mat : testLst)
+	{
+		cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+		hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
+		int predicted = svm->predict(descriptors);
+		if(pedestrian)
+		{
+			if (predicted) nTrue++;
+			else nFalse++;
+		}
+		else
+		{
+			if (!predicted) nTrue++;
+			else nFalse++;
+		}
+	}
 }
 
 void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector )
