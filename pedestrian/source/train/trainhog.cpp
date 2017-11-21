@@ -4,7 +4,7 @@
 #include <iterator>
 #include <string>
 #include <vector>
-void TrainHog::fillVectors(std::string &path, bool isNeg)
+void TrainHog::fillVectors(std::string path, bool isNeg)
 {
     assert(!path.empty());
     std::vector<cv::Mat> data;

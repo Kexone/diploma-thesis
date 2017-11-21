@@ -23,41 +23,20 @@ SvmTest::SvmTest()
 
 void SvmTest::runSvmTest()
 {
-	std::string samplesPath = "samples/";
-	posSamples = samplesPath + "listPosMin.txt";
-	negSamples = samplesPath + "listNegMin.txt";
-	posTest = samplesPath + "listPosTestMin.txt";
-	negTest = samplesPath + "listNegTestMin.txt";
-	classifierName = "test.yml";
 	actualIter = 1;
-
-	this->maxIterations = 300;
-	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
-	this->kernel = cv::ml::SVM::LINEAR;
-	this->type = cv::ml::SVM::NU_SVC;
-	this->epsilon = 1.e-6;
-	this->coef0 = 0.0;
-	this->degree = 3;
-	this->gamma = 0.1;
-	this->nu = 0.1;
-	this->p = 0.1;
-	this->c = 0.1;
 
 	std::cout << "\n\n******************" << std::endl;
 	std::cout << "***  SVM TEST  ***" << std::endl;
 	std::cout << "******************" << std::endl;
-	std::cout << "DIFFERENTIAL EVOLUTION (1)\RANDOM TESTING (2)\nCHOOSE TYPE: ";
+	std::cout << "DIFFERENTIAL EVOLUTION (1)\nRANDOM TESTING (2)\nCHOOSE TYPE: ";
 	std::cin >> typeTest;
 	if(typeTest == 1)
 	{
-		loadMats(posTest, posTestLst);
-		loadMats(negTest, negTestLst);
+		typeTest = 3;
 		initResultFile();
 		SvmTest dims(3);
-		// Create Differential Evolution optimizer with population size of 50
 		de::DifferentialEvolution de(dims, 50);
 
-		// Optimize for 200 iterations
 		de.Optimize(1000, true);
 	}
 	std::cout << "NUMBER OF REPEATS: ";
@@ -93,15 +72,27 @@ void SvmTest::runSvmTest()
 		std::cout << "NUMBER OF ITERATIONS PER CYCLE:";
 		std::cin >> iterChange;
 	}
-	loadMats(posTest, posTestLst);
-	loadMats(negTest, negTestLst);
+
 	initResultFile();
+
+	this->maxIterations = 300;
+	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
+	this->kernel = cv::ml::SVM::LINEAR;
+	this->type = cv::ml::SVM::NU_SVC;
+	this->epsilon = 1.e-6;
+	this->coef0 = 0.0;
+	this->degree = 3;
+	this->gamma = 0.1;
+	this->nu = 0.1;
+	this->p = 0.1;
+	this->c = 0.1;
 
 	std::cout << std::endl  << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
 
 	while(actualIter != maxIterTest+1)
 	{
 		process();
+		print2File(actualIter);
 
 		if(typeIncr == 1)	incrementValues();
 		else if(typeIncr == 2)
@@ -128,7 +119,6 @@ void SvmTest::runSvmTest()
 			maxIterations += iterChange;
 		}
 		else if(typeIncr == 3)	maxIterations += iterChange;
-		actualIter++;
 	}
 }
 
@@ -138,6 +128,7 @@ void SvmTest::initResultFile()
 	std::string incrType = "SOFT";
 	std::string iterType = "SINGLE";
 	if (typeTest == 2) incrType = "GROSS";
+	if (typeTest == 3) incrType = "DIFFERENTIAL EVOLUTION";
 	else if (typeIncr == 2) iterType = "ALL AT ONCE";
 	else if (typeIncr == 3) iterType = "ONLY ITERATION";
 
@@ -148,9 +139,15 @@ void SvmTest::initResultFile()
 	file << "\t\t******************" << std::endl;
 	file << "\t\t***  SVM TEST  ***" << std::endl;
 	file << "\t\t******************" << std::endl;
-	file << "NUMBER OF REPEATS: " << maxIterTest << std::endl;
-	file << "REGRESSION TYPE: " << incrType << std::endl;
-	file << "INCREMENT TYPE: " << iterType << std::endl;
+	if (typeTest != 3) {
+		file << "NUMBER OF REPEATS: " << maxIterTest << std::endl;
+		file << "REGRESSION TYPE: " << incrType << std::endl;
+		file << "INCREMENT TYPE: " << iterType << std::endl;
+	}
+	else
+	{
+		file << "TYPE: " << incrType << std::endl;
+	}
 	file << "__________________________________" << std::endl;
 
 	file.close();
@@ -158,6 +155,7 @@ void SvmTest::initResultFile()
 
 void SvmTest::process()
 {
+
 	nTruePos = 0;
 	nFalsePos = 0;
 	nTrueNeg = 0;
@@ -185,9 +183,8 @@ void SvmTest::process()
 	std::cout << "POS DETECTION [T/F] " << nTruePos << "/" << nFalsePos << std::endl;
 	std::cout << "NEG DETECTION [T/F] " << nTrueNeg << "/" << nFalseNeg << std::endl;
 
-	print2File(actualIter);
-
-	accuracy = (nTruePos + nTrueNeg ) / (nTruePos + nTrueNeg + nFalsePos + nFalseNeg) ;
+	actualIter++;
+	accuracy = static_cast<float>(nTruePos + nTrueNeg) / static_cast<float>(nTruePos + nTrueNeg + nFalsePos + nFalseNeg) ;
 }
 
 void SvmTest::print2File(int actualIter)
@@ -213,27 +210,11 @@ void SvmTest::print2File(int actualIter)
 	file << "\t__SVM RESULTS__" << std::endl;
 	file << "POS GOOD: " << nTruePos << " POS BAD: " << nFalsePos << std::endl;
 	file << "NEG GOOD: " << nTrueNeg << " NEG BAD: " << nFalseNeg << std::endl;
+	file << "ACCURACY: " << accuracy << " %" << std::endl;
 	file << "CLASS TIME: " << static_cast<float>(classTime / CLOCKS_PER_MIN) << " MIN" << std::endl << std::endl ;
 	file << "\t<< END" << actualIter << ".ITERATION>>" << std::endl;
 
 	file.close();
-}
-
-void SvmTest::loadMats(std::string& samplesPath, std::vector<cv::Mat>& samples)
-{
-	assert(!samplesPath.empty());
-
-	cv::Mat frame;
-	std::fstream sampleFile(samplesPath);
-	std::string oSample;
-	while (sampleFile >> oSample) {
-
-		frame = cv::imread(oSample, CV_32FC3);
-		cv::resize(frame, frame, cv::Size(48, 96));
-		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
-
-		samples.push_back(frame.clone());
-	}
 }
 
 void SvmTest::incrementValues()
@@ -247,14 +228,22 @@ void SvmTest::incrementValues()
 
 double SvmTest::EvaluteCost(std::vector<double> inputs) const
 {
-	assert(inputs.size() == 3);
-
+	const_cast<SvmTest*>(this)->maxIterations = 330;//inputs[3] * 1000;
+	const_cast<SvmTest*>(this)->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
+	const_cast<SvmTest*>(this)->kernel = cv::ml::SVM::LINEAR;
+	const_cast<SvmTest*>(this)->type = cv::ml::SVM::NU_SVC;
+	const_cast<SvmTest*>(this)->epsilon = 1.e-6;
+	const_cast<SvmTest*>(this)->coef0 = 0.0;
+	const_cast<SvmTest*>(this)->degree = 0.1;
+	const_cast<SvmTest*>(this)->gamma = 0.3;
 	const_cast<SvmTest*>(this)->c = inputs[0];
 	const_cast<SvmTest*>(this)->p = inputs[1];
 	const_cast<SvmTest*>(this)->nu = inputs[2];
 	const_cast<SvmTest*>(this)->process();
+	const_cast<SvmTest*>(this)->print2File(const_cast<SvmTest*>(this)->actualIter);
 
-	return const_cast<SvmTest*>(this)->accuracy;
+	std::cout << const_cast<SvmTest*>(this)->accuracy << std::endl;
+	return 1 - const_cast<SvmTest*>(this)->accuracy;
 }
 
 unsigned int SvmTest::NumberOfParameters() const
@@ -264,10 +253,11 @@ unsigned int SvmTest::NumberOfParameters() const
 
 std::vector<de::IOptimizable::Constraints> SvmTest::GetConstraints() const
 {
-	std::vector<Constraints> constr(NumberOfParameters());
-	for (auto& c : constr)
-	{
-		c = Constraints(0.0, 1.0, true);
-	}
+	std::vector<Constraints> constr;
+
+	constr.push_back(Constraints(0.0, 1.0, true));
+	constr.push_back(Constraints(0.0, 1.0, true));
+	constr.push_back(Constraints(0.0, 1.0, true));
+	//constr.push_back(Constraints(0.3, 1.0, true));
 	return constr;
 }

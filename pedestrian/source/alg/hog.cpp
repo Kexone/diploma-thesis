@@ -67,7 +67,7 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
         return found_filtered;
 }
 
-void Hog::detect(std::vector<cv::Mat> &testLst, int &nTrue, int &nFalse, bool pedestrian)
+void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)
 {
 	std::vector< cv::Point > location;
 	std::vector< float > descriptors;

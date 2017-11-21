@@ -2,8 +2,6 @@
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
 #include "source/test/svmTest.h"
-#include "3dparty/de/DifferentialEvolution.h"
-#include "3dparty/de/TestFunctions.h"
 
 ////////////////////////////////////////////////////////
 //		DATA		 //

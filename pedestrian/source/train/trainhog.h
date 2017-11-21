@@ -39,7 +39,7 @@ public:
 	TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
 		int degree, double gamma, double nu, double p, double c, std::string classifierName);
 	void printSettings();
-    void fillVectors(std::string &samplesListPath, bool isNeg = false);
+    void fillVectors(const std::string samplesListPath, bool isNeg = false);
 	void trainFromMat(std::string path, std::string labelsPath);
     void train(bool saveData);
 };
