@@ -4,7 +4,7 @@
 class SvmTest
 {
 private:
-	void iterateValues();
+	void incrementValues();
 	void print2File(int actualIter);
 	void loadMats(std::string &samplesPath, std::vector< cv::Mat > &samples);
 	void initResultFile();
@@ -33,6 +33,7 @@ private:
 	double parChange;
 	int maxIterTest;
 	int typeTest;
+	int typeIncr;
 
 public:
 	SvmTest();
