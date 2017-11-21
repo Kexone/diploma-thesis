@@ -1,6 +1,7 @@
 #include <iostream>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
+#include "source/test/svmTest.h"
 
 ////////////////////////////////////////////////////////
 //		DATA		 //
@@ -35,11 +36,16 @@ int main(int argc, char *argv[])
 			std::cout << "training" << std::endl;
 			train();
 		}
-		else if(std::strcmp(argv[1], "camera") == 0)
+		else if (std::strcmp(argv[1], "camera") == 0)
 		{
 			Pipeline pl;
 			std::cout << "camera" << std::endl;
 			pl.execute(1);
+		}
+		else if (std::strcmp(argv[1], "testsvm") == 0)
+		{
+			SvmTest svm;
+			svm.runSvmTest();
 		}
 		else
 		{

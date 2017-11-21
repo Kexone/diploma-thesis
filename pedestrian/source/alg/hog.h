@@ -11,11 +11,14 @@ class Hog
 {
 public:
     Hog();
+	Hog(std::string svmPath);
     std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frame);
+	void detect(std::vector< cv::Mat > &testLst, int &nTrue, int &nFalse, bool pedestrian = true);
 
 private:
     void getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector );
     cv::HOGDescriptor hog;
+	cv::Ptr<cv::ml::SVM> svm;
 };
 
 #endif // HOG_H
