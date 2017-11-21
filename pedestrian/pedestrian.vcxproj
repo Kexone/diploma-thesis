@@ -172,6 +172,8 @@
     <ClCompile Include="source\train\trainhog.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3dparty\de\DifferentialEvolution.h" />
+    <ClInclude Include="3dparty\de\TestFunctions.h" />
     <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
     <ClInclude Include="source\alg\hog.h" />

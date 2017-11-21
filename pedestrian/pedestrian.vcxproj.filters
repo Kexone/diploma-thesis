@@ -37,6 +37,9 @@
     <Filter Include="Header Files\test">
       <UniqueIdentifier>{ebe9553d-8add-4333-8ffb-e3caba3228a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\3dparty">
+      <UniqueIdentifier>{c60c3092-cca5-48c3-a631-727ce2448de7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -103,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="source\test\svmTest.h">
       <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="3dparty\de\DifferentialEvolution.h">
+      <Filter>Header Files\3dparty</Filter>
+    </ClInclude>
+    <ClInclude Include="3dparty\de\TestFunctions.h">
+      <Filter>Header Files\3dparty</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
