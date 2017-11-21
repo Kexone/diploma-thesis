@@ -8,7 +8,6 @@ void TrainHog::fillVectors(std::string &path, bool isNeg)
 {
     assert(!path.empty());
     std::vector<cv::Mat> data;
-    int counter =0;
     cv::Mat frame;
 	std::fstream sampleFile(path);
 	std::string oSample;
@@ -24,17 +23,13 @@ void TrainHog::fillVectors(std::string &path, bool isNeg)
 		else {
 			labels.push_back(0);
 		}
-		counter++;
 	}
     if(!isNeg)
         posSamples = data;
     else
         negSamples = data;
     data.clear();
-	std::string type = "Negative ";
-	if (!isNeg)
-		type = "Positive ";
-	std::cout << type << "samples: " << counter << std::endl;
+
 
 }
 
@@ -55,6 +50,10 @@ void TrainHog::train(bool saveData)
 {
     std::vector< cv::Mat > gradientLst;
     cv::Mat trainMat;
+
+	std::cout << "Negative samples: " << posSamples.size() << std::endl;
+	std::cout << "Positive samples: " << negSamples.size() << std::endl;
+
     extractFeatures(posSamples, gradientLst);
 	posSamples.clear();
     extractFeatures(negSamples, gradientLst);

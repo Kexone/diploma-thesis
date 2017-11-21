@@ -15,7 +15,7 @@
 
 void SvmTest::runSvmTest()
 {
-	int maxIterTest;
+
 	std::cout << "\n\n******************" << std::endl;
 	std::cout << "***  SVM TEST  ***" << std::endl;
 	std::cout << "******************" << std::endl;
@@ -26,35 +26,36 @@ void SvmTest::runSvmTest()
 		std::cout << "COUNT OF ITERATION MUST BE GREATER THEN ZERO!\nEND" << std::endl;
 		return;
 	}
-	std::cout << "SOFT (1) OR GROSS (2) REGRESSION TEST?";
-	int typeTest;
+	std::cout << "SOFT (1) OR GROSS (2) REGRESSION TEST: ";
 	std::cin >> typeTest;
+
 	if(typeTest == 1)
 	{
-		iterChange = 10;
-		parChange = 0.01;
+		iterChange = 50;
+		parChange = 0.001;
 	}
 	else
 	{
 		iterChange = 100;
-		parChange = 0.1;
+		parChange = 0.01;
 	}
 	std::string samplesPath = "samples/";
 	std::string posSamples = samplesPath + "listPosMin.txt";
 	std::string negSamples = samplesPath + "listNegMin.txt";
-	std::string posTest = samplesPath + "listTestPosMin.txt";
-	std::string negTest = samplesPath + "listTestNegMin.txt";
+	std::string posTest = samplesPath + "listPosTestMin.txt";
+	std::string negTest = samplesPath + "listNegTestMin.txt";
 	std::string classifierName = "test.yml";
 	
 	std::vector< cv::Mat > posTestLst;
 	std::vector< cv::Mat > negTestLst;
-	loadMats(posSamples, posTestLst);
-	loadMats(negSamples, negTestLst);
+	loadMats(posTest, posTestLst);
+	loadMats(negTest, negTestLst);
+	initResultFile();
+
 	std::cout << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
 
 	int actualIter = 1;
 	
-
 	this->maxIterations = 300;
 	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
 	this->kernel = cv::ml::SVM::LINEAR;
@@ -66,6 +67,7 @@ void SvmTest::runSvmTest()
 	this->nu = 0.1;
 	this->p = 0.1;
 	this->c = 0.1;
+
 	while(actualIter != maxIterTest+1)
 	{
 		nTruePos = 0;
@@ -73,7 +75,7 @@ void SvmTest::runSvmTest()
 		nTrueNeg = 0;
 		nFalseNeg = 0;
 
-		std::cout << actualIter << ". ITERATION OF TESTING" << std::endl;
+		std::cout << std::endl << actualIter << ". ITERATION OF TESTING" << std::endl;
 
 		TrainHog th = TrainHog(maxIterations,termCriteria,kernel,type,epsilon,coef0,degree,gamma,nu,p,c,classifierName);
 
@@ -85,10 +87,15 @@ void SvmTest::runSvmTest()
 
 		Hog h = Hog(classifierName);
 
+		std::cout << " << TESTING SVM >>" << std::endl;
+
 		classTime = clock();
 		h.detect(posTestLst, nTruePos, nFalsePos);
 		h.detect(negTestLst, nTrueNeg, nFalseNeg, false);
 		classTime = clock() - classTime;
+
+		std::cout << "POS DETECTION [T/F] " << nTruePos << "/" << nFalsePos << std::endl;
+		std::cout << "NEG DETECTION [T/F] " << nTrueNeg << "/" << nFalseNeg << std::endl;
 
 		print2File(actualIter);
 		iterateValues();
@@ -135,9 +142,31 @@ void SvmTest::loadMats(std::string& samplesPath, std::vector<cv::Mat>& samples)
 	std::string oSample;
 	while (sampleFile >> oSample) {
 
-		//	frame = cv::imread(oSample, CV_32FC3);
-		samples.push_back(cv::imread(oSample, CV_32FC3));
+		frame = cv::imread(oSample, CV_32FC3);
+		cv::resize(frame, frame, cv::Size(48, 96));
+		cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
+
+		samples.push_back(frame.clone());
 	}
+}
+
+void SvmTest::initResultFile()
+{
+	std::string incrType = "SOFT";
+	if (typeTest == 2) incrType = "GROSS";
+
+	std::ofstream file;
+	file.open("result.txt", std::ios::app);
+
+	file << "__________________________________" << std::endl;
+	file << "\t\t******************" << std::endl;
+	file << "\t\t***  SVM TEST  ***" << std::endl;
+	file << "\t\t******************" << std::endl;
+	file << "\t\tCOUNT OF ITERATION: " << maxIterTest << std::endl;
+	file << "\t\tINCREMENT TYPE: " << incrType << std::endl;
+	file << "__________________________________" << std::endl;
+
+	file.close();
 }
 
 void SvmTest::iterateValues()

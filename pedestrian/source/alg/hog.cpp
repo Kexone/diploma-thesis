@@ -67,23 +67,23 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
         return found_filtered;
 }
 
-void Hog::detect(std::vector<cv::Mat> &testLst, int &nTrue, int &nFalse, bool pedestrian = true)
+void Hog::detect(std::vector<cv::Mat> &testLst, int &nTrue, int &nFalse, bool pedestrian)
 {
 	std::vector< cv::Point > location;
 	std::vector< float > descriptors;
+	hog.winSize = cv::Size(48, 96);
 	for(auto &mat : testLst)
 	{
-		cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
 		hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
 		int predicted = svm->predict(descriptors);
 		if(pedestrian)
 		{
-			if (predicted) nTrue++;
+			if (predicted == 1) nTrue++;
 			else nFalse++;
 		}
 		else
 		{
-			if (!predicted) nTrue++;
+			if (predicted == 0) nTrue++;
 			else nFalse++;
 		}
 	}
