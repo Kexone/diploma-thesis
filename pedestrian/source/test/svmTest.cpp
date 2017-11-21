@@ -37,12 +37,12 @@ void SvmTest::runSvmTest()
 	std::cout << "\n\n******************" << std::endl;
 	std::cout << "***  SVM TEST  ***" << std::endl;
 	std::cout << "******************" << std::endl;
-	std::cout << "COUNT OF ITERATION: ";
+	std::cout << "NUMBER OF REPEATS: ";
 	std::cin >> maxIterTest;
 
 	if(maxIterTest <= 0)
 	{
-		std::cout << "COUNT OF ITERATION MUST BE GREATER THEN ZERO!\nEND" << std::endl;
+		std::cout << "NUMBER OF ITERATIONS MUST BE GREATER THAN ZERO!\nEND" << std::endl;
 		return;
 	}
 	std::cout << "SOFT (1) OR GROSS (2) REGRESSION TEST: ";
@@ -59,17 +59,22 @@ void SvmTest::runSvmTest()
 		parChange = 0.01;
 	}
 
-	std::cout << "ITERATE ALL AT ONCE (1) ITERATION ONE BY ONE (2): ";
+	std::cout << "ITERATE ALL AT ONCE (1) \nITERATION ONE BY ONE (2) \nONLY ITERATION(3)\nCHOOSE TYPE: ";
 	std::cin >> typeIncr;
 	if (typeIncr == 2) {
 		std::cout << "TESTING WILL TAKE PLACE MAX ITER * VARIABLES (" << maxIterTest * 3 << " ITER)" << std::endl;
 		maxIterTest *= 3;
 	}
+	else if (typeIncr == 3)
+	{
+		std::cout << "NUMBER OF ITERATIONS PER CYCLE:";
+		std::cin >> iterChange;
+	}
 	loadMats(posTest, posTestLst);
 	loadMats(negTest, negTestLst);
 	initResultFile();
 
-	std::cout << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
+	std::cout << std::endl  << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
 
 	
 	this->maxIterations = 300;
@@ -114,8 +119,8 @@ void SvmTest::runSvmTest()
 		std::cout << "NEG DETECTION [T/F] " << nTrueNeg << "/" << nFalseNeg << std::endl;
 
 		print2File(actualIter);
-		if(typeIncr == 1)		incrementValues();
-		else
+		if(typeIncr == 1)	incrementValues();
+		else if(typeIncr == 2)
 		{
 			int par =(maxIterTest / (float)(maxIterTest / 3));
 			if (par == PARAMETER_NU)
@@ -138,6 +143,7 @@ void SvmTest::runSvmTest()
 			}
 			maxIterations += iterChange;
 		}
+		else if(typeIncr == 3)	maxIterations += iterChange;
 		actualIter++;
 	}
 }
@@ -148,7 +154,9 @@ void SvmTest::initResultFile()
 	std::string incrType = "SOFT";
 	std::string iterType = "SINGLE";
 	if (typeTest == 2) incrType = "GROSS";
-	if (typeIncr == 2) iterType = "ALL AT ONCE";
+	else if (typeIncr == 2) iterType = "ALL AT ONCE";
+	else if (typeIncr == 3) iterType = "ONLY ITERATION";
+
 	std::ofstream file;
 	file.open("result.txt", std::ios::app);
 
@@ -156,7 +164,7 @@ void SvmTest::initResultFile()
 	file << "\t\t******************" << std::endl;
 	file << "\t\t***  SVM TEST  ***" << std::endl;
 	file << "\t\t******************" << std::endl;
-	file << "COUNT OF ITERATION: " << maxIterTest << std::endl;
+	file << "NUMBER OF REPEATS: " << maxIterTest << std::endl;
 	file << "REGRESSION TYPE: " << incrType << std::endl;
 	file << "INCREMENT TYPE: " << iterType << std::endl;
 	file << "__________________________________" << std::endl;
