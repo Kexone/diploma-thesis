@@ -22,10 +22,14 @@ private:
 
 	clock_t trainTime;
 	clock_t classTime;
-	int badPos;
-	int goodPos;
-	int badNeg;
-	int goodNeg;
+
+	int nTruePos;
+	int nFalsePos;
+	int nTrueNeg;
+	int nFalseNeg;
+
+	int iterChange;
+	double parChange;
 
 public:
 	SvmTest();

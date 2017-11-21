@@ -1,6 +1,6 @@
 /* 
  * 
- * Testing trained SVM 
+ * Testing trained SVM  on samples data
  * 
  */
 
@@ -12,9 +12,6 @@
 
 // The number of clock ticks per minute
 #define CLOCKS_PER_MIN  ((clock_t)60000)
-
-void print2File();
-void iterateValues();
 
 void SvmTest::runSvmTest()
 {
@@ -29,10 +26,24 @@ void SvmTest::runSvmTest()
 		std::cout << "COUNT OF ITERATION MUST BE GREATER THEN ZERO!\nEND" << std::endl;
 		return;
 	}
-	std::string posSamples = "listPosMin.txt";
-	std::string negSamples = "listNegMin.txt";
-	std::string posTest = "listTestPos.txt";
-	std::string negTest = "listTestNeg.txt";
+	std::cout << "SOFT (1) OR GROSS (2) REGRESSION TEST?";
+	int typeTest;
+	std::cin >> typeTest;
+	if(typeTest == 1)
+	{
+		iterChange = 10;
+		parChange = 0.01;
+	}
+	else
+	{
+		iterChange = 100;
+		parChange = 0.1;
+	}
+	std::string samplesPath = "samples/";
+	std::string posSamples = samplesPath + "listPosMin.txt";
+	std::string negSamples = samplesPath + "listNegMin.txt";
+	std::string posTest = samplesPath + "listTestPosMin.txt";
+	std::string negTest = samplesPath + "listTestNegMin.txt";
 	std::string classifierName = "test.yml";
 	
 	std::vector< cv::Mat > posTestLst;
@@ -44,7 +55,7 @@ void SvmTest::runSvmTest()
 	int actualIter = 1;
 	
 
-	this->maxIterations = 3300;
+	this->maxIterations = 300;
 	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
 	this->kernel = cv::ml::SVM::LINEAR;
 	this->type = cv::ml::SVM::NU_SVC;
@@ -57,26 +68,26 @@ void SvmTest::runSvmTest()
 	this->c = 0.1;
 	while(actualIter != maxIterTest+1)
 	{
-		badPos = 0;
-		goodPos = 0;
-		badNeg = 0;
-		goodNeg = 0;
+		nTruePos = 0;
+		nFalsePos = 0;
+		nTrueNeg = 0;
+		nFalseNeg = 0;
 
 		std::cout << actualIter << ". ITERATION OF TESTING" << std::endl;
 
-		//TrainHog th = TrainHog(maxIterations,termCriteria,kernel,type,epsilon,coef0,degree,gamma,nu,p,c,classifierName);
+		TrainHog th = TrainHog(maxIterations,termCriteria,kernel,type,epsilon,coef0,degree,gamma,nu,p,c,classifierName);
 
 		trainTime = clock();
-		//th.fillVectors(posSamples);
-		//th.fillVectors(negSamples, true);
-		//th.train(false);
+		th.fillVectors(posSamples);
+		th.fillVectors(negSamples, true);
+		th.train(false);
 		trainTime = clock() - trainTime;
 
 		Hog h = Hog(classifierName);
 
 		classTime = clock();
-		h.detect(posTestLst,goodPos,badPos);
-		h.detect(negTestLst,goodNeg, badNeg, false);
+		h.detect(posTestLst, nTruePos, nFalsePos);
+		h.detect(negTestLst, nTrueNeg, nFalseNeg, false);
 		classTime = clock() - classTime;
 
 		print2File(actualIter);
@@ -107,8 +118,8 @@ void SvmTest::print2File(int actualIter)
 	file << "TRAIN TIME: " << static_cast<float>(trainTime / CLOCKS_PER_MIN ) << " MIN" << std::endl;
 
 	file << "\n\t__SVM RESULTS__" << std::endl;
-	file << "POS GOOD: " << badPos << " POS BAD: " << goodPos  << std::endl;
-	file << "NEG GOOD: " << badNeg << " NEG BAD: " << goodNeg  << std::endl;
+	file << "POS GOOD: " << nTruePos << " POS BAD: " << nFalsePos << std::endl;
+	file << "NEG GOOD: " << nTrueNeg << " NEG BAD: " << nFalseNeg << std::endl;
 	file << "CLASS TIME: " << static_cast<float>(classTime / CLOCKS_PER_MIN) << " MIN" << std::endl;
 	file << "\t<< END" << actualIter << ".ITERATION>>" << std::endl;
 
@@ -131,7 +142,10 @@ void SvmTest::loadMats(std::string& samplesPath, std::vector<cv::Mat>& samples)
 
 void SvmTest::iterateValues()
 {
-	
+	maxIterations += iterChange;
+	this->nu += parChange;
+	this->p += parChange;
+	this->c += parChange;
 }
 
 SvmTest::SvmTest()
