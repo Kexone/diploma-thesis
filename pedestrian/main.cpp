@@ -1,7 +1,7 @@
 #include <iostream>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
-#include "source/test/svmTest.h"
+#include "source/test/testClass.h"
 
 ////////////////////////////////////////////////////////
 //		DATA		 //
@@ -44,8 +44,7 @@ int main(int argc, char *argv[])
 		}
 		else if (std::strcmp(argv[1], "testsvm") == 0)
 		{
-			SvmTest svm;
-			svm.runSvmTest();
+			TestClass().initTesting();
 		}
 		else
 		{

@@ -168,12 +168,13 @@
     <ClCompile Include="source\media\mediafile.cpp" />
     <ClCompile Include="source\media\videostream.cpp" />
     <ClCompile Include="source\pipeline.cpp" />
+    <ClCompile Include="source\test\diffEvoTest.cpp" />
     <ClCompile Include="source\test\svmTest.cpp" />
+    <ClCompile Include="source\test\testClass.cpp" />
     <ClCompile Include="source\train\trainhog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dparty\de\DifferentialEvolution.h" />
-    <ClInclude Include="3dparty\de\TestFunctions.h" />
     <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
     <ClInclude Include="source\alg\hog.h" />
@@ -183,7 +184,9 @@
     <ClInclude Include="source\media\videostream.h" />
     <ClInclude Include="source\pipeline.h" />
     <ClInclude Include="source\settings.h" />
+    <ClInclude Include="source\test\diffEvoTest.h" />
     <ClInclude Include="source\test\svmTest.h" />
+    <ClInclude Include="source\test\testClass.h" />
     <ClInclude Include="source\train\trainhog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

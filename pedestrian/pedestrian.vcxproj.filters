@@ -72,6 +72,12 @@
     <ClCompile Include="source\test\svmTest.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
+    <ClCompile Include="source\test\diffEvoTest.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="source\test\testClass.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -110,8 +116,11 @@
     <ClInclude Include="3dparty\de\DifferentialEvolution.h">
       <Filter>Header Files\3dparty</Filter>
     </ClInclude>
-    <ClInclude Include="3dparty\de\TestFunctions.h">
-      <Filter>Header Files\3dparty</Filter>
+    <ClInclude Include="source\test\diffEvoTest.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="source\test\testClass.h">
+      <Filter>Header Files\test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
