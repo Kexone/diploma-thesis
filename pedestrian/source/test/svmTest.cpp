@@ -26,7 +26,6 @@ SvmTest::SvmTest()
 	this->degree = 3;
 	this->gamma = 0.1;
 	if (posTestLst.empty() || negTestLst.empty()) {
-		std::cout << "budu plnit";
 		loadMats(posTest, posTestLst);
 		loadMats(negTest, negTestLst);
 	}

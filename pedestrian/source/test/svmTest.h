@@ -30,10 +30,6 @@ private:
 
 	float accuracy;
 
-	int nTruePos;
-	int nFalsePos;
-	int nTrueNeg;
-	int nFalseNeg;
 	std::string posSamplesMin;
 	std::string negSamplesMin;
 

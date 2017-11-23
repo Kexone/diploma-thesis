@@ -74,7 +74,6 @@ void TestClass::randomTest(int typeTest)
 		std::cin >> iterChange;
 	}
 	initLog(typeTest,typeIncr,maxRepeatTest);
-	int actual = 0;
 	nu = 0.0;
 	p = 0.0;
 	c = 0.0;
@@ -84,7 +83,7 @@ void TestClass::randomTest(int typeTest)
 
 	std::cout << std::endl << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
 
-	while (actual != maxRepeatTest)
+	while (maxRepeatTest != 0)
 	{
 		incrementSvmValues(typeIncr, maxRepeatTest);
 		values2Log();
@@ -92,7 +91,7 @@ void TestClass::randomTest(int typeTest)
 		svm.setParams(maxIterations, nu, c, p);
 		svm.process(ss);
 
-		actual++;
+		maxRepeatTest--;
 	}
 }
 void TestClass::incrementSvmValues(int typeIncr, int maxRepTest)
