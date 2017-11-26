@@ -6,6 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
+	hog = Hog("2.yml");
 
 }
 
@@ -41,6 +42,8 @@ void Pipeline::execute(int cameraFeed = 99)
   //  cv::destroyWindow("Test");
 }
 
+std::stringstream ss;
+
 void Pipeline::execute(std::string cameraFeed)
 {
 	allDetections = 0;
@@ -56,12 +59,14 @@ void Pipeline::execute(std::string cameraFeed)
         }
         process(frame);
         frame.release();
-      //  std::stringstream ss;
-     //   ss <<  "../img/mat_" << i << ".jpg";
-     //   cv::imwrite(ss.str(),localFrame);
-        localFrame.release();
-        i++;
+        
 		cv::waitKey(5);
+		ss << "../img/mat_" << i << ".jpg";
+		cv::imwrite(ss.str(), localFrame);
+		ss.str("");
+		ss.clear();
+		localFrame.release();
+		i++;
     }
      cv::destroyWindow("Test");
 }
@@ -72,23 +77,23 @@ void Pipeline::process(cv::Mat frame)
 	preprocessing(frame);
 	frame = mog.processMat(frame);
 	//cv::blur(frame, frame, cv::Size(9, 9));
-	cv::imshow("MOG", frame);
+	//cv::imshow("MOG", frame);
 	std::vector< cv::Rect > rect = ch.wrapObjects(localFrame, frame);
 
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
-		for (uint i = 0; i < rect.size(); i++) {
+		for (size_t i = 0; i < rect.size(); i++) {
 			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
 		}
-		found_filtered = hog.detect(croppedImages);
-		//found_filtered = cc.detect(croppedImages);
-		draw2mat(croppedImages);
+		std::vector < std::vector < cv::Rect > > foundRect;
+		foundRect = hog.detect(croppedImages);
+		//foundRect = cc.detect(croppedImages);
+		draw2mat(croppedImages, foundRect);
 	}
 	// if(Settings::showVideoFrames)
 	cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
-	found_filtered.clear();
 }
 
 void Pipeline::preprocessing(cv::Mat& frame)
@@ -104,17 +109,19 @@ void Pipeline::preprocessing(cv::Mat& frame)
 	//cv::imshow("Blur", frame);
 }
 
-void Pipeline::draw2mat(std::vector< CroppedImage > croppedImages)
+void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
 {
-    for (uint j = 0; j < found_filtered.size(); j++) {
-        for (uint i = 0; i < found_filtered[j].size(); i++) {
-            cv::Rect r = found_filtered[j][i];
+    for (uint j = 0; j < rect.size(); j++) {
+        for (uint i = 0; i < rect[j].size(); i++) {
+            cv::Rect r = rect[j][i];
             r.x += cvRound(croppedImages[j].offsetX);
             //r.width = cvRound(croppedImages[j].croppedImg.cols);
             r.y += cvRound(croppedImages[j].offsetY);
             //r.height = cvRound(croppedImages[j].croppedImg.rows);
             cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
         }
-		allDetections += found_filtered[j].size();
+		allDetections += rect[j].size();
     }
+	rect.clear();
+
 }

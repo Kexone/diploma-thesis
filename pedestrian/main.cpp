@@ -7,7 +7,7 @@
 //		DATA		 //
 //////////////////////
 
-std::string filename = "C:/Users/Jakub/Downloads/cctv4.mp4";
+std::string filename = "C:/Users/Jakub/Downloads/cctv1.mp4";
 std::string posSamples = "samples/listPos.txt";
 std::string negSamples = "samples/listNeg.txt";
 

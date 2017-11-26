@@ -78,9 +78,6 @@
     <ClCompile Include="source\test\testClass.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
-    <ClCompile Include="source\train\trainhaar.cpp">
-      <Filter>Source Files\train</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -124,9 +121,6 @@
     </ClInclude>
     <ClInclude Include="source\test\testClass.h">
       <Filter>Header Files\test</Filter>
-    </ClInclude>
-    <ClInclude Include="source\train\trainhaar.h">
-      <Filter>Header Files\train</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

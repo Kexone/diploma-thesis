@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef CASCADECLASS_H
+#define CASCADECLASS_H
+
 #include "opencv2/objdetect.hpp"
 #include <opencv2/ml.hpp>
 #include <opencv2/videostab/ring_buffer.hpp>
@@ -14,3 +16,5 @@ public:
 private:
 	cv::CascadeClassifier clasifier;
 };
+
+#endif //CASCADECLASS_H
