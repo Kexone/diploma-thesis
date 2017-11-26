@@ -86,10 +86,9 @@ void TestClass::randomTest(int typeTest)
 	while (maxRepeatTest != 0)
 	{
 		incrementSvmValues(typeIncr, maxRepeatTest);
-		values2Log();
 
 		svm.setParams(maxIterations, nu, c, p);
-		svm.process(ss);
+		svm.process();
 
 		maxRepeatTest--;
 	}
@@ -168,11 +167,4 @@ void TestClass::initLog(int typeTest, int typeIncr, int maxRepeatTest)
 		ss << "TYPE: " << incrType << std::endl;
 	}
 	ss << "__________________________________" << std::endl;
-}
-
-void TestClass::values2Log()
-{
-	ss << "\tNU: " << this->nu << std::endl;
-	ss << "\tP: " << this->p << std::endl;
-	ss << "\tC: " << this->c << std::endl;
 }

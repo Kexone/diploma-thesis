@@ -8,7 +8,7 @@
 class SvmTest
 {
 private:
-	void print2File(int currentTestNumb, int *valuation, std::stringstream &ss);
+	void print2File(int currentTestNumb, int *valuation);
 
 	void loadMats(std::string samplesPath, std::vector< cv::Mat > &lst);
 
@@ -36,7 +36,7 @@ private:
 public:
 	SvmTest();
 	void setParams(int maxIter, double nu, double c, double p);
-	float process(std::stringstream &ss);
+	float process();
 	static void initResultFile(std::stringstream &ss);
 };
 

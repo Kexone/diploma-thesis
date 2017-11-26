@@ -27,6 +27,5 @@ private:
 	void incrementSvmValues(int typeIncr, int maxRepTest);
 
 	void initLog(int typeTest, int typeIncr = 0, int maxRepeatTest = 0);
-	void values2Log();
 
 };

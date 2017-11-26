@@ -171,6 +171,7 @@
     <ClCompile Include="source\test\diffEvoTest.cpp" />
     <ClCompile Include="source\test\svmTest.cpp" />
     <ClCompile Include="source\test\testClass.cpp" />
+    <ClCompile Include="source\train\trainhaar.cpp" />
     <ClCompile Include="source\train\trainhog.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +188,7 @@
     <ClInclude Include="source\test\diffEvoTest.h" />
     <ClInclude Include="source\test\svmTest.h" />
     <ClInclude Include="source\test\testClass.h" />
+    <ClInclude Include="source\train\trainhaar.h" />
     <ClInclude Include="source\train\trainhog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

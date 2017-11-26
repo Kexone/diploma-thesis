@@ -8,8 +8,8 @@
 //////////////////////
 
 std::string filename = "C:/Users/Jakub/Downloads/cctv4.mp4";
-std::string posSamples = "listPos.txt";
-std::string negSamples = "listNeg.txt";
+std::string posSamples = "samples/listPos.txt";
+std::string negSamples = "samples/listNeg.txt";
 
 ///////////////////////
 //					//
@@ -67,11 +67,36 @@ int main(int argc, char *argv[])
 
 void train()
 {
-	TrainHog th;
-	//th.fillVectors(posSamples);
-	//th.fillVectors(negSamples, true);
-	//th.train(false);
-	th.trainFromMat("test.yml", "labels.txt");
+	TrainHog th = TrainHog(114,3,0,100,1.e-06,0,3,0.1, 0.313903, 0.212467, 0.130589,"2111_79_98.4.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
+	//th.trainFromMat("test.yml", "labels.txt");
+
+	th = TrainHog(105, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.173182, 0.393894, 0.111534, "2292_78_98.3.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
+
+	th = TrainHog(100, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.477977, 0.3514, 0.108495, "2717_78_98.4.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
+
+	th = TrainHog(100, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.477977, 0.3514, 0.108495, "2717_78_98.4.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
+
+	th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.243877, 0.336372, 0.130589, "3111_79_98.4.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
+
+	th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.243877, 0.336372, 0.130589, "3111_79_98.4.yml");
+	th.fillVectors(posSamples);
+	th.fillVectors(negSamples, true);
+	th.train(false);
 }
 
 void printResults(clock_t timer)
