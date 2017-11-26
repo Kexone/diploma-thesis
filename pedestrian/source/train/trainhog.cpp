@@ -133,24 +133,25 @@ cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
 	return grad;
 }
 
-cv::Mat featureColorGradient(const cv::Mat &mat) {
-	// Init matrices, convert BGR to HSV
-	cv::Mat hsvPlace, hueHist;
-	cv::cvtColor(mat, hsvPlace, CV_BGR2HSV);
-	std::vector<cv::Mat> hsvPlanes;
-	cv::split(hsvPlace, hsvPlanes);
+void sum(std::vector<float> &vec, float &channelsValues)
+{
+	float sum = 0;
+	for (auto& n : vec)
+		sum += n;
+	channelsValues = sum;
+}
+cv::Mat featureColorGradient(const cv::Mat &mat, cv::HOGDescriptor hog) {
+	float channelsValues[3];
+	std::vector < cv::Mat > channels(3);
+	std::vector < std::vector < float > > descriptors(3);
 
-	/// Establish the number of bins
-	int histSize = 180;
-
-	/// Set the ranges ( for B,G,R) )
-	float range[] = { 0, 180 };
-	const float *histRange = { range };
-
-	/// Compute the histograms:
-	cv::calcHist(&hsvPlanes[0], 1, 0, cv::Mat(), hueHist, 1, &histSize, &histRange, true, false);
-
-	return hueHist;
+	cv::split(mat, channels);
+	for (int i = 0; i < channels.size(); i++)
+	{
+		hog.compute(channels[i], descriptors[i], cv::Size(8, 8), cv::Size(0, 0));
+		sum(descriptors[i], channelsValues[i]);
+	}
+	return cv::Mat(descriptors[std::distance(channelsValues, std::find(channelsValues, channelsValues + 5, *std::max_element(channelsValues, channelsValues + 3)))]);
 }
 
 void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst)
@@ -173,20 +174,23 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
     std::vector< cv::Point > location;
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
-	//	GammaCorrection(mat, gr,0.5);
+		GammaCorrection(mat, gr,0.5);
 		//mat.convertTo(gr, CV_64F);
 	//	cv::imshow("bef", gr);
         //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
 		//cv::pow(gr,1.1, gr);
 	//	cv::convertScaleAbs(gr, gr, 1, 0);
+		//cv::imshow("bef", gr);
+		//gr = featureColorGradient(gr);
+		//cv::imshow("gra", gr);
+		gr.convertTo(gr, CV_8U);
 		//cv::imshow("aft", gr);
-	//	cv::waitKey(5);
-		//gr = featureColorGradient(mat);
-		//gr.convertTo(gr, CV_8U);
+		//cv::waitKey(25);
 
-		hog.compute(mat, descriptors,cv::Size(8, 8),cv::Size(0, 0));
-		gradientLst.push_back(cv::Mat(descriptors).clone());
-		//gradientLst.push_back( cv::Mat( featureSobel(mat,80) ) );
+		//hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0));
+		//gradientLst.push_back(cv::Mat(descriptors).clone());
+		//gradientLst.push_back(cv::Mat(featureSobel(mat, 80)));
+		gradientLst.push_back( featureColorGradient(gr,hog).clone() );
     }
 }
 

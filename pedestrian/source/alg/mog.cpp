@@ -5,7 +5,7 @@
 Mog::Mog()
 {
    // pMOG1 = cv::bgsegm::createBackgroundSubtractorMOG(150,13,0.1,1); //MOG approach
-    pMOG2 = cv::createBackgroundSubtractorMOG2(400,16,false); //MOG2 approach /*Settings::mogHistory, Settings::mogThreshold*/
+    pMOG2 = cv::createBackgroundSubtractorMOG2(100,16,false); //MOG2 approach /*Settings::mogHistory, Settings::mogThreshold*/
 } 
 
 cv::Mat Mog::processMat(cv::Mat &frame)

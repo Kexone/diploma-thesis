@@ -6,7 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	hog = Hog("2.yml");
+	hog = Hog("2111_79_98.4.yml");
 
 }
 

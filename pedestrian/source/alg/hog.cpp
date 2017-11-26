@@ -1,10 +1,46 @@
 #include "hog.h"
 
+void gammaCorrection(cv::Mat src, cv::Mat& dst, float fGamma)
+{
+	unsigned char lut[256];
+
+	for (int i = 0; i < 256; i++)
+	{
+		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), fGamma) * 255.0f);
+	}
+
+	dst = src.clone();
+	const int channels = dst.channels();
+	switch (channels)
+	{
+	case 1:
+	{
+		cv::MatIterator_<uchar> it, end;
+
+		for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
+			*it = lut[(*it)];
+		break;
+	}
+	case 3:
+	{
+		cv::MatIterator_<cv::Vec3b> it, end;
+		for (it = dst.begin<cv::Vec3b>(), end = dst.end<cv::Vec3b>(); it != end; it++)
+
+		{
+			(*it)[0] = lut[((*it)[0])];
+			(*it)[1] = lut[((*it)[1])];
+			(*it)[2] = lut[((*it)[2])];
+		}
+		break;
+	}
+	}
+}
+
 Hog::Hog()
 {
 }
 
-Hog::Hog(int default)
+Hog::Hog(int def)
 {
 	hog.gammaCorrection = true;
 	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
@@ -13,41 +49,26 @@ Hog::Hog(int default)
 
 Hog::Hog(std::string svmPath)
 {
-	//svmPath = "3111_79_98.4.yml";
-	//svmPath = "2292_78_98.3.yml";  //WORKS
-	//svmPath = "2717_78_98.4.yml"; //WORKS
-	//svmPath = "2717_78_98.4.yml";
-	svmPath = "2111_79_98.4.yml";
-
-	//	hog = cv::HOGDescriptor(
-	//		cv::Size(8, 8), //winSize
-	//		cv::Size(8, 8), //blocksize
-	//		cv::Size(16, 16), //blockStride,
-	//		cv::Size(8, 8), //cellSize,
-	//		9, //nbins,
-	//		0, //derivAper,
-	//		-1, //winSigma,
-	//		0, //histogramNormType,
-	//		0.2, //L2HysThresh,
-	//		0 //gammal corRection,
-	//		  //nlevels=64
-	//	);
+	hog = cv::HOGDescriptor(
+									cv::Size(48,96), //winSize
+									cv::Size(16, 16), //,blocksize
+									cv::Size(8, 8), //blockStride
+									cv::Size(8, 8), //cellSize,
+									9, //nbins,
+									0, //derivAper,
+									-1, //winSigma,
+									0, //histogramNormType,
+									0.2, //L2HysThresh,
+									0 //gammal corRection,
+									  //nlevels=64
+		);
 	hog.svmDetector.clear();
-	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
 	std::vector< float > hogDetector;
-	//hogDetector = svm->getSupportVectors();
-	getSvmDetector(svm, hogDetector);
-	hog.svmDetector = hogDetector;
-	//	hog = cv::HOGDescriptor(
-	//		cv::Size(8, 8), //winSize
-	//		cv::Size(8, 8), //blocksize
-	//		cv::Size(16, 16), //blockStride,
-	//		cv::Size(8, 8), //cellSize,
-	//		9  //nbins,
-	//	);
-	//hog.winSize = cv::Size(8, 8);
-	//hog.gammaCorrection = true;
+	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
 
+	getSvmDetector(svm, hogDetector);
+	hog.gammaCorrection = true;
+	hog.setSVMDetector(hogDetector);
 	std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() <<  std::endl;
 	hogDetector.clear();
 }
@@ -55,7 +76,7 @@ Hog::Hog(std::string svmPath)
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
 
-	std::cout << "PIC size: " << frames.size() << std::endl;
+	//std::cout << "PIC size: " << frames.size() << std::endl;
 	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
        // fflush(stdout);
         for (size_t x = 0; x < frames.size(); x++) {
@@ -65,19 +86,10 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
         	assert(!test.empty());
 			//test.convertTo(test, CV_8UC3);
 
-
-			//cv::convertScaleAbs(test, test, 1, 0);
-			//cv::pow(test, 2, test);
+			//gammaCorrection(test, test, 0.5);
 			//cv::cvtColor(test, test, CV_BGR2GRAY);
 			//cv::equalizeHist(test, test);
-//			for (int y = 0; y < test.rows; y++)
-//			{
-//				for (int x = 0; x < test.cols; x++)
-//				{
-//						test.at<uchar>(y, x) =
-//							cv::saturate_cast<uchar>(1.1*(test.at<uchar>(y, x) + 10));
-//				}
-//			}
+        	
 			cv::imshow("test", test);
 			//cv::waitKey(15);
             hog.detectMultiScale(
@@ -87,11 +99,11 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
             						cv::Size(8, 8),			// winStride size(8, 8)
             						cv::Size(0, 0),			// padding size(0, 0)
             						1.05,					// scale = 1,05
-            						2,						// finalThreshold = 2 // 0
+            						1,						// finalThreshold = 2 // 0
 									false					// use meanshift grouping = false
             				    );
 			test.release();
-			std::cout << found.size() << std::endl;
+		//	std::cout << found.size() << std::endl;
 
             if (found.empty()) {
                 continue;
