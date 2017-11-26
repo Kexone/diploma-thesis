@@ -51,8 +51,8 @@ void TrainHog::train(bool saveData)
     std::vector< cv::Mat > gradientLst;
     cv::Mat trainMat;
 
-	std::cout << "Negative samples: " << posSamples.size() << std::endl;
-	std::cout << "Positive samples: " << negSamples.size() << std::endl;
+	std::cout << "Positive samples: " << posSamples.size() << std::endl;
+	std::cout << "Negative samples: " << negSamples.size() << std::endl;
 
     extractFeatures(posSamples, gradientLst);
 	posSamples.clear();
@@ -66,8 +66,96 @@ void TrainHog::train(bool saveData)
     trainSvm(trainMat, labels);
 }
 
+void GammaCorrection(cv::Mat src, cv::Mat& dst, float fGamma)
+{
+	unsigned char lut[256];
+
+	for (int i = 0; i < 256; i++)
+	{
+		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), fGamma) * 255.0f);
+	}
+
+	dst = src.clone();
+	const int channels = dst.channels();
+	switch (channels)
+	{
+	case 1:
+		{
+			cv::MatIterator_<uchar> it, end;
+
+			for (it = dst.begin<uchar>() , end = dst.end<uchar>(); it != end; it++)
+				*it = lut[(*it)];
+			break;
+		}
+	case 3:
+		{
+			cv::MatIterator_<cv::Vec3b> it, end;
+			for (it = dst.begin<cv::Vec3b>() , end = dst.end<cv::Vec3b>(); it != end; it++)
+
+			{
+				(*it)[0] = lut[((*it)[0])];
+				(*it)[1] = lut[((*it)[1])];
+				(*it)[2] = lut[((*it)[2])];
+			}
+			break;
+		}
+	}
+}
+
+cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
+	cv::Mat src = mat.clone();
+	cv::Mat srcGray, gradX, gradY, grad;
+
+	// Checks
+	assert(src.type() == CV_8UC3); // 8UC3
+
+								   // Convert to gray and blur
+	cv::cvtColor(src, srcGray, CV_BGR2GRAY);
+	cv::medianBlur(srcGray, srcGray, 3);
+
+	/// Gradient X & Y
+	Sobel(srcGray, gradX, CV_16S, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT);
+	Sobel(srcGray, gradY, CV_16S, 0, 1, 3, 1, 0, cv::BORDER_DEFAULT);
+
+	// Convert to 8UC1
+	convertScaleAbs(gradX, gradX);
+	convertScaleAbs(gradY, gradY);
+
+	// Checks
+	assert(gradX.type() == CV_8UC1); // 8UC1
+	assert(gradY.type() == CV_8UC1); // 8UC1
+	assert(grad.type() == CV_8UC1); // 8UC1
+
+									/// Total Gradient (approximate)
+	addWeighted(gradX, 0.5, gradY, 0.5, 0, grad);
+
+
+	return grad;
+}
+
+cv::Mat featureColorGradient(const cv::Mat &mat) {
+	// Init matrices, convert BGR to HSV
+	cv::Mat hsvPlace, hueHist;
+	cv::cvtColor(mat, hsvPlace, CV_BGR2HSV);
+	std::vector<cv::Mat> hsvPlanes;
+	cv::split(hsvPlace, hsvPlanes);
+
+	/// Establish the number of bins
+	int histSize = 180;
+
+	/// Set the ranges ( for B,G,R) )
+	float range[] = { 0, 180 };
+	const float *histRange = { range };
+
+	/// Compute the histograms:
+	cv::calcHist(&hsvPlanes[0], 1, 0, cv::Mat(), hueHist, 1, &histSize, &histRange, true, false);
+
+	return hueHist;
+}
+
 void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst)
 {
+
     cv::HOGDescriptor hog(
 					pedestrianSize, //winSize
                     cv::Size(blockSize,blockSize), //blocksize
@@ -85,9 +173,20 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
     std::vector< cv::Point > location;
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
-        cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
-        hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0),location);
-        gradientLst.push_back( cv::Mat( descriptors ).clone() );
+	//	GammaCorrection(mat, gr,0.5);
+		//mat.convertTo(gr, CV_64F);
+	//	cv::imshow("bef", gr);
+        //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
+		//cv::pow(gr,1.1, gr);
+	//	cv::convertScaleAbs(gr, gr, 1, 0);
+		//cv::imshow("aft", gr);
+	//	cv::waitKey(5);
+		//gr = featureColorGradient(mat);
+		//gr.convertTo(gr, CV_8U);
+
+		hog.compute(mat, descriptors,cv::Size(8, 8),cv::Size(0, 0));
+		gradientLst.push_back(cv::Mat(descriptors).clone());
+		//gradientLst.push_back( cv::Mat( featureSobel(mat,80) ) );
     }
 }
 
@@ -109,7 +208,6 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 	svm->setType(type);
 	svm->train(trainMat, cv::ml::ROW_SAMPLE, cv::Mat(labels));
 	svm->save(classifierName);
-
 	timer = clock() - timer;
     std::cout << "training DONE ..."<< static_cast<float>(timer) / (CLOCKS_PER_SEC*60) << " min" <<  std::endl;
 
@@ -148,18 +246,18 @@ void TrainHog::saveLabeledMat(cv::Mat data)
 
 TrainHog::TrainHog()
 {
-	this->maxIterations = 3300;
+	this->maxIterations = 400; // 3300;
 	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
 	this->kernel = cv::ml::SVM::LINEAR;
-	this->type = cv::ml::SVM::NU_SVC;
+	this->type = cv::ml::SVM::C_SVC;
 	this->epsilon = 1.e-6;
 	this->coef0 = 0.0;
 	this->degree = 3;
 	this->gamma = 0.1;
-	this->nu = 0.1;
-	this->p = 0.1;
-	this->c = 0.1;
-	this->classifierName = "96_16_8_8_9_01.yml";
+	this->nu = 0.1; //0.1;
+	this->p = 0.0369121;
+	this->c = 0.01;
+	this->classifierName = "48_96_16_8_8_9_01.yml";
 	pedestrianSize = cv::Size(48, 96);
 
 }
