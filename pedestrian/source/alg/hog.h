@@ -11,6 +11,7 @@ class Hog
 {
 public:
     Hog();
+	Hog(int default);
 	Hog(std::string svmPath);
     std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frame);
 	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);

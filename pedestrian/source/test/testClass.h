@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿#ifndef TESTCLASS_H
+#define TESTCLASS_H
+
 #include <iostream>
 #include "diffEvoTest.h"
 #include <sstream>
@@ -29,3 +31,5 @@ private:
 	void initLog(int typeTest, int typeIncr = 0, int maxRepeatTest = 0);
 
 };
+
+#endif // TESTCLASS_H
