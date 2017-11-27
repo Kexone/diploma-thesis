@@ -106,9 +106,6 @@ cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
 	cv::Mat src = mat.clone();
 	cv::Mat srcGray, gradX, gradY, grad;
 
-	// Checks
-	assert(src.type() == CV_8UC3); // 8UC3
-
 								   // Convert to gray and blur
 	cv::cvtColor(src, srcGray, CV_BGR2GRAY);
 	cv::medianBlur(srcGray, srcGray, 3);
@@ -121,12 +118,6 @@ cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
 	convertScaleAbs(gradX, gradX);
 	convertScaleAbs(gradY, gradY);
 
-	// Checks
-	assert(gradX.type() == CV_8UC1); // 8UC1
-	assert(gradY.type() == CV_8UC1); // 8UC1
-	assert(grad.type() == CV_8UC1); // 8UC1
-
-									/// Total Gradient (approximate)
 	addWeighted(gradX, 0.5, gradY, 0.5, 0, grad);
 
 
@@ -175,21 +166,17 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
 		GammaCorrection(mat, gr,0.5);
-		//mat.convertTo(gr, CV_64F);
-	//	cv::imshow("bef", gr);
         //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
-		//cv::pow(gr,1.1, gr);
-	//	cv::convertScaleAbs(gr, gr, 1, 0);
-		//cv::imshow("bef", gr);
-		//gr = featureColorGradient(gr);
-		//cv::imshow("gra", gr);
+
 		gr.convertTo(gr, CV_8U);
 		//cv::imshow("aft", gr);
 		//cv::waitKey(25);
 
 		//hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0));
 		//gradientLst.push_back(cv::Mat(descriptors).clone());
-		//gradientLst.push_back(cv::Mat(featureSobel(mat, 80)));
+
+		//gradientLst.push_back(cv::Mat(featureSobel(mat, 80)).clone());
+
 		gradientLst.push_back( featureColorGradient(gr,hog).clone() );
     }
 }

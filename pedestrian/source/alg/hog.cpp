@@ -1,40 +1,5 @@
 #include "hog.h"
 
-void gammaCorrection(cv::Mat src, cv::Mat& dst, float fGamma)
-{
-	unsigned char lut[256];
-
-	for (int i = 0; i < 256; i++)
-	{
-		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), fGamma) * 255.0f);
-	}
-
-	dst = src.clone();
-	const int channels = dst.channels();
-	switch (channels)
-	{
-	case 1:
-	{
-		cv::MatIterator_<uchar> it, end;
-
-		for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
-			*it = lut[(*it)];
-		break;
-	}
-	case 3:
-	{
-		cv::MatIterator_<cv::Vec3b> it, end;
-		for (it = dst.begin<cv::Vec3b>(), end = dst.end<cv::Vec3b>(); it != end; it++)
-
-		{
-			(*it)[0] = lut[((*it)[0])];
-			(*it)[1] = lut[((*it)[1])];
-			(*it)[2] = lut[((*it)[2])];
-		}
-		break;
-	}
-	}
-}
 
 Hog::Hog()
 {
@@ -86,7 +51,6 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
         	assert(!test.empty());
 			//test.convertTo(test, CV_8UC3);
 
-			//gammaCorrection(test, test, 0.5);
 			//cv::cvtColor(test, test, CV_BGR2GRAY);
 			//cv::equalizeHist(test, test);
         	
