@@ -54,12 +54,12 @@ void TestClass::randomTest(int typeTest)
 	if (typeTest == 1)
 	{
 		iterChange = 50;
-		parChange = 0.001;
+		parChange = 0.001f;
 	}
 	else
 	{
 		iterChange = 100;
-		parChange = 0.01;
+		parChange = 0.01f;
 	}
 
 	std::cout << "ITERATE ALL AT ONCE (1) \nITERATION ONE BY ONE (2) \nONLY ITERATION(3)\nCHOOSE TYPE: ";
@@ -104,7 +104,7 @@ void TestClass::incrementSvmValues(int typeIncr, int maxRepTest)
 	}
 	else if (typeIncr == 2)
 	{
-		int par = (maxRepTest / (float)(maxRepTest / 3));
+		int par = (int) (maxRepTest / (float)(maxRepTest / 3));
 		if (par == PARAMETER_NU)
 		{
 			nu += parChange;

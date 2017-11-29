@@ -116,7 +116,7 @@ namespace de
 
             for (auto& agent : m_population)
             {
-                for (int i = 0; i < m_numberOfParameters; i++)
+                for (size_t i = 0; i < m_numberOfParameters; i++)
                 {
                     if (m_constraints[i].isConstrained)
                     {
@@ -132,7 +132,7 @@ namespace de
             }
 
             // Initialize minimum cost, best agent and best agent index
-            for (int i = 0; i < m_populationSize; i++)
+            for (size_t i = 0; i < m_populationSize; i++)
             {
                 m_minCostPerAgent[i] = m_cost.EvaluteCost(m_population[i]);
 
@@ -151,7 +151,7 @@ namespace de
             double minCost = m_minCostPerAgent[0];
             int bestAgentIndex = 0;
 
-            for (int x = 0; x < m_populationSize; x++)
+            for (size_t x = 0; x < m_populationSize; x++)
             {
                 // For x in population select 3 random agents (a, b, c) different from x
                 int a = x;
@@ -161,21 +161,21 @@ namespace de
                 // Agents must be different from each other and from x
                 while (a == x || b == x || c == x || a == b || a == c || b == c)
                 {
-                    a = distribution(m_generator);
-                    b = distribution(m_generator);
-                    c = distribution(m_generator);
+                    a = (int) distribution(m_generator);
+                    b = (int) distribution(m_generator);
+                    c = (int) distribution(m_generator);
                 }
 
                 // Form intermediate solution z
                 std::vector<double> z(m_numberOfParameters);
-                for (int i = 0; i < m_numberOfParameters; i ++)
+                for (size_t i = 0; i < m_numberOfParameters; i ++)
                 {
                     z[i] = m_population[a][i] + m_F * (m_population[b][i] - m_population[c][i]);
                 }
 
                 // Chose random R
                 std::uniform_real_distribution<double> distributionParam(0, m_numberOfParameters);
-                int R = distributionParam(m_generator);
+                int R = (int) distributionParam(m_generator);
 
                 // Chose random r for each dimension
                 std::vector<double> r(m_numberOfParameters);
@@ -188,7 +188,7 @@ namespace de
                 std::vector<double> newX(m_numberOfParameters);
 
                 // Execute crossing
-                for (int i = 0; i < m_numberOfParameters; i++)
+                for (size_t i = 0; i < m_numberOfParameters; i++)
                 {
                     if (r[i] < m_CR || i == R)
                     {
@@ -242,7 +242,7 @@ namespace de
         std::vector<std::pair<std::vector<double>, double>> GetPopulationWithCosts() const
         {
             std::vector<std::pair<std::vector<double>, double>> toRet;
-            for (int i = 0; i < m_populationSize; i++)
+            for (size_t i = 0; i < m_populationSize; i++)
             {
                 toRet.push_back(std::make_pair(m_population[i], m_minCostPerAgent[i]));
             }
@@ -277,7 +277,7 @@ namespace de
                     std::cout << std::fixed << std::setprecision(5);
                     std::cout << "Current minimal cost: " << m_minCost << "\t\t";
                     std::cout << "Best agent: ";
-                    for (int i = 0; i < m_numberOfParameters; i++)
+                    for (size_t i = 0; i < m_numberOfParameters; i++)
                     {
                         std::cout<< m_population[m_bestAgentIndex][i] << " ";
                     }
@@ -311,7 +311,7 @@ namespace de
     private:
         bool CheckConstraints(std::vector<double> agent)
         {
-            for (int i = 0; i < agent.size(); i++)
+            for (size_t i = 0; i < agent.size(); i++)
             {
                 if (!m_constraints[i].Check(agent[i]))
                 {

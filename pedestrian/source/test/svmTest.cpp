@@ -65,9 +65,7 @@ float SvmTest::process()
 	TrainHog th = TrainHog(maxIterations, termCriteria, kernel, type, epsilon, coef0, degree, gamma, nu, p, c, classifierName);
 
 	trainTime = clock();
-	th.fillVectors(posSamplesMin);
-	th.fillVectors(negSamplesMin, true);
-	th.train(false);
+	th.train(posSamplesMin, negSamplesMin, false);
 	trainTime = clock() - trainTime;
 
 	Hog h = Hog(classifierName);

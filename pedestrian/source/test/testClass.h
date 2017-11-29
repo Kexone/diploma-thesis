@@ -16,7 +16,7 @@ private:
 
 	int maxIterations = 300;
 	float parChange;
-	float  iterChange;
+	int iterChange;
 	double nu;
 	double p;
 	double c;
