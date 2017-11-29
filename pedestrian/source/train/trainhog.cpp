@@ -4,33 +4,41 @@
 #include <iterator>
 #include <string>
 #include <vector>
-void TrainHog::fillVectors(std::string path, bool isNeg)
+#include "../utils/utils.h"
+
+TrainHog::TrainHog()
 {
-    assert(!path.empty());
-    std::vector<cv::Mat> data;
-    cv::Mat frame;
-	std::fstream sampleFile(path);
-	std::string oSample;
-	while (sampleFile >> oSample) {
+	this->maxIterations = 400; // 3300;
+	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
+	this->kernel = cv::ml::SVM::LINEAR;
+	this->type = cv::ml::SVM::C_SVC;
+	this->epsilon = 1.e-6;
+	this->coef0 = 0.0;
+	this->degree = 3;
+	this->gamma = 0.1;
+	this->nu = 0.1; //0.1;
+	this->p = 0.0369121;
+	this->c = 0.01;
+	this->classifierName = "48_96_16_8_8_9_01.yml";
+	pedestrianSize = cv::Size(48, 96);
+}
 
-		frame = cv::imread(oSample, CV_32FC3);
-		if (frame.empty()) std::cout << "fail" << std::endl;
-		cv::resize(frame, frame, pedestrianSize);
-		data.push_back(frame.clone());
-		if (!isNeg) {
-			labels.push_back(1);
-		}
-		else {
-			labels.push_back(0);
-		}
-	}
-    if(!isNeg)
-        posSamples = data;
-    else
-        negSamples = data;
-    data.clear();
-
-
+TrainHog::TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
+	int degree, double gamma, double nu, double p, double c, std::string classifierName)
+{
+	this->maxIterations = maxIterations;
+	this->termCriteria = termCriteria;
+	this->kernel = kernel;
+	this->type = type;
+	this->epsilon = epsilon;
+	this->coef0 = coef0;
+	this->degree = degree;
+	this->gamma = gamma;
+	this->nu = nu;
+	this->p = p;
+	this->c = c;
+	this->classifierName = classifierName;
+	pedestrianSize = cv::Size(48, 96);
 }
 
 void TrainHog::trainFromMat(std::string matPath, std::string labelsPath)
@@ -41,65 +49,31 @@ void TrainHog::trainFromMat(std::string matPath, std::string labelsPath)
 
 	std::ifstream is(labelsPath);
 	std::istream_iterator<int> start(is), end;
-	labels = std::vector<int> (start, end);
+	std::vector< int > labels = std::vector<int> (start, end);
 
 	trainSvm(trainMat, labels);
 }
 
-void TrainHog::train(bool saveData)
+void TrainHog::train(std::string posSamples, std::string negSamples, bool saveData)
 {
+	std::vector< cv::Mat > posSamplesLst;
+	std::vector< cv::Mat > negSamplesLst;
     std::vector< cv::Mat > gradientLst;
+	std::vector< int > labels;
     cv::Mat trainMat;
 
+	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
+	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize,true);
 	std::cout << "Positive samples: " << posSamples.size() << std::endl;
 	std::cout << "Negative samples: " << negSamples.size() << std::endl;
 
-    extractFeatures(posSamples, gradientLst);
-	posSamples.clear();
-    extractFeatures(negSamples, gradientLst);
-	negSamples.clear();
+    extractFeatures(posSamplesLst, gradientLst);
+    extractFeatures(negSamplesLst, gradientLst);
     convertSamples2Mat(gradientLst, trainMat);
-	gradientLst.clear();
 
-	if (saveData) saveLabeledMat(trainMat);
+	if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
-}
-
-void GammaCorrection(cv::Mat src, cv::Mat& dst, float fGamma)
-{
-	unsigned char lut[256];
-
-	for (int i = 0; i < 256; i++)
-	{
-		lut[i] = cv::saturate_cast<uchar>(pow((float)(i / 255.0), fGamma) * 255.0f);
-	}
-
-	dst = src.clone();
-	const int channels = dst.channels();
-	switch (channels)
-	{
-	case 1:
-		{
-			cv::MatIterator_<uchar> it, end;
-
-			for (it = dst.begin<uchar>() , end = dst.end<uchar>(); it != end; it++)
-				*it = lut[(*it)];
-			break;
-		}
-	case 3:
-		{
-			cv::MatIterator_<cv::Vec3b> it, end;
-			for (it = dst.begin<cv::Vec3b>() , end = dst.end<cv::Vec3b>(); it != end; it++)
-
-			{
-				(*it)[0] = lut[((*it)[0])];
-				(*it)[1] = lut[((*it)[1])];
-				(*it)[2] = lut[((*it)[2])];
-			}
-			break;
-		}
-	}
 }
 
 cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
@@ -137,7 +111,7 @@ cv::Mat featureColorGradient(const cv::Mat &mat, cv::HOGDescriptor hog) {
 	std::vector < std::vector < float > > descriptors(3);
 
 	cv::split(mat, channels);
-	for (int i = 0; i < channels.size(); i++)
+	for (size_t i = 0; i < channels.size(); i++)
 	{
 		hog.compute(channels[i], descriptors[i], cv::Size(8, 8), cv::Size(0, 0));
 		sum(descriptors[i], channelsValues[i]);
@@ -147,7 +121,6 @@ cv::Mat featureColorGradient(const cv::Mat &mat, cv::HOGDescriptor hog) {
 
 void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst)
 {
-
     cv::HOGDescriptor hog(
 					pedestrianSize, //winSize
                     cv::Size(blockSize,blockSize), //blocksize
@@ -158,19 +131,16 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
                     -1, //winSigma,
                     0, //histogramNormType,
                     0.2, //L2HysThresh,
-                    0 //gammal corRection,
+                    true //gammal corRection,
                                     //nlevels=64
                     );
     cv::Mat gr;
     std::vector< cv::Point > location;
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
-		GammaCorrection(mat, gr,0.5);
         //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
 
 		gr.convertTo(gr, CV_8U);
-		//cv::imshow("aft", gr);
-		//cv::waitKey(25);
 
 		//hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0));
 		//gradientLst.push_back(cv::Mat(descriptors).clone());
@@ -225,7 +195,7 @@ void TrainHog::convertSamples2Mat(const std::vector<cv::Mat> &trainSamples, cv::
 	
 }
 
-void TrainHog::saveLabeledMat(cv::Mat data)
+void TrainHog::saveLabeledMat(cv::Mat data, std::vector< int > labels)
 {
 	cv::FileStorage fs("test.yml", cv::FileStorage::WRITE);
 	fs << "samples"<< data;
@@ -233,42 +203,6 @@ void TrainHog::saveLabeledMat(cv::Mat data)
 	std::ofstream output_file("./labels.txt");
 	std::ostream_iterator<int> output_iterator(output_file, "\n");
 	std::copy(labels.begin(), labels.end(), output_iterator);
-}
-
-TrainHog::TrainHog()
-{
-	this->maxIterations = 400; // 3300;
-	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
-	this->kernel = cv::ml::SVM::LINEAR;
-	this->type = cv::ml::SVM::C_SVC;
-	this->epsilon = 1.e-6;
-	this->coef0 = 0.0;
-	this->degree = 3;
-	this->gamma = 0.1;
-	this->nu = 0.1; //0.1;
-	this->p = 0.0369121;
-	this->c = 0.01;
-	this->classifierName = "48_96_16_8_8_9_01.yml";
-	pedestrianSize = cv::Size(48, 96);
-
-}
-
-TrainHog::TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
-	int degree, double gamma, double nu, double p, double c, std::string classifierName)
-{
-	this->maxIterations = maxIterations;
-	this->termCriteria = termCriteria;
-	this->kernel = kernel;
-	this->type = type;
-	this->epsilon = epsilon;
-	this->coef0 = coef0;
-	this->degree = degree;
-	this->gamma = gamma;
-	this->nu = nu;
-	this->p = p;
-	this->c = c;
-	this->classifierName = classifierName;
-	pedestrianSize = cv::Size(48, 96);
 }
 
 void TrainHog::printSettings()

@@ -6,6 +6,7 @@
 
 #include "alg/mog.h"
 #include "alg/hog.h"
+#include "alg/fhog.h"
 #include "alg/convexhull.h"
 #include "media/croppedimage.h"
 #include "media/videostream.h"
@@ -23,7 +24,7 @@ public:
 
 private:
     Mog mog;
-
+	FHog fhog;
 	//Hog hog = Hog("3.yml");
 	Hog hog;
 	//Hog hog = Hog("48_96_16_8_8_9_01.yml");

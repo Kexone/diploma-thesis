@@ -6,7 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	hog = Hog("3111_79_98.4.yml");
+	//hog = Hog("3111_79_98.4.yml");
 
 }
 
@@ -86,7 +86,9 @@ void Pipeline::process(cv::Mat frame)
 			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
-		foundRect = hog.detect(croppedImages);
+		
+		foundRect = fhog.detect(croppedImages);
+	//	foundRect = hog.detect(croppedImages);
 		//foundRect = cc.detect(croppedImages);
 		draw2mat(croppedImages, foundRect);
 	}
