@@ -40,8 +40,7 @@ Hog::Hog(std::string svmPath)
 
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
-
-	//std::cout << "PIC size: " << frames.size() << std::endl;
+  
 	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
        // fflush(stdout);
         for (size_t x = 0; x < frames.size(); x++) {
