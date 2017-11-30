@@ -1,7 +1,7 @@
 #include <iostream>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
-
+#include <opencv2/core/utility.hpp>
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
@@ -28,34 +28,45 @@ void printResults(clock_t timer);
 
 int main(int argc, char *argv[])
 {
+	const cv::String keys =
+		"{help h ? || print help message}"
+		"{alg	         |1         | alg type}"
+		"{video v        |          | use video as input}"
+		"{image i        |          | use list of images as input}"
+		"{camera c       |          | enable camera capturing}"
+		"{class svm      |0         | trained clasifier path }"
+		"{type  t        |detection | type of alg (train, test, video, picture}"
+		"{vizualize      | 0        | show result in window   }"
+		;
+
 	Pipeline pl;
-	if( argc > 1)
+	cv::CommandLineParser parser(argc, argv, keys);
+	parser.about("DIPLOMA THESIS- Pedestrian Detection v1.0.0");
+	if (parser.has("help"))
 	{
-		if (std::strcmp(argv[1], "train") == 0)
-		{
-			std::cout << "training";
-			train();
-		}
-		else if(std::strcmp(argv[1], "camera") == 0)
-		{
-			std::cout << "camera";
-			pl.execute(0);
-		}
-		else
-		{
-			std::cout << "Bad params";
-		}
+		parser.printMessage();
+		return 0;
 	}
-	else
+	else if (parser.has("train"))
+	{
+		std::cout << "training";
+		train();
+	}
+	else if(parser.has("camera"))
+	{
+		std::cout << "camera";
+		pl.execute(0);
+	}
+	else if(parser.has("video"))
 	{
 		clock_t timer;
 		timer = clock();
 		pl.execute(filename);
 		timer = clock() - timer;
 		printResults(timer);
+		cv::waitKey(0);
 	}
 	
-	cv::waitKey(0);
 	return 0;
 }
 
