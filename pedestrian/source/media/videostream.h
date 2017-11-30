@@ -21,4 +21,4 @@ public:
 
 };
 
-#endif VIDEOSTREAM_H
+#endif // VIDEOSTREAM_H

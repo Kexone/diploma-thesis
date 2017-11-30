@@ -3,106 +3,114 @@
 
 Hog::Hog()
 {
-	std::string name = "96_16_8_8_9_01.yml";
-	struct stat buffer;
-	if (stat(name.c_str(), &buffer) == 0)
-	{
-		cv::Ptr<cv::ml::SVM> svm = cv::Algorithm::load<cv::ml::SVM>(name);
-		std::vector< float > hogDetector;
-		getSvmDetector(svm, hogDetector);
-		hog.svmDetector = hogDetector;
-		hog.gammaCorrection = true;
-		std::cout << "Initialized custom SVM" << std::endl;
-	}
-	else
-	{
-		hog.gammaCorrection = true;
-		hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
-	}
-	
 }
 
-std::vector<cv::Rect> Hog::detect(cv::Mat frame)
+Hog::Hog(int def)
 {
-    std::vector<cv::Rect> found_filtered;
-    cv::Mat src_frame = frame.clone();
-    if (frame.empty())
-        return found_filtered;
-    fflush(stdout);
-    //for (uint x = 0; x < frames.size(); x++) {
-        std::vector<cv::Rect> rRect;
-        std::vector<cv::Rect> found;
-        //cv::Mat test  = frames[x].croppedImg;
-        //cv::Size size(64, 128);
-        //cv::resize(src_frame, src_frame, cv::Size(64,128));
-        //hog.detectMultiScale(test, found, 0, cv::Size(6, 6), cv::Size(32, 32), 1.05, 2);
-        hog.detectMultiScale(src_frame, found, 1, cv::Size(8, 8), cv::Size(32,32), 1.05, 0);
-        if (found.empty()) {
-            return found_filtered;
-        }
-        size_t i, j;
-        for (i = 0; i<found.size(); i++)
-        {
-            cv::Rect r = found[i];
-            for (j = 0; j<found.size(); j++)
-                if (j != i && (r & found[j]) == r)
-                    break;
-                if (j == found.size())
-                    found_filtered.push_back(r);
-        }
-        found.clear();
-    //}
-        return found_filtered;
+	hog.gammaCorrection = true;
+	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+	std::cout << "Initialized default people detector" << std::endl;
 }
+
+Hog::Hog(std::string svmPath)
+{
+	hog = cv::HOGDescriptor(
+									cv::Size(48,96), //winSize
+									cv::Size(16, 16), //,blocksize
+									cv::Size(8, 8), //blockStride
+									cv::Size(8, 8), //cellSize,
+									9, //nbins,
+									0, //derivAper,
+									-1, //winSigma,
+									0, //histogramNormType,
+									0.2, //L2HysThresh,
+									0 //gammal corRection,
+									  //nlevels=64
+		);
+	hog.svmDetector.clear();
+	std::vector< float > hogDetector;
+	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
+
+	getSvmDetector(svm, hogDetector);
+	hog.gammaCorrection = true;
+	hog.setSVMDetector(hogDetector);
+	std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() <<  std::endl;
+	hogDetector.clear();
+}
+
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
-
-//	std::cout << "PIC size: " << frames.size() << std::endl;
+  
 	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
-    if (frames.empty())
-        return found_filtered;
-        fflush(stdout);
-        for (uint x = 0; x < frames.size(); x++) {
+       // fflush(stdout);
+        for (size_t x = 0; x < frames.size(); x++) {
             std::vector<cv::Rect> rRect;
-            std::vector<cv::Rect> found;
-            cv::Mat test  = frames[x].croppedImg;
+			std::vector<cv::Rect> found;
+			cv::Mat test = frames[x].croppedImg;
+        	assert(!test.empty());
+			//test.convertTo(test, CV_8UC3);
 
-            assert(!test.empty());
-            test.convertTo(test,CV_8UC1);
-			cv::cvtColor(test, test, CV_BGR2GRAY);
-			cv::equalizeHist(test, test);
-			//cv::imshow("test", test);
-			hog.detectMultiScale(
+			//cv::cvtColor(test, test, CV_BGR2GRAY);
+			//cv::equalizeHist(test, test);
+        	
+			cv::imshow("test", test);
+			//cv::waitKey(15);
+            hog.detectMultiScale(
             						test,					// testing img
             						found,					// foundLocation <rect>
-            						0,						// hitThreshold = 0 // 1
-            						cv::Size(8,8),			// winStride size(8, 8)
-            						cv::Size(0,0),			// padding size(0, 0)
+            						1,						// hitThreshold = 0 // 1
+            						cv::Size(8, 8),			// winStride size(8, 8)
+            						cv::Size(0, 0),			// padding size(0, 0)
             						1.05,					// scale = 1,05
-            						2,						// finalThreshold = 2 // 0
+            						1,						// finalThreshold = 2 // 0
 									false					// use meanshift grouping = false
             				    );
+			test.release();
+		//	std::cout << found.size() << std::endl;
 
             if (found.empty()) {
                 continue;
             }
             size_t i, j;
+
             for (i = 0; i< found.size(); i++)
             {
-                cv::Rect r = found[i];
+                //cv::Rect r = found[i];
 
-                for (j = 0; j<found.size(); j++)
-                    if (j != i && (r & found[j]) == r)
-                        break;
-                if (j == found.size())
-                    found_filtered[x].push_back(r);
+                //for (j = 0; j<found.size(); j++)
+                //    if (j != i && (r & found[j]) == r)
+              //          break;
+            //    if (j == found.size())
+                    found_filtered[x].push_back(found[i]);
 					//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
-                    cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
+          //          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
             }
-            //cv::imshow("test", test);
+         //   cv::imshow("test", test);
             //found.clear();
         }
         return found_filtered;
+}
+
+void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)
+{
+	std::vector< cv::Point > location;
+	std::vector< float > descriptors;
+	hog.winSize = cv::Size(48, 96);
+	for(auto &mat : testLst)
+	{
+		hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
+		int predicted = svm->predict(descriptors);
+		if(pedestrian)
+		{
+			if (predicted == 1) nTrue++;
+			else nFalse++;
+		}
+		else
+		{
+			if (predicted == 0) nTrue++;
+			else nFalse++;
+		}
+	}
 }
 
 void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector )
@@ -117,7 +125,7 @@ void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float 
     //CV_Assert( alpha.total() == 1 && svidx.total() == 1 && sv_total == 1 );
     //CV_Assert( (alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
       //         (alpha.type() == CV_32F && alpha.at<float>(0) == 1.f) );
-    //CV_Assert( sv.type() == CV_32F );
+    CV_Assert( sv.type() == CV_32F );
     hog_detector.clear();
 
     hog_detector.resize(sv.cols + 1);

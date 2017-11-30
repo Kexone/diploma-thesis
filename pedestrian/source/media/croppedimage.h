@@ -15,4 +15,4 @@ public:
         offsetX(cropping.x), offsetY(cropping.y) {}
 };
 
-#endif CROPPEDIMAGE_H
+#endif // CROPPEDIMAGE_H

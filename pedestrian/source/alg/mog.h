@@ -7,7 +7,7 @@ class Mog
 {
 public:
     Mog();
-    cv::Mat processMat(cv::Mat &frame);
+	cv::Mat processMat(cv::Mat &frame);
 private:
     cv::Ptr< cv::BackgroundSubtractor > pMOG1;  //MOG  Background subtractor
     cv::Ptr< cv::BackgroundSubtractor > pMOG2; //MOG2 Background subtractor

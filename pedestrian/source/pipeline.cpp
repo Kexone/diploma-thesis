@@ -6,6 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
+	//hog = Hog("3111_79_98.4.yml");
 
 }
 
@@ -27,7 +28,8 @@ void Pipeline::execute(int cameraFeed = 99)
 {
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
-    vs->openCamera();
+	std::cout << "Camera initialized." << std::endl;
+	vs->openCamera();
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
         if(frame.empty()) {
@@ -35,15 +37,19 @@ void Pipeline::execute(int cameraFeed = 99)
         }
         process(frame);
         frame.release();
+		cv::waitKey(5);
     }
   //  cv::destroyWindow("Test");
 }
+
+std::stringstream ss;
 
 void Pipeline::execute(std::string cameraFeed)
 {
 	allDetections = 0;
     vs = new VideoStream(cameraFeed);
     vs->openCamera();
+	std::cout << "Videostream initialized." << std::endl;
     int i = 0;
     for( ; ; ) {
         cv::Mat frame = vs->getFrame();
@@ -53,12 +59,14 @@ void Pipeline::execute(std::string cameraFeed)
         }
         process(frame);
         frame.release();
-        std::stringstream ss;
-        ss <<  "../img/mat_" << i << ".jpg";
-        cv::imwrite(ss.str(),localFrame);
-        localFrame.release();
-        i++;
+        
 		cv::waitKey(5);
+		ss << "../img/mat_" << i << ".jpg";
+		cv::imwrite(ss.str(), localFrame);
+		ss.str("");
+		ss.clear();
+		localFrame.release();
+		i++;
     }
      cv::destroyWindow("Test");
 }
@@ -70,36 +78,32 @@ void Pipeline::process(cv::Mat frame)
 	frame = mog.processMat(frame);
 	//cv::blur(frame, frame, cv::Size(9, 9));
 	//cv::imshow("MOG", frame);
-	std::vector< std::vector< cv::Rect > > rect = ch.wrapObjects(localFrame, frame);
+	std::vector< cv::Rect > rect = ch.wrapObjects(localFrame, frame);
 
-	std::vector< CroppedImage > croppedImages;
 	if (rect.size() != 0) {
-		for (uint j = 0; j < rect.size(); j++) {
-			for (uint i = 0; i < rect[j].size(); i++) {
-				croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[j][i]));
-			}
+		std::vector< CroppedImage > croppedImages;
+		for (size_t i = 0; i < rect.size(); i++) {
+			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
 		}
+		std::vector < std::vector < cv::Rect > > foundRect;
+		
+		foundRect = fhog.detect(croppedImages);
+	//	foundRect = hog.detect(croppedImages);
+		//foundRect = cc.detect(croppedImages);
+		draw2mat(croppedImages, foundRect);
 	}
-	clock_t timer;
-	timer = clock();
-	found_filtered = hog.detect(croppedImages);
-	timer = clock() - timer;
-	std::cout << "HOG took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
-
-	//found_filtered = cc.detect(croppedImages);
-	draw2mat(croppedImages);
 	// if(Settings::showVideoFrames)
 	cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
-	found_filtered.clear();
 }
 
 void Pipeline::preprocessing(cv::Mat& frame)
 {
 	cv::cvtColor(frame, frame, CV_BGR2GRAY);
 	frame.convertTo(frame, CV_8UC1);
-	cv::medianBlur(frame, frame, 9);
+	cv::medianBlur(frame, frame, 3);
+	
 	//cv::Mat dst(frame.rows, frame.cols, CV_8UC1);
 	//cv::bilateralFilter(frame, dst, 10, 1.5, 1.5, cv::BORDER_DEFAULT);
 	//cv::GaussianBlur(frame, frame, cv::Size(9, 9), 2,4 , cv::BORDER_DEFAULT);
@@ -107,17 +111,19 @@ void Pipeline::preprocessing(cv::Mat& frame)
 	//cv::imshow("Blur", frame);
 }
 
-void Pipeline::draw2mat(std::vector< CroppedImage > croppedImages)
+void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
 {
-    for (uint j = 0; j < found_filtered.size(); j++) {
-        for (uint i = 0; i < found_filtered[j].size(); i++) {
-            cv::Rect r = found_filtered[j][i];
+    for (uint j = 0; j < rect.size(); j++) {
+        for (uint i = 0; i < rect[j].size(); i++) {
+            cv::Rect r = rect[j][i];
             r.x += cvRound(croppedImages[j].offsetX);
             //r.width = cvRound(croppedImages[j].croppedImg.cols);
             r.y += cvRound(croppedImages[j].offsetY);
             //r.height = cvRound(croppedImages[j].croppedImg.rows);
             cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
         }
-		allDetections += found_filtered[j].size();
+		allDetections += rect[j].size();
     }
+	rect.clear();
+
 }

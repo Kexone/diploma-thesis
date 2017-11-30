@@ -31,6 +31,18 @@
     <Filter Include="Source Files\train">
       <UniqueIdentifier>{2b32fdef-a43b-4ebe-b6bd-d5c7c0934a4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\test">
+      <UniqueIdentifier>{d88abd30-3c10-48e9-867a-b7c9d912a1c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\test">
+      <UniqueIdentifier>{ebe9553d-8add-4333-8ffb-e3caba3228a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3dparty">
+      <UniqueIdentifier>{c60c3092-cca5-48c3-a631-727ce2448de7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{89a18a0d-cda4-4bf5-ae61-0734483bf76d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -59,6 +71,21 @@
     </ClCompile>
     <ClCompile Include="source\alg\cascadeClass.cpp">
       <Filter>Source Files\alg</Filter>
+    </ClCompile>
+    <ClCompile Include="source\test\svmTest.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="source\test\diffEvoTest.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="source\test\testClass.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="source\alg\fhog.cpp">
+      <Filter>Source Files\alg</Filter>
+    </ClCompile>
+    <ClCompile Include="source\train\trainfhog.cpp">
+      <Filter>Source Files\train</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +118,27 @@
     </ClInclude>
     <ClInclude Include="source\alg\cascadeClass.h">
       <Filter>Header Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="source\test\svmTest.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="3dparty\de\DifferentialEvolution.h">
+      <Filter>Header Files\3dparty</Filter>
+    </ClInclude>
+    <ClInclude Include="source\test\diffEvoTest.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="source\test\testClass.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="source\alg\fhog.h">
+      <Filter>Header Files\alg</Filter>
+    </ClInclude>
+    <ClInclude Include="source\train\trainfhog.h">
+      <Filter>Header Files\train</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utils\utils.h">
+      <Filter>Header Files\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
