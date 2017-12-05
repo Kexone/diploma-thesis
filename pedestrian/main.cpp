@@ -1,9 +1,7 @@
 #include <iostream>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
-#include "source/test/testClass.h"
-#include "source/train/trainfhog.h"
-
+#include <opencv2/core/utility.hpp>
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
@@ -30,48 +28,61 @@ void printResults(clock_t timer);
 
 int main(int argc, char *argv[])
 {
-	TrainFHog tfh;
-	tfh.train(posSamples,negSamples);
-	return 0;
-	if( argc > 1)
+	const cv::String keys =
+		"{help h ? || print help message}"
+		"{alg	         |1         | alg type}"
+		"{video v        |          | use video as input}"
+		"{image i        |          | use list of images as input}"
+		"{camera c       |          | enable camera capturing}"
+		"{class svm      |0         | trained clasifier path }"
+		"{type  t        |          | type of alg (train, test, video, picture}"
+		"{vizualize      | 0        | show result in window   }"
+		;
+
+	Pipeline pl;
+	cv::CommandLineParser parser(argc, argv, keys);
+	parser.about("DIPLOMA THESIS- Pedestrian Detection v1.0.0");
+	if (parser.has("help"))
 	{
-		if (std::strcmp(argv[1], "train") == 0)
-		{
-			std::cout << "training" << std::endl;
-			train();
-		}
-		else if (std::strcmp(argv[1], "camera") == 0)
-		{
-			Pipeline pl;
-			std::cout << "camera" << std::endl;
-			pl.execute(1);
-		}
-		else if (std::strcmp(argv[1], "testsvm") == 0)
-		{
-			TestClass().initTesting();
-		}
-		else
-		{
-			std::cout << "Bad params" << std::endl;
-		}
+		parser.printMessage();
+		return 0;
 	}
-	else
+	else if (parser.has("type"))
 	{
-		Pipeline pl;
+		std::cout << "training";
+		train();
+	}
+	else if (parser.has("camera"))
+	{
+		std::cout << "camera";
+		pl.execute(0);
+	}
+	else if (parser.has("video"))
+	{
 		clock_t timer;
 		timer = clock();
-		pl.execute(filename);
+		pl.execute(parser.get<std::string>("video"));
 		timer = clock() - timer;
 		printResults(timer);
+		cv::waitKey(0);
+	}
+	else if (parser.has("i"))
+	{
+		clock_t timer;
+		timer = clock();
+		pl.executeImages(parser.get<std::string>("image"));
+		std::cout << parser.get<std::string>("image");
+		timer = clock() - timer;
+		//printResults(timer);
+		cv::waitKey(0);
 	}
 	
-	cv::waitKey(0);
 	return 0;
 }
 
 void train()
 {
-	TrainHog th = TrainHog(114,3,0,100,1.e-06,0,3,0.1, 0.313903, 0.212467, 0.130589,"2111_79_98.4.yml");
+	TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
 	th.train(posSamples, negSamples, false);
 	//th.trainFromMat("test.yml", "labels.txt");
 
@@ -94,7 +105,6 @@ void train()
 void printResults(clock_t timer)
 {
 	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
-	std::cout << "Algorithm FPS: " << VideoStream::totalFrames / (static_cast<float>(timer) / CLOCKS_PER_SEC) << "." << std::endl;
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
 	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;

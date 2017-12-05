@@ -6,19 +6,25 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	//hog = Hog("3111_79_98.4.yml");
+	hog = Hog("48_96_16_8_8_9_01.yml");
 
 }
 
-void Pipeline::execute(std::vector<cv::Mat> frames)
+void Pipeline::executeImages(std::string testSamplesPath)
 {
 	allDetections = 0;
-
-    for(auto &frame: frames) {
+	assert(!testSamplesPath.empty());
+	cv::Mat frame;
+	std::fstream sampleFile(testSamplesPath);
+	std::string oSample;
+	while (sampleFile >> oSample) {
+		frame = cv::imread(oSample, CV_32FC3);
         if(frame.empty()) {
+			sampleFile.close();
             break;
         }
-       process(frame);
+       processStandaloneIm(frame);
+	   cv::waitKey(0);
        frame.release();
     }
     cv::destroyWindow("Result");
@@ -71,7 +77,7 @@ void Pipeline::execute(std::string cameraFeed)
      cv::destroyWindow("Test");
 }
 
-void Pipeline::process(cv::Mat frame)
+void Pipeline::process(cv::Mat &frame)
 {
 	localFrame = frame.clone();
 	preprocessing(frame);
@@ -98,6 +104,22 @@ void Pipeline::process(cv::Mat frame)
 	rect.clear();
 }
 
+
+void Pipeline::processStandaloneIm(cv::Mat &frame)
+{
+	localFrame = frame.clone();
+	preprocessing(frame);
+	std::vector < cv::Rect  > foundRect;
+	//foundRect = fhog.detect(frame);
+		foundRect = hog.detect(frame);
+	//foundRect = cc.detect(frame);
+	draw2mat(foundRect);
+
+	// if(Settings::showVideoFrames)
+	cv::imshow("Result", localFrame);
+	foundRect.clear();
+}
+
 void Pipeline::preprocessing(cv::Mat& frame)
 {
 	cv::cvtColor(frame, frame, CV_BGR2GRAY);
@@ -113,17 +135,26 @@ void Pipeline::preprocessing(cv::Mat& frame)
 
 void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
 {
-    for (uint j = 0; j < rect.size(); j++) {
-        for (uint i = 0; i < rect[j].size(); i++) {
-            cv::Rect r = rect[j][i];
-            r.x += cvRound(croppedImages[j].offsetX);
-            //r.width = cvRound(croppedImages[j].croppedImg.cols);
-            r.y += cvRound(croppedImages[j].offsetY);
-            //r.height = cvRound(croppedImages[j].croppedImg.rows);
-            cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
-        }
+	for (uint j = 0; j < rect.size(); j++) {
+		for (uint i = 0; i < rect[j].size(); i++) {
+			cv::Rect r = rect[j][i];
+			r.x += cvRound(croppedImages[j].offsetX);
+			//r.width = cvRound(croppedImages[j].croppedImg.cols);
+			r.y += cvRound(croppedImages[j].offsetY);
+			//r.height = cvRound(croppedImages[j].croppedImg.rows);
+			cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
+		}
 		allDetections += rect[j].size();
-    }
+	}
 	rect.clear();
 
+}
+
+void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
+{
+	for (uint i = 0; i < rect.size(); i++) {
+		cv::rectangle(localFrame, rect[i], cv::Scalar(0, 255, 0), 3);
+	}
+	allDetections += rect.size();
+	rect.clear();
 }

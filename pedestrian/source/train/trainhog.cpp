@@ -156,7 +156,8 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
     std::cout << "START training ..." << std::endl;
 	clock_t timer = clock();
 
-    cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+	//cv::Ptr<cv::ml::Boost> svm = cv::ml::Boost::create();
 
 	svm->setCoef0(coef0);
 	svm->setDegree(degree);

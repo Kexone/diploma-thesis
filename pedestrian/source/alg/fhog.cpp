@@ -5,10 +5,10 @@
 FHog::FHog()
 {
 }
-dlib::image_window win;
 
 std::vector< std::vector < cv::Rect  > > FHog::detect(std::vector<CroppedImage>& frame)
 {
+dlib::image_window win;
 	std::vector< std::vector < cv::Rect  > > dets (frame.size()) ;
 	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
 	image_scanner_type scanner;
