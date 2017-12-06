@@ -17,13 +17,14 @@ private:
 	bool clicked = false;
 	cv::Mat fullFrame;
 	cv::Mat img;
-	cv::Mat ROI;
+	//cv::Mat ROI;
 	cv::Rect cropRect;
 	cv::Point point1;
 	cv::Point point2;
 	char imgName[15];
 	int rectCount;
 	int indRect;
+	std::vector < cv::Mat > ROIs;
 	std::vector < cv::Rect > rects;
 	std::vector < std::vector  < cv::Rect > > rects2Save;
 	const std::string winName = "EXTRACT ROI";

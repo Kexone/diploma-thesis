@@ -17,7 +17,7 @@ void ExtractorROI::extractROI(std::string cameraFeed)
 
 	int countFrame = 0;
 	rects2Save = std::vector < std::vector < cv::Rect > >(VideoStream::totalFrames);
-
+	ROIs = std::vector< cv::Mat >(rectCount);
 	while (true) {
 		cv::Mat frame = vs->getFrame();
 		if (frame.empty()) {
@@ -110,6 +110,7 @@ void ExtractorROI::process(int cFrame)
 	point1 = cv::Point(0, 0);
 	point2 = cv::Point(0, 0);
 	rects.clear();
+
 	for (int i = 0; i < rectCount; i++)
 		rects.push_back(cv::Rect(0, 0, 0, 0));
 
@@ -124,6 +125,11 @@ void ExtractorROI::process(int cFrame)
 		if (c == 's') {
 			std::sprintf(imgName, "%d_full.jpg", cFrame);
 			cv::imwrite(imgName, img);
+			for (int i = 0; i < rects.size(); i++) {
+				std::sprintf(imgName, "%d_roi_%d.jpg", cFrame,i);
+				cv::imwrite(imgName, img);
+				cv::destroyWindow("cropped_" + i);
+			}
 			rects2Save[cFrame] = rects;
 			std::cout << "  Saved " << imgName << std::endl;
 			break;
@@ -147,6 +153,7 @@ void ExtractorROI::process(int cFrame)
 		else
 			std::cout << "Too much large number. \nActive " << indRect << " rect" << std::endl;
 		showImage();
+		drawRects();
 	}
 }
 
@@ -161,8 +168,18 @@ void ExtractorROI::drawRects()
 {
 	img = fullFrame.clone();
 	checkBoundary();
-	for (auto rect : rects) 
-		cv::rectangle(img, rect, cv::Scalar(0, 255, 0), 1, 8, 0);
+
+	for (int i = 0; i < rects.size(); i++)	{
+		if (rects[i].width > 0 && rects[i].height > 0)		{
+			ROIs[i] = fullFrame(rects[i]);
+			cv::imshow("cropped_"+i, ROIs[i]);
+			cv::rectangle(img, rects[i], cv::Scalar(0, 255, 0), 1, 8, 0);
+		}
+		else
+		{
+			cv::destroyWindow("cropped_" + i);
+		}
+	}
 }
 
 void ExtractorROI::onMouse(int event, int x, int y, int, void* userdata)
