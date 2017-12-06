@@ -12,8 +12,8 @@
 std::string filename = "C:/Users/Jakub/Downloads/cctv2.mp4";
 std::string posSamples = "samples/listPos.txt";
 std::string negSamples = "samples/listNeg.txt";
-std::string posSamplesMin = "samples/listPosMinMin.txt";
-std::string negSamplesMin = "samples/listNegMinMin.txt";
+std::string posSamplesMin = "samples/listPosMin.txt";
+std::string negSamplesMin = "samples/listNegMin.txt";
 
 ///////////////////////
 //					//
@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
 		"{camera c       |          | enable camera capturing}"
 		"{class svm      |0         | trained clasifier path }"
 		"{type  t        |          | type of alg (train, test, video, picture}"
+		"{extract e      |          | extract ROI from videostream}"
 		"{vizualize      | 0        | show result in window   }"
 		;
 
@@ -63,28 +64,22 @@ int main(int argc, char *argv[])
 		parser.printMessage();
 		return 0;
 	}
-	else if (parser.has("type"))
-	{
+	else if (parser.has("type"))	{
 		std::cout << "training" << std::endl;
 		std::cout << parser.get<std::string>("type") << std::endl;
 		//train();
 		CombinedTrainHog cth;
 		cth.train(posSamplesMin, negSamplesMin);
+		//TrainFHog tfh;
+		//tfh.train(posSamples,negSamples);
+		//return 0;
 	}
-	else if (parser.has("camera"))
-	//TrainFHog tfh;
-	//tfh.train(posSamples,negSamples);
-	//return 0;
-	if( argc > 1)
-	{
+	else if (parser.has("camera"))	{
 		Pipeline pl;
-		std::cout << "camera";
-		ExtractorROI eroi = ExtractorROI(3,"Result.txt");
-		eroi.extractROI(parser.get<std::string>("camera"));
+		std::cout << "camera" << std::endl;
 		pl.execute(0);
 	}
-	else if (parser.has("video"))
-	{
+	else if (parser.has("video"))	{
 		Pipeline pl;
 		clock_t timer;
 		timer = clock();
@@ -93,16 +88,17 @@ int main(int argc, char *argv[])
 		printResults(timer);
 		cv::waitKey(0);
 	}
-	else if (parser.has("i"))
-	{
+	else if (parser.has("image"))	{
 		Pipeline pl;
-		clock_t timer;
-		timer = clock();
 		pl.executeImages(parser.get<std::string>("image"));
-		std::cout << parser.get<std::string>("image");
-		timer = clock() - timer;
-		//printResults(timer);
+		std::cout << parser.get<std::string>("image") << std::endl;
 		cv::waitKey(0);
+	}
+
+	else if (parser.has("extract"))	{
+		std::cout << "extracting ROI" << std::endl;
+		ExtractorROI eroi = ExtractorROI(2, "Result.txt");
+		eroi.extractROI(parser.get<std::string>("extract"));
 	}
 	
 	return 0;
