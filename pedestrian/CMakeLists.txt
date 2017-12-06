@@ -15,6 +15,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} - release")
 include_directories(${OpenCV}/include)
 link_directories(${OpenCV}/release/lib)
 message("test" + ${OpenCV} )
-add_executable(Pedestrian main.cpp source/pipeline.cpp source/alg/convexhull.cpp source/alg/hog.cpp source/alg/mog.cpp source/alg/cascadeClass.cpp source/media/videostream.cpp source/media/mediafile.cpp source/train/trainhog.cpp source/test/diffEvoTest.cpp source/test/testClass.cpp source/test/svmTest.cpp 3dparty/de/DifferentialEvolution.h )
+add_executable(Pedestrian main.cpp source/pipeline.cpp source/alg/convexhull.cpp source/alg/hog.cpp source/alg/fhog.cpp source/alg/mog.cpp source/alg/cascadeClass.cpp source/media/videostream.cpp source/media/mediafile.cpp source/train/trainhog.cpp source/train/trainfhog.cpp source/test/diffEvoTest.cpp source/test/testClass.cpp source/test/svmTest.cpp 3dparty/de/DifferentialEvolution.h source/utils/extractorROI.cpp source/utils/utils.h source/train/combinedTrainHog.cpp )
 target_link_libraries(Pedestrian opencv_core opencv_highgui opencv_bgsegm
 opencv_imgproc opencv_imgcodecs opencv_video opencv_videoio opencv_objdetect opencv_ml)
