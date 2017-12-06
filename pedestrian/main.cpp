@@ -9,7 +9,7 @@
 //		DATA		 //
 //////////////////////
 
-std::string filename = "C:/Users/Jakub/Downloads/cctv4.mp4";
+std::string filename = "C:/Users/Jakub/Downloads/cctv2.mp4";
 std::string posSamples = "samples/listPos.txt";
 std::string negSamples = "samples/listNeg.txt";
 std::string posSamplesMin = "samples/listPosMinMin.txt";
@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
 		cth.train(posSamplesMin, negSamplesMin);
 	}
 	else if (parser.has("camera"))
+	//TrainFHog tfh;
+	//tfh.train(posSamples,negSamples);
+	//return 0;
+	if( argc > 1)
 	{
 		Pipeline pl;
 		std::cout << "camera";

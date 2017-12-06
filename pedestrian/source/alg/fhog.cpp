@@ -26,7 +26,9 @@ dlib::image_window win;
 
 		if(detector(img).empty())
 			continue;
+
 		 dets[i] = (Utils::vecDlibRectangle2VecOpenCV(detector(img)));
+		 dlib::image_window win;
 		 win.clear_overlay();
 		 win.set_image(img);
 		 win.add_overlay(detector(img), dlib::rgb_pixel(0, 255, 0));
