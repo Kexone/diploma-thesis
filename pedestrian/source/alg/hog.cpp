@@ -36,59 +36,84 @@ Hog::Hog(std::string svmPath)
 	hog.setSVMDetector(hogDetector);
 	std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() <<  std::endl;
 	hogDetector.clear();
+
 }
 
 
 std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
-  
-	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
-       // fflush(stdout);
-        for (size_t x = 0; x < frames.size(); x++) {
-            std::vector<cv::Rect> rRect;
-			std::vector<cv::Rect> found;
-			cv::Mat test = frames[x].croppedImg;
-        	assert(!test.empty());
-			//test.convertTo(test, CV_8UC3);
 
-			//cv::cvtColor(test, test, CV_BGR2GRAY);
-			//cv::equalizeHist(test, test);
-        	
-			cv::imshow("test", test);
-			//cv::waitKey(15);
-            hog.detectMultiScale(
-            						test,					// testing img
-            						found,					// foundLocation <rect>
-            						1,						// hitThreshold = 0 // 1
-            						cv::Size(8, 8),			// winStride size(8, 8)
-            						cv::Size(0, 0),			// padding size(0, 0)
-            						1.05,					// scale = 1,05
-            						1,						// finalThreshold = 2 // 0
-									false					// use meanshift grouping = false
-            				    );
-			test.release();
+	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
+	// fflush(stdout);
+	for (size_t x = 0; x < frames.size(); x++) {
+		std::vector<cv::Rect> rRect;
+		std::vector<cv::Rect> found;
+		cv::Mat test = frames[x].croppedImg;
+		assert(!test.empty());
+		//test.convertTo(test, CV_8UC3);
+
+		//cv::cvtColor(test, test, CV_BGR2GRAY);
+		//cv::equalizeHist(test, test);
+
+		cv::imshow("test", test);
+		//cv::waitKey(15);
+		hog.detectMultiScale(
+			test,					// testing img
+			found,					// foundLocation <rect>
+			1,						// hitThreshold = 0 // 1
+			cv::Size(8, 8),			// winStride size(8, 8)
+			cv::Size(0, 0),			// padding size(0, 0)
+			1.05,					// scale = 1,05
+			1,						// finalThreshold = 2 // 0
+			false					// use meanshift grouping = false
+		);
+		test.release();
 		//	std::cout << found.size() << std::endl;
 
-            if (found.empty()) {
-                continue;
-            }
-            size_t i, j;
+		if (found.empty()) {
+			continue;
+		}
+		size_t i, j;
 
-            for (i = 0; i< found.size(); i++)
-            {
-                //cv::Rect r = found[i];
+		for (i = 0; i< found.size(); i++)
+		{
+			//cv::Rect r = found[i];
 
-                //for (j = 0; j<found.size(); j++)
-                //    if (j != i && (r & found[j]) == r)
-              //          break;
-            //    if (j == found.size())
-                    found_filtered[x].push_back(found[i]);
-					//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
-          //          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
-            }
-         //   cv::imshow("test", test);
-            //found.clear();
-        }
-        return found_filtered;
+			//for (j = 0; j<found.size(); j++)
+			//    if (j != i && (r & found[j]) == r)
+			//          break;
+			//    if (j == found.size())
+			found_filtered[x].push_back(found[i]);
+			//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
+			//          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
+		}
+		//   cv::imshow("test", test);
+		//found.clear();
+	}
+	return found_filtered;
+}
+
+std::vector < cv::Rect > Hog::detect(cv::Mat& frame) {
+
+	// fflush(stdout);
+		std::vector<cv::Rect> found;
+		assert(!frame.empty());
+		//test.convertTo(test, CV_8UC3);
+
+		//cv::cvtColor(test, test, CV_BGR2GRAY);
+		//cv::equalizeHist(test, test);
+
+		hog.detectMultiScale(
+			frame,					// testing img
+			found,					// foundLocation <rect>
+			1,						// hitThreshold = 0 // 1
+			cv::Size(8, 8),			// winStride size(8, 8)
+			cv::Size(0, 0),			// padding size(0, 0)
+			1.05,					// scale = 1,05
+			1,						// finalThreshold = 2 // 0
+			false					// use meanshift grouping = false
+		);
+
+	return found;
 }
 
 void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)

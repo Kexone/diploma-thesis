@@ -66,7 +66,7 @@ public:
 		return rects;
 	}
 
-	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector<int> &labels, cv::Size pedSize, bool isNeg = false)
+	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false)
 	{
 		assert(!path.empty());
 		cv::Mat frame;
@@ -78,15 +78,15 @@ public:
 			if (frame.empty())		std::cout << "fail" << std::endl;
 			cv::resize(frame, frame, pedSize);
 			dstList.push_back(frame.clone());
-		}
-		if (!isNeg) {
-			labels.push_back(1);
-		}
-		else {
-			labels.push_back(0);
+			if (!isNeg) {
+				labels.push_back(1);
+			}
+			else {
+				labels.push_back(0);
+			}
 		}
 	}
-	static void fillSamples2List(std::string &path, std::vector< dlib::matrix < TrainFHog::pixel_type> > &dstList, std::vector<int> &labels, cv::Size pedSize, bool isNeg = false)
+	static void fillSamples2List(std::string &path, std::vector< dlib::matrix < TrainFHog::pixel_type> > &dstList, std::vector<float> &labels, cv::Size pedSize, bool isNeg = false)
 	{
 	//	int i = 0;
 		assert(!path.empty());

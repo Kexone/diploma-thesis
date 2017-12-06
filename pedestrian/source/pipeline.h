@@ -16,7 +16,7 @@ class Pipeline
 {
 public:
     Pipeline();
-    void execute(std::vector<cv::Mat> frames);
+    void executeImages(std::string testSamplesPath);
     void execute(int cameraFeed);
     void execute(std::string cameraFeed);
 
@@ -42,10 +42,11 @@ private:
     VideoStream *vs;
     cv::Mat localFrame;
 
-    void process(cv::Mat frame);
-	void preprocessing(cv::Mat &frame);
+    void process(cv::Mat &frame);
+	void processStandaloneIm(cv::Mat &frame);
+	void preprocessing(cv::Mat &frame, bool afterMog = false);
     void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
-
+	void draw2mat(std::vector < cv::Rect > &rect);
 
 };
 

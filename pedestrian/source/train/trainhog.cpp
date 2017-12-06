@@ -48,8 +48,8 @@ void TrainHog::trainFromMat(std::string matPath, std::string labelsPath)
 	fs["samples"] >> trainMat;
 
 	std::ifstream is(labelsPath);
-	std::istream_iterator<int> start(is), end;
-	std::vector< int > labels = std::vector<int> (start, end);
+	std::istream_iterator < int > start(is), end;
+	std::vector< int > labels = std::vector < int > (start, end);
 
 	trainSvm(trainMat, labels);
 }
@@ -63,9 +63,9 @@ void TrainHog::train(std::string posSamples, std::string negSamples, bool saveDa
     cv::Mat trainMat;
 
 	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize,true);
-	std::cout << "Positive samples: " << posSamples.size() << std::endl;
-	std::cout << "Negative samples: " << negSamples.size() << std::endl;
+	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize,true);
+	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
+	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
     extractFeatures(posSamplesLst, gradientLst);
     extractFeatures(negSamplesLst, gradientLst);
@@ -74,6 +74,11 @@ void TrainHog::train(std::string posSamples, std::string negSamples, bool saveDa
 	if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
+}
+
+cv::Size TrainHog::getPedSize()
+{
+	return pedestrianSize;
 }
 
 cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
@@ -142,12 +147,12 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
 
 		gr.convertTo(gr, CV_8U);
 
-		//hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0));
-		//gradientLst.push_back(cv::Mat(descriptors).clone());
+		hog.compute(mat, descriptors,cv::Size(8, 8),cv::Size(0, 0));
+		gradientLst.push_back(cv::Mat(descriptors).clone());
 
 		//gradientLst.push_back(cv::Mat(featureSobel(mat, 80)).clone());
 
-		gradientLst.push_back( featureColorGradient(gr,hog).clone() );
+		//gradientLst.push_back( featureColorGradient(gr,hog).clone() );
     }
 }
 
@@ -155,8 +160,8 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 {
     std::cout << "START training ..." << std::endl;
 	clock_t timer = clock();
-
-    cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+	//cv::Ptr<cv::ml::Boost> svm = cv::ml::Boost::create();
 
 	svm->setCoef0(coef0);
 	svm->setDegree(degree);

@@ -94,11 +94,6 @@ TrainFHog::TrainFHog()
 void TrainFHog::train(std::string posSamples, std::string negSamples)
 {
 
-
-
-
-
-
 	const std::string parser = "dataset/training.xml";
 	const std::string samplesPath = "dataset/imgSamples.txt";
 
@@ -196,6 +191,45 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 		featuresLst.push_back(hog);
 	}*/
 
+}
+
+void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> labels)
+{
+	typedef dlib::matrix < float, 1980, 1 > sample_type;
+	typedef radial_basis_kernel < sample_type > kernel_type;
+	std::vector < sample_type > samples;
+	std::vector < float > flLabels(labels.begin(), labels.end());
+	svm_nu_trainer < kernel_type > trainer;
+
+	const double max_nu = 1;
+
+	for(auto &sample :  samplesList)
+	{
+		dlib::cv_image<float> cvTmp(sample);
+		dlib::matrix<float,1980,1> mtxTmp = dlib::mat(cvTmp);
+		samples.push_back(mtxTmp);
+	}
+
+	std::cout << "All samples : " <<  samples.size() << std::endl;
+
+	cout << "doing cross validation" << endl;
+	for (double gamma = 0.00001; gamma <= 1; gamma *= 5)
+	{
+		for (double nu = 0.00001; nu < max_nu; nu *= 5)
+		{
+			// tell the trainer the parameters we want to use
+			trainer.set_kernel(kernel_type(gamma));
+			trainer.set_nu(nu);
+
+			cout << "gamma: " << gamma << "    nu: " << nu;
+			// Print out the cross validation accuracy for 3-fold cross validation using
+			// the current gamma and nu.  cross_validate_trainer() returns a row vector.
+			// The first element of the vector is the fraction of +1 training examples
+			// correctly classified and the second number is the fraction of -1 training
+			// examples correctly classified.
+			cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
+		}
+	}
 }
 
 void bs()
