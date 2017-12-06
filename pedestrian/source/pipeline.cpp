@@ -6,7 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	hog = Hog("48_96_16_8_8_9_01.yml");
+	//hog = Hog("48_96_16_8_8_9_01.yml");
 
 }
 
@@ -82,9 +82,12 @@ void Pipeline::process(cv::Mat &frame)
 	localFrame = frame.clone();
 	preprocessing(frame);
 	frame = mog.processMat(frame);
-	//cv::blur(frame, frame, cv::Size(9, 9));
-	//cv::imshow("MOG", frame);
-	std::vector< cv::Rect > rect = ch.wrapObjects(localFrame, frame);
+	preprocessing(frame, true);
+	///cv::blur(frame, frame, cv::Size(9, 9));
+	
+	cv::imshow("MOG", frame);
+	//cv::imwrite("test.jpg", frame);
+	std::vector< cv::Rect > rect;// = ch.wrapObjects(localFrame, frame);
 
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
@@ -93,13 +96,13 @@ void Pipeline::process(cv::Mat &frame)
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		
-		foundRect = fhog.detect(croppedImages);
-	//	foundRect = hog.detect(croppedImages);
+	//	foundRect = fhog.detect(croppedImages);
+		foundRect = hog.detect(croppedImages);
 		//foundRect = cc.detect(croppedImages);
 		draw2mat(croppedImages, foundRect);
 	}
 	// if(Settings::showVideoFrames)
-	cv::imshow("Result", localFrame);
+	//cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
 }
@@ -120,11 +123,31 @@ void Pipeline::processStandaloneIm(cv::Mat &frame)
 	foundRect.clear();
 }
 
-void Pipeline::preprocessing(cv::Mat& frame)
+void Pipeline::preprocessing(cv::Mat& frame, bool afterMog)
 {
-	cv::cvtColor(frame, frame, CV_BGR2GRAY);
-	frame.convertTo(frame, CV_8UC1);
-	cv::medianBlur(frame, frame, 3);
+	
+	if(afterMog)
+	{
+		int dilation_type = cv::MORPH_RECT;
+		int erosion_type = cv::MORPH_CROSS;
+		int dilation_size = 4;
+		int erosion_size = 3;
+		cv::Mat dilMat = getStructuringElement(dilation_type,
+			cv::Size(2 * dilation_size + 1, 2 * dilation_size + 1),
+			cv::Point(dilation_size, dilation_size));
+		cv::Mat eroMat = getStructuringElement(erosion_type,
+			cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+			cv::Point(erosion_size, erosion_size));
+		cv::dilate(frame, frame, dilMat);
+		cv::erode(frame, frame, eroMat);
+	}
+	else
+	{
+		cv::cvtColor(frame, frame, CV_BGR2GRAY);
+		frame.convertTo(frame, CV_8UC1);
+
+	}
+	//cv::medianBlur(frame, frame, 3);
 	
 	//cv::Mat dst(frame.rows, frame.cols, CV_8UC1);
 	//cv::bilateralFilter(frame, dst, 10, 1.5, 1.5, cv::BORDER_DEFAULT);

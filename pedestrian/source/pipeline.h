@@ -44,7 +44,7 @@ private:
 
     void process(cv::Mat &frame);
 	void processStandaloneIm(cv::Mat &frame);
-	void preprocessing(cv::Mat &frame);
+	void preprocessing(cv::Mat &frame, bool afterMog = false);
     void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
 	void draw2mat(std::vector < cv::Rect > &rect);
 

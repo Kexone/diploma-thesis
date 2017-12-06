@@ -2,6 +2,9 @@
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
 #include <opencv2/core/utility.hpp>
+#include "source/train/combinedTrainHog.h"
+#include "source/utils/extractorROI.h"
+
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
@@ -9,6 +12,8 @@
 std::string filename = "C:/Users/Jakub/Downloads/cctv4.mp4";
 std::string posSamples = "samples/listPos.txt";
 std::string negSamples = "samples/listNeg.txt";
+std::string posSamplesMin = "samples/listPosMinMin.txt";
+std::string negSamplesMin = "samples/listNegMinMin.txt";
 
 ///////////////////////
 //					//
@@ -25,7 +30,19 @@ void printResults(clock_t timer);
 //		 MAIN		 //
 //////////////////////
 
-
+/*
+ * @TODO command line parser
+ * @TODO train cascade classificator
+ * @TODO HAAR cascade classificator
+ * @TODO LBP cascade classificator
+ * @TODO ADA BOOST train
+ * @TODO LBP train
+ * @TODO HAAR train
+ * @TODO optimalize pipeline for all algorithms
+ * @TODO replace convex hull with something more effiness
+ * @TODO refactor Utils class
+ * @TODO docs
+ */
 int main(int argc, char *argv[])
 {
 	const cv::String keys =
@@ -39,9 +56,8 @@ int main(int argc, char *argv[])
 		"{vizualize      | 0        | show result in window   }"
 		;
 
-	Pipeline pl;
 	cv::CommandLineParser parser(argc, argv, keys);
-	parser.about("DIPLOMA THESIS- Pedestrian Detection v1.0.0");
+	parser.about("DIPLOMA THESIS -- Pedestrian Detection v1.0.0");
 	if (parser.has("help"))
 	{
 		parser.printMessage();
@@ -49,16 +65,23 @@ int main(int argc, char *argv[])
 	}
 	else if (parser.has("type"))
 	{
-		std::cout << "training";
-		train();
+		std::cout << "training" << std::endl;
+		std::cout << parser.get<std::string>("type") << std::endl;
+		//train();
+		CombinedTrainHog cth;
+		cth.train(posSamplesMin, negSamplesMin);
 	}
 	else if (parser.has("camera"))
 	{
+		Pipeline pl;
 		std::cout << "camera";
+		ExtractorROI eroi = ExtractorROI(3,"Result.txt");
+		eroi.extractROI(parser.get<std::string>("camera"));
 		pl.execute(0);
 	}
 	else if (parser.has("video"))
 	{
+		Pipeline pl;
 		clock_t timer;
 		timer = clock();
 		pl.execute(parser.get<std::string>("video"));
@@ -68,6 +91,7 @@ int main(int argc, char *argv[])
 	}
 	else if (parser.has("i"))
 	{
+		Pipeline pl;
 		clock_t timer;
 		timer = clock();
 		pl.executeImages(parser.get<std::string>("image"));
@@ -85,21 +109,6 @@ void train()
 	TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
 	th.train(posSamples, negSamples, false);
 	//th.trainFromMat("test.yml", "labels.txt");
-
-	th = TrainHog(105, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.173182, 0.393894, 0.111534, "2292_78_98.3.yml");
-	th.train(posSamples, negSamples, false);
-
-	th = TrainHog(100, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.477977, 0.3514, 0.108495, "2717_78_98.4.yml");
-	th.train(posSamples, negSamples, false);
-
-	th = TrainHog(100, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.477977, 0.3514, 0.108495, "2717_78_98.4.yml");
-	th.train(posSamples, negSamples, false);
-
-	th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.243877, 0.336372, 0.130589, "3111_79_98.4.yml");
-	th.train(posSamples, negSamples, false);
-
-	th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.243877, 0.336372, 0.130589, "3111_79_98.4.yml");
-	th.train(posSamples, negSamples, false);
 }
 
 void printResults(clock_t timer)
