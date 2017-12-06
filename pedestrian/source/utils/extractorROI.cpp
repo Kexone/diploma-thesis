@@ -28,6 +28,7 @@ void ExtractorROI::extractROI(std::string cameraFeed)
 		}
 		fullFrame = frame.clone();
 		img = frame.clone();
+		std::cout << "FRAME " << countFrame << "/" << VideoStream::totalFrames << std::endl;
 		process(countFrame);
 		countFrame++;
 	}
@@ -120,7 +121,6 @@ void ExtractorROI::process(int cFrame)
 	cv::imshow(winName, fullFrame);
 	std::cout << "Active " << indRect << " rect" << std::endl;
 	while (true) {
-		std::cout << indRect << std::endl;
 		char c = cv::waitKey();
 		if (c == 's') {
 			std::sprintf(imgName, "%d_full.jpg", cFrame);
