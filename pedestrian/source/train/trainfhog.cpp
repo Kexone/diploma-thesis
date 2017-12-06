@@ -8,6 +8,45 @@
 using namespace std;
 using namespace dlib;
 
+void pick_best_window_size(
+	const std::vector<std::vector<rectangle> >& boxes,
+	unsigned long& width,
+	unsigned long& height,
+	const unsigned long target_size
+)
+/*!
+ensures
+- Finds the average aspect ratio of the elements of boxes and outputs a width
+and height such that the aspect ratio is equal to the average and also the
+area is equal to target_size.  That is, the following will be approximately true:
+- #width*#height == target_size
+- #width/#height == the average aspect ratio of the elements of boxes.
+!*/
+{
+	// find the average width and height
+	running_stats<double> avg_width, avg_height;
+	for (unsigned long i = 0; i < boxes.size(); ++i)
+	{
+		for (unsigned long j = 0; j < boxes[i].size(); ++j)
+		{
+			avg_width.add(boxes[i][j].width());
+			avg_height.add(boxes[i][j].height());
+		}
+	}
+
+	// now adjust the box size so that it is about target_pixels pixels in size
+	double size = avg_width.mean()*avg_height.mean();
+	double scale = std::sqrt(target_size / size);
+
+	width = (unsigned long)(avg_width.mean()*scale + 0.5);
+	height = (unsigned long)(avg_height.mean()*scale + 0.5);
+	// make sure the width and height never round to zero.
+	if (width == 0)
+		width = 1;
+	if (height == 0)
+		height = 1;
+}
+
 bool contains_any_boxes(
 	const std::vector<std::vector<rectangle> >& boxes
 )
@@ -73,12 +112,13 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 		//dlib::matrix<TrainFHog::pixel_type> test = dlib::mat(cvTmp);
 	//	dstList.push_back(test);
 
-	std::vector<std::vector<rectangle> > object_locations, ignore;
-	ignore = load_image_dataset(images, object_locations,parser);
+	std::vector<std::vector<rectangle> > objectLocations, ignore;
+	ignore = load_image_dataset(images, objectLocations,parser);
 
 	cout << "Number of images loaded: " << images.size() << endl;
-	cout << "Number of obj loaded: " << object_locations[0].size() << endl;
+	cout << "Number of obj loaded: " << objectLocations[0].size() << endl;
 
+	const unsigned int numFolds = images.size();
 
 
 
@@ -100,26 +140,28 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 //	typedef radial_basis_kernel<sample_type> kernel_type;
 	//svm_c_trainer<kernel_type> trainer;
 	typedef scan_fhog_pyramid<pyramid_down<6> > image_scanner_type;
+	const unsigned long targetSize= 96 * 48;
 	image_scanner_type scanner;
-	scanner.set_detection_window_size(48, 96);
+	unsigned long width, height;
+	pick_best_window_size(objectLocations, width, height, targetSize);
+	scanner.set_detection_window_size(width, height);
 	structural_object_detection_trainer<image_scanner_type> trainer(scanner);
 
 
 	trainer.be_verbose();
-	trainer.set_c(0.5);
-	trainer.set_epsilon(0.01);
+	trainer.set_c(0.15325);    // 0.15625
+	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
 	
 	const unsigned long upsample_amount = 0;
-	const unsigned long target_size = 46*96;
 	std::vector<std::vector<rectangle> > removed;
-	removed = remove_unobtainable_rectangles(trainer, images, object_locations);
+	removed = remove_unobtainable_rectangles(trainer, images, objectLocations);
 	// if we weren't able to get all the boxes to match then throw an error 
 	if (contains_any_boxes(removed))
 	{
 		unsigned long scale = upsample_amount + 1;
 		scale = scale*scale;
-		throw_invalid_box_error_message(parser, removed, target_size / scale);
+		throw_invalid_box_error_message(parser, removed, targetSize / scale);
 	}
 	std::vector<std::vector<rectangle>> rects;
 	//object_detector<image_scanner_type> detector = trainer.train(images, object_locations, ignore);
@@ -130,12 +172,11 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	//cout << "Testing detector on training data..." << endl;
 	//cout << "Test detector (precision,recall,AP): " << test_object_detection_function(detector, images, object_locations, ignore) << endl;
 	
-	int num_folds = images.size();
 	
-	randomize_samples(images, object_locations);
+	randomize_samples(images, objectLocations);
 
-	cout << num_folds << "-fold cross validation (precision,recall,AP): "
-		<< cross_validate_object_detection_trainer(trainer, images, object_locations, ignore, num_folds) << endl;
+	cout << numFolds << "-fold cross validation (precision,recall,AP): "
+		<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << endl;
 	
 	//typedef scan_fhog_pyramid<pyramid_down<6>> image_scanner_type;
 	//image_scanner_type scanner;
