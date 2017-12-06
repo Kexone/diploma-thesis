@@ -53,19 +53,17 @@ void ExtractorROI::write2File()
 {
 	std::ofstream fs;
 	fs.open(nameFile, std::ios::app);
-	fs << "************************************" << std::endl;
-	fs << "Total frames: " <<  VideoStream::totalFrames << "FPS: " << VideoStream::fps << std::endl << std::endl;
 	int ind = 0;
+	fs << rects2Save.size() << std::endl;
 	for (auto rects : rects2Save)
 	{
-		fs << ++ind << " FRAME" << std::endl << "\t";
 		for (int i = 0; i < rects.size(); i++)
 		{
-			fs << i << " "<< rects[i].tl() << " " << rects[i].br() << " ";
+			if (rects[i].area() == 0) continue;
+			fs << ind << " "<< rects[i].tl().x << " " << rects[i].tl().y << " " << rects[i].br().x  << " " << rects[i].br().y << std::endl;
 		}
-		fs << std::endl;
+		ind++;
 	}
-	fs << "END OF STREAM" << std::endl;
 	fs.close();
 }
 
@@ -128,7 +126,7 @@ void ExtractorROI::process(int cFrame)
 	rects.clear();
 
 	for (int i = 0; i < rectCount; i++)
-		rects.push_back(cv::Rect(0, 0, 0, 0));
+		rects.push_back(cv::Rect());
 
 	namedWindow(winName, cv::WINDOW_AUTOSIZE);
 	cv::setMouseCallback(winName, onMouse, this);
@@ -164,7 +162,7 @@ void ExtractorROI::process(int cFrame)
 		{
 			indRect = numb;
 			SetConsoleTextAttribute(hConsole, 15);
-			std::cout << "\tnnActive " << indRect << " rect" << std::endl;
+			std::cout << "\tActive " << indRect << " rect" << std::endl;
 			SetConsoleTextAttribute(hConsole, 8);
 		}
 		else {
