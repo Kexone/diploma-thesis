@@ -19,12 +19,12 @@ public:
     void executeImages(std::string testSamplesPath);
     void execute(int cameraFeed);
     void execute(std::string cameraFeed);
-
+	void evaluate(std::string testResultPath, std::string trainedPosPath);
 	static int allDetections;
 
 private:
     Mog mog;
-	FHog fhog;
+//	FHog fhog;
 	//Hog hog = Hog("3.yml");
 	Hog hog;
 	//Hog hog = Hog("48_96_16_8_8_9_01.yml");
@@ -37,16 +37,19 @@ private:
 	//	Hog hog = Hog("3111_79_98.4.yml");
 
 	
-	CascadeClass cc;
+	//CascadeClass cc;
     ConvexHull ch;
     VideoStream *vs;
     cv::Mat localFrame;
+	std::vector < std::vector < std::vector < cv::Rect > > > rects2Eval;
 
-    void process(cv::Mat &frame);
+    void process(cv::Mat &frame, int cFrame);
 	void processStandaloneIm(cv::Mat &frame);
 	void preprocessing(cv::Mat &frame, bool afterMog = false);
     void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
 	void draw2mat(std::vector < cv::Rect > &rect);
+	void saveResults(std::string filePath);
+	void loadRects(std::string filePath, std::vector< std::vector<cv::Rect> > & rects);
 
 };
 

@@ -1,23 +1,35 @@
 #include "extractorROI.h"
-#include <opencv2/videostab/ring_buffer.hpp>
 
-void ExtractorROI::extractROI(std::string cameraFeed)
+
+
+void ExtractorROI::extractROI(std::string videoStreamPath)
 {
-	std::cout << "'s' save" << std::endl << std::endl;
-	std::cout << "'n' next frame" << std::endl << std::endl;
-
-	std::cout << "number changes active rect" << std::endl << std::endl;
-
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 14);
+	std::cout << "\n's' save" << std::endl;
+	std::cout << "'n' next frame"  << std::endl;
 	std::cout << "'r' to reset" << std::endl;
+	std::cout << "'x' immediately write to file (not recommend)" << std::endl;
+	std::cout << "'0-"<<rectCount-1<<"' changes active rect" << std::endl << std::endl;
 
-	vs = new VideoStream(cameraFeed);
+
+	SetConsoleTextAttribute(hConsole, 8);
+	unsigned first = videoStreamPath.find("/");
+	unsigned last = videoStreamPath.find(".");
+	path = videoStreamPath.substr(first+1, last - first-1);
+	if (!std::experimental::filesystem::exists(path))	{
+		std::experimental::filesystem::create_directory(path);
+		std::experimental::filesystem::create_directory(path + "\\ROI");
+	}
+	vs = new VideoStream(videoStreamPath);
 	vs->openCamera();
 
-	std::cout << "Videostream initialized." << std::endl;
+	std::cout << "Videostream initialized.\n\n" << std::endl;
 
 	int countFrame = 0;
-	rects2Save = std::vector < std::vector < cv::Rect > >(VideoStream::totalFrames);
-
+	int totalFrames = VideoStream::totalFrames;
+	rects2Save = std::vector < std::vector < cv::Rect > >(totalFrames);
+	ROIs = std::vector< cv::Mat >(rectCount);
 	while (true) {
 		cv::Mat frame = vs->getFrame();
 		if (frame.empty()) {
@@ -28,29 +40,30 @@ void ExtractorROI::extractROI(std::string cameraFeed)
 		}
 		fullFrame = frame.clone();
 		img = frame.clone();
-		std::cout << "FRAME " << countFrame << "/" << VideoStream::totalFrames << std::endl;
+		SetConsoleTextAttribute(hConsole, 10);
+		std::cout  << countFrame << "/" << totalFrames << " FRAME " << std::endl;
+		SetConsoleTextAttribute(hConsole, 8);
 		process(countFrame);
 		countFrame++;
 	}
+	std::cout << "DONE!" << std::endl;
 }
 
 void ExtractorROI::write2File()
 {
 	std::ofstream fs;
 	fs.open(nameFile, std::ios::app);
-	fs << "************************************" << std::endl;
-	fs << "Total frames: " <<  VideoStream::totalFrames << "FPS: " << VideoStream::fps << std::endl << std::endl;
 	int ind = 0;
+	fs << rects2Save.size() << std::endl;
 	for (auto rects : rects2Save)
 	{
-		fs << ++ind << " FRAME" << std::endl << "\t";
 		for (int i = 0; i < rects.size(); i++)
 		{
-			fs << i << " "<< rects[i].tl() << " " << rects[i].br() << " ";
+			if (rects[i].area() == 0) continue;
+			fs << ind << " "<< rects[i].tl().x << " " << rects[i].tl().y << " " << rects[i].br().x  << " " << rects[i].br().y << std::endl;
 		}
-		fs << std::endl;
+		ind++;
 	}
-	fs << "END OF STREAM" << std::endl;
 	fs.close();
 }
 
@@ -111,21 +124,27 @@ void ExtractorROI::process(int cFrame)
 	point1 = cv::Point(0, 0);
 	point2 = cv::Point(0, 0);
 	rects.clear();
-	for (int i = 0; i < rectCount; i++)
-		rects.push_back(cv::Rect(0, 0, 0, 0));
 
+	for (int i = 0; i < rectCount; i++)
+		rects.push_back(cv::Rect());
 
 	namedWindow(winName, cv::WINDOW_AUTOSIZE);
 	cv::setMouseCallback(winName, onMouse, this);
 	cv::imshow(winName, fullFrame);
-	std::cout << "Active " << indRect << " rect" << std::endl;
+	std::cout << "\tActive " << indRect << " rect" << std::endl;
 	while (true) {
 		char c = cv::waitKey();
 		if (c == 's') {
 			std::sprintf(imgName, "%d_full.jpg", cFrame);
-			cv::imwrite(imgName, img);
+			cv::imwrite(path + "\\" + imgName, img);
+			for (int i = 0; i < ROIs.size(); i++) {
+				if (ROIs[i].rows == 0) continue;
+				std::sprintf(imgName, "%d_roi_%d.jpg", cFrame,i);
+				cv::imwrite(path + "\\ROI\\" + imgName, ROIs[i]);
+				cv::destroyWindow("cropped_" + i);
+			}
 			rects2Save[cFrame] = rects;
-			std::cout << "  Saved " << imgName << std::endl;
+			std::cout << "\tSaved" << std::endl;
 			break;
 		}
 		if (c == 'n') {
@@ -142,11 +161,17 @@ void ExtractorROI::process(int cFrame)
 		if(numb < rectCount && numb >=0)
 		{
 			indRect = numb;
-			std::cout << "Active " << indRect << " rect" << std::endl;
+			SetConsoleTextAttribute(hConsole, 15);
+			std::cout << "\tActive " << indRect << " rect" << std::endl;
+			SetConsoleTextAttribute(hConsole, 8);
 		}
-		else
-			std::cout << "Too much large number. \nActive " << indRect << " rect" << std::endl;
+		else {
+			SetConsoleTextAttribute(hConsole, 12);
+			std::cout << "Too much large number or pressed bad key. " << std::endl;
+			SetConsoleTextAttribute(hConsole, 8);
+		}
 		showImage();
+		drawRects();
 	}
 }
 
@@ -161,8 +186,17 @@ void ExtractorROI::drawRects()
 {
 	img = fullFrame.clone();
 	checkBoundary();
-	for (auto rect : rects) 
-		cv::rectangle(img, rect, cv::Scalar(0, 255, 0), 1, 8, 0);
+
+	for (int i = 0; i < rects.size(); i++)	{
+		if (rects[i].width > 0 && rects[i].height > 0)	{
+			ROIs[i] = fullFrame(rects[i]);
+			cv::imshow("cropped_"+i, ROIs[i]);
+			cv::rectangle(img, rects[i], cv::Scalar(0, 255, 0), 1, 8, 0);
+		}
+		else	{
+			cv::destroyWindow("cropped_" + i);
+		}
+	}
 }
 
 void ExtractorROI::onMouse(int event, int x, int y, int, void* userdata)

@@ -83,9 +83,10 @@ int main(int argc, char *argv[])
 		Pipeline pl;
 		clock_t timer;
 		timer = clock();
-		pl.execute(parser.get<std::string>("video"));
+	//	pl.execute(parser.get<std::string>("video"));
 		timer = clock() - timer;
 		printResults(timer);
+		pl.evaluate("test.txt", "Result.txt");
 		cv::waitKey(0);
 	}
 	else if (parser.has("image"))	{
