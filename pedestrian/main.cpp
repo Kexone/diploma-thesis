@@ -4,6 +4,7 @@
 #include <opencv2/core/utility.hpp>
 #include "source/train/combinedTrainHog.h"
 #include "source/utils/extractorROI.h"
+#include "source/utils/utils.h"
 
 ////////////////////////////////////////////////////////
 //		DATA		 //
@@ -32,16 +33,33 @@ void printResults(clock_t timer);
 
 /*
  * @TODO command line parser
+ * @TODO docs
+ * @TODO add choose to set all params
+ * @TODO ROC curves
+ * 
+ * 
+ * @TODO calc confidence
+ * @TODO testing cycl for c_svc type
+ * @TODO clear bad samples from dataset
+ * @TODO train on same samples
+ * @TODO saving ROI frames from HOG
+ * @TODO train on siluette samples
+ * 
  * @TODO train cascade classificator
  * @TODO HAAR cascade classificator
  * @TODO LBP cascade classificator
  * @TODO ADA BOOST train
  * @TODO LBP train
  * @TODO HAAR train
- * @TODO optimalize pipeline for all algorithms
  * @TODO replace convex hull with something more effiness
+ * 
+ * 
+ * @TODO optimalize pipeline for all algorithms
  * @TODO refactor Utils class
- * @TODO docs
+ * @TODO implement cv::groupRectangles();
+ * @TODO own implementation of detectMultiScale()
+ * @TODO method for cropping from img with sliding window
+ * @TODO sliding window for negative samples
  */
 int main(int argc, char *argv[])
 {
@@ -55,6 +73,7 @@ int main(int argc, char *argv[])
 		"{type  t        |          | type of alg (train, test, video, picture}"
 		"{extract e      |          | extract ROI from videostream}"
 		"{vizualize      | 0        | show result in window   }"
+		"{cs createSample      | 0        |  creating samples from image  }"
 		;
 
 	cv::CommandLineParser parser(argc, argv, keys);
@@ -96,10 +115,18 @@ int main(int argc, char *argv[])
 		cv::waitKey(0);
 	}
 
-	else if (parser.has("extract"))	{
+	else if (parser.has("extract")) {
 		std::cout << "extracting ROI" << std::endl;
 		ExtractorROI eroi = ExtractorROI(2, "Result.txt");
 		eroi.extractROI(parser.get<std::string>("extract"));
+	}
+
+	else if (parser.has("createSample")) {
+		std::cout << "Creating samples from img" << std::endl;
+		clock_t timer = clock();
+		Utils::createSamplesFromImage(parser.get<std::string>("createSample"), "makedSamples");
+		timer = clock() - timer;
+		std::cout << "Parsing took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
 	}
 	
 	return 0;

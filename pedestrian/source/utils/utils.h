@@ -10,6 +10,7 @@
 #include <dlib/opencv/cv_image.h>
 #include <opencv2/opencv.hpp>
 #include <type_traits>
+#include <filesystem>
 #include "../train/trainfhog.h"
 class Utils
 {
@@ -114,6 +115,46 @@ public:
 		}
 	}
 
+	/*
+	 * This method parsing image by sliding window to samples to train
+	 */
+	static void createSamplesFromImage( std::string path, std::string folder )
+	{
+		assert(!path.empty());
+		assert(!folder.empty());
+		cv::Mat img;
+		std::fstream sampleFile;
+		std::string oSample;
+		int nSample = 0;
+		char imgName[30];
+		sampleFile.open(path);
+		if (!std::experimental::filesystem::exists(folder)) {
+			std::experimental::filesystem::create_directory(folder);
+		}
+		folder.append("/");
+		while (sampleFile >> oSample) {
+			img = imread(oSample, cv::IMREAD_COLOR);
+			cv::Mat bcp = img.clone();
+			int xStep = 48, yStep = 96, nCount = 0;
+			for (int y = 0; y < img.rows - yStep; y += yStep)
+			{
+				for (int x = 0; x < img.cols - xStep; x += xStep)
+				{
+					cv::Rect rect(cv::Point(x, y), cv::Point(x + xStep, y + yStep));
+					cv::Mat roi = img(rect);
+					std::sprintf(imgName, "negsample%d_%d.jpg", nSample, nCount);
+					cv::imwrite(folder+imgName, roi);
+					//cv::rectangle(img, rect, cv::Scalar(0, 255, 0));
+					//cv::imshow("test", img);
+					//cv::waitKey(1);
+					//img = bcp.clone();
+					roi.release();
+					nCount++;
+				}
+			}
+			nSample++;
+		}
+	}
 //	static dlib::array2d<dlib::rgb_pixel> toDLib(cv::Mat px)
 //	{
 //		dlib::array2d<dlib::rgb_pixel> out;
