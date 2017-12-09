@@ -5,14 +5,16 @@
 #include "source/train/combinedTrainHog.h"
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
+#include "source/test/svmTest.h"
+#include "source/test/testClass.h"
 
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
 
 std::string filename = "C:/Users/Jakub/Downloads/cctv2.mp4";
-std::string posSamples = "samples/listPos.txt";
-std::string negSamples = "samples/listNeg.txt";
+std::string posSamples = "samples/posSamples.txt";
+std::string negSamples = "samples/negSamples.txt";
 std::string posSamplesMin = "samples/listPosMin.txt";
 std::string negSamplesMin = "samples/listNegMin.txt";
 
@@ -39,10 +41,10 @@ void printResults(clock_t timer);
  * 
  * 
  * @TODO calc confidence
- * @TODO testing cycl for c_svc type
+ * @TODO testing cycl for c_svc type --DONE
  * @TODO clear bad samples from dataset
- * @TODO train on same samples
- * @TODO saving ROI frames from HOG
+ * @TODO train on same samples --DONE
+ * @TODO saving ROI frames from HOG --DONE
  * @TODO train on siluette samples
  * 
  * @TODO train cascade classificator
@@ -85,10 +87,21 @@ int main(int argc, char *argv[])
 	}
 	else if (parser.has("type"))	{
 		std::cout << "training" << std::endl;
+		std::string type = parser.get<std::string>("type");
+		if(!type.compare("test") )
+		{
+			TestClass tc;
+			tc.initTesting();
+		}
 		std::cout << parser.get<std::string>("type") << std::endl;
-		//train();
-		CombinedTrainHog cth;
-		cth.train(posSamplesMin, negSamplesMin);
+		if (!type.compare("train"))
+		{
+			train();
+		}
+		//TestClass ts = TestClass();
+	//	ts.initTesting();
+		//CombinedTrainHog cth;
+		//cth.train(posSamplesMin, negSamplesMin);
 		//TrainFHog tfh;
 		//tfh.train(posSamples,negSamples);
 		//return 0;
@@ -102,7 +115,7 @@ int main(int argc, char *argv[])
 		Pipeline pl;
 		clock_t timer;
 		timer = clock();
-	//	pl.execute(parser.get<std::string>("video"));
+		pl.execute(parser.get<std::string>("video"));
 		timer = clock() - timer;
 		printResults(timer);
 		pl.evaluate("test.txt", "Result.txt");
@@ -117,7 +130,7 @@ int main(int argc, char *argv[])
 
 	else if (parser.has("extract")) {
 		std::cout << "extracting ROI" << std::endl;
-		ExtractorROI eroi = ExtractorROI(2, "Result.txt");
+		ExtractorROI eroi = ExtractorROI(2);
 		eroi.extractROI(parser.get<std::string>("extract"));
 	}
 
@@ -134,8 +147,9 @@ int main(int argc, char *argv[])
 
 void train()
 {
-	TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
-	th.train(posSamples, negSamples, false);
+	TrainHog th;
+	//TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
+	th.train("samples/silhouettesPos.txt", negSamples, false);
 	//th.trainFromMat("test.yml", "labels.txt");
 }
 

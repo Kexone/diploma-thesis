@@ -18,7 +18,6 @@ class ExtractorROI
 {
 private: 
 	VideoStream *vs;
-	std::string nameFile;
 	bool clicked = false;
 	cv::Mat fullFrame;
 	cv::Mat img;
@@ -36,7 +35,7 @@ private:
 	HANDLE hConsole;
 
 public:
-	ExtractorROI(int rectCount, std::string nameOfFile) : rectCount(rectCount), nameFile(nameOfFile) {};
+	ExtractorROI(int rectCount) : rectCount(rectCount) {};
 	void extractROI(std::string videoStreamPath);
 
 private:

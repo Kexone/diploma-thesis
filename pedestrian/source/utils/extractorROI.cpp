@@ -9,7 +9,12 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	std::cout << "\n's' save" << std::endl;
 	std::cout << "'n' next frame"  << std::endl;
 	std::cout << "'r' to reset" << std::endl;
-	std::cout << "'x' immediately write to file (not recommend)" << std::endl;
+	std::cout << "'x' immediately write to file (not recommend)" << std::endl << std::endl;
+	std::cout << "'j' move actual rect to left" << std::endl;
+	std::cout << "'l' move actual rect to right" << std::endl;
+	std::cout << "'i' move actual rect to up" << std::endl;
+	std::cout << "'k' move actual rect to down" << std::endl;
+
 	std::cout << "'0-"<<rectCount-1<<"' changes active rect" << std::endl << std::endl;
 
 
@@ -56,7 +61,7 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 void ExtractorROI::write2File()
 {
 	std::ofstream fs;
-	fs.open(nameFile, std::ios::app);
+	fs.open(path+".txt", std::ios::app);
 	int ind = 0;
 	fs << rects2Save.size() << std::endl;
 	for (auto rects : rects2Save)
@@ -200,7 +205,8 @@ void ExtractorROI::drawRects()
 	for (int i = 0; i < rects.size(); i++)	{
 		std::stringstream ss;
 		ss << "cropped_" << i;
-		cv::destroyWindow(ss.str().c_str());
+		if( i == indRect)
+			cv::destroyWindow(ss.str().c_str());
 
 		if (rects[i].width > 0 && rects[i].height > 0)	{
 			ROIs[i] = fullFrame(rects[i]);
