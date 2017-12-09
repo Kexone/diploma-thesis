@@ -1,13 +1,14 @@
 #include <iostream>
+#include <cstdlib>
+#include <opencv2/core/utility.hpp>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
-#include <opencv2/core/utility.hpp>
 #include "source/train/combinedTrainHog.h"
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
-#include "source/test/svmTest.h"
 #include "source/test/testClass.h"
-
+#include <csignal>
+#include <signal.h>
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
@@ -63,6 +64,7 @@ void printResults(clock_t timer);
  * @TODO method for cropping from img with sliding window
  * @TODO sliding window for negative samples
  */
+
 int main(int argc, char *argv[])
 {
 	const cv::String keys =

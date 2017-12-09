@@ -14,6 +14,10 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	std::cout << "'l' move actual rect to right" << std::endl;
 	std::cout << "'i' move actual rect to up" << std::endl;
 	std::cout << "'k' move actual rect to down" << std::endl;
+	std::cout << "'J' decrease the left" << std::endl;
+	std::cout << "'L' increase the left" << std::endl;
+	std::cout << "'I' decrease the bottom" << std::endl;
+	std::cout << "'K' increase the bottom" << std::endl;
 
 	std::cout << "'0-"<<rectCount-1<<"' changes active rect" << std::endl << std::endl;
 
@@ -148,6 +152,14 @@ void ExtractorROI::process(int cFrame)
 		case 'k':	rects[indRect].y++;
 			break;
 		case 'l':	rects[indRect].x++;
+			break;
+		case 'I':	rects[indRect].height--;
+			break;
+		case 'J':	rects[indRect].width--;
+			break;
+		case 'K':	rects[indRect].height++;
+			break;
+		case 'L':	rects[indRect].width++;
 			break;
 		case 'n':	rects2Save[cFrame] = { cv::Rect(0, 0, 0, 0) };
 					nextOp = false;
