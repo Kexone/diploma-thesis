@@ -30,6 +30,10 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	int totalFrames = VideoStream::totalFrames;
 	rects2Save = std::vector < std::vector < cv::Rect > >(totalFrames);
 	ROIs = std::vector< cv::Mat >(rectCount);
+	rects.clear();
+
+	for (int i = 0; i < rectCount; i++)
+		rects.push_back(cv::Rect());
 	while (true) {
 		cv::Mat frame = vs->getFrame();
 		if (frame.empty()) {
@@ -123,40 +127,46 @@ void ExtractorROI::process(int cFrame)
 	indRect = 0;
 	point1 = cv::Point(0, 0);
 	point2 = cv::Point(0, 0);
-	rects.clear();
-
-	for (int i = 0; i < rectCount; i++)
-		rects.push_back(cv::Rect());
-
+	
 	namedWindow(winName, cv::WINDOW_AUTOSIZE);
 	cv::setMouseCallback(winName, onMouse, this);
 	cv::imshow(winName, fullFrame);
 	std::cout << "\tActive " << indRect << " rect" << std::endl;
-	while (true) {
+	bool nextOp = true;
+	while (nextOp) {
 		char c = cv::waitKey();
-		if (c == 's') {
+		switch (c) {
+		case 'i':	rects[indRect].y--;
+			break;
+		case 'j':	rects[indRect].x--;
+			break;
+		case 'k':	rects[indRect].y++;
+			break;
+		case 'l':	rects[indRect].x++;
+			break;
+		case 'n':	rects2Save[cFrame] = { cv::Rect(0, 0, 0, 0) };
+					nextOp = false;
+			break;
+		case 's':
 			std::sprintf(imgName, "%d_full.jpg", cFrame);
 			cv::imwrite(path + "\\" + imgName, img);
 			for (int i = 0; i < ROIs.size(); i++) {
 				if (ROIs[i].rows == 0) continue;
-				std::sprintf(imgName, "%d_roi_%d.jpg", cFrame,i);
+				std::sprintf(imgName, "%d_roi_%d.jpg", cFrame, i);
 				cv::imwrite(path + "\\ROI\\" + imgName, ROIs[i]);
 				cv::destroyWindow("cropped_" + i);
+				nextOp = false;
 			}
 			rects2Save[cFrame] = rects;
 			std::cout << "\tSaved" << std::endl;
 			break;
-		}
-		if (c == 'n') {
-			rects2Save[cFrame] = { cv::Rect(0, 0, 0, 0) };
+		case 'r': { rects[indRect].x = 0; rects[indRect].y = 0; rects[indRect].width = 0; rects[indRect].height = 0; }
+				  img = fullFrame.clone();
+			break;
+		case 'x':	write2File();
+			nextOp = false;
 			break;
 		}
-		if (c == 'x') {
-			write2File();
-			break;
-		}
-		if (c == 'r') { rects[indRect].x = 0; rects[indRect].y = 0; rects[indRect].width = 0; rects[indRect].height = 0; }
-
 		int numb =  static_cast<int>(c - '0');
 		if(numb < rectCount && numb >=0)
 		{
@@ -165,11 +175,11 @@ void ExtractorROI::process(int cFrame)
 			std::cout << "\tActive " << indRect << " rect" << std::endl;
 			SetConsoleTextAttribute(hConsole, 8);
 		}
-		else {
+		/*else {
 			SetConsoleTextAttribute(hConsole, 12);
 			std::cout << "Too much large number or pressed bad key. " << std::endl;
 			SetConsoleTextAttribute(hConsole, 8);
-		}
+		}*/
 		showImage();
 		drawRects();
 	}
@@ -188,13 +198,14 @@ void ExtractorROI::drawRects()
 	checkBoundary();
 
 	for (int i = 0; i < rects.size(); i++)	{
+		std::stringstream ss;
+		ss << "cropped_" << i;
+		cv::destroyWindow(ss.str().c_str());
+
 		if (rects[i].width > 0 && rects[i].height > 0)	{
 			ROIs[i] = fullFrame(rects[i]);
-			cv::imshow("cropped_"+i, ROIs[i]);
+			cv::imshow(ss.str().c_str(), ROIs[i]);
 			cv::rectangle(img, rects[i], cv::Scalar(0, 255, 0), 1, 8, 0);
-		}
-		else	{
-			cv::destroyWindow("cropped_" + i);
 		}
 	}
 }
