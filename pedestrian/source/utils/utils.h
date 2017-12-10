@@ -74,7 +74,7 @@ public:
 		std::fstream sampleFile(path);
 		std::string oSample;
 		while (sampleFile >> oSample) {
-			std::cout << oSample << std::endl;
+		//	std::cout << oSample << std::endl;
 			frame = cv::imread(oSample, CV_32FC3);
 			if (frame.empty())		std::cout << "fail" << std::endl;
 			cv::resize(frame, frame, pedSize);

@@ -1,7 +1,5 @@
 #include "diffEvoTest.h"
-std::random_device rd;
-std::mt19937 gen(rd());
-std::uniform_int_distribution<> dis(90, 200);
+
 
 double DiffEvoTest::EvaluteCost(std::vector<double> inputs) const
 {

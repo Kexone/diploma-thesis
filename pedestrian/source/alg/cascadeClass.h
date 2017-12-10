@@ -11,6 +11,8 @@ class CascadeClass
 {
 public:
 	CascadeClass();
+
+
 	std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frames);
 
 private:
