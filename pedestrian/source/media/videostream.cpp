@@ -19,7 +19,7 @@ cv::Mat VideoStream::getFrame()
 {
     cv::Mat cameraFrame;
     if (!capture.isOpened())
-        return cameraFrame;
+        return cv::Mat();
     capture >> cameraFrame;
     return cameraFrame;
 }

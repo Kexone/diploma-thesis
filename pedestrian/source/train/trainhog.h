@@ -40,7 +40,9 @@ public:
 		int degree, double gamma, double nu, double p, double c, std::string classifierName);
 	void printSettings();
 	void trainFromMat(std::string path, std::string labelsPath);
+	void trainFromMat(cv::Mat trainMat, std::vector < int > labels);
     void train(std::string posSamples, std::string negSamples, bool saveData);
+	void calcMatForTraining(std::string posSamples, std::string negSamples, cv::Mat &trainMat, std::vector < int > &labels);
 	cv::Size getPedSize();
 };
 

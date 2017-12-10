@@ -6,6 +6,7 @@ std::uniform_int_distribution<> dis(90, 200);
 double DiffEvoTest::EvaluteCost(std::vector<double> inputs) const
 {
 	SvmTest st;
+	st.preprocessing();
 	st.setParams((int) inputs[0] * 1000, inputs[1], inputs[2], inputs[3]);
 
 	return (1 - st.process());

@@ -54,6 +54,11 @@ void TrainHog::trainFromMat(std::string matPath, std::string labelsPath)
 	trainSvm(trainMat, labels);
 }
 
+void TrainHog::trainFromMat(cv::Mat trainMat, std::vector<int> labels)
+{
+	trainSvm(trainMat, labels);
+}
+
 void TrainHog::train(std::string posSamples, std::string negSamples, bool saveData)
 {
 	std::vector< cv::Mat > posSamplesLst;
@@ -74,6 +79,22 @@ void TrainHog::train(std::string posSamples, std::string negSamples, bool saveDa
 	if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
+}
+
+void TrainHog::calcMatForTraining(std::string posSamples, std::string negSamples, cv::Mat& trainMat, std::vector<int> &labels)
+{
+	std::vector< cv::Mat > posSamplesLst;
+	std::vector< cv::Mat > negSamplesLst;
+	std::vector< cv::Mat > gradientLst;
+
+	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
+	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize, true);
+	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
+	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
+
+	extractFeatures(posSamplesLst, gradientLst);
+	extractFeatures(negSamplesLst, gradientLst);
+	convertSamples2Mat(gradientLst, trainMat);
 }
 
 cv::Size TrainHog::getPedSize()

@@ -33,9 +33,17 @@ private:
 	std::string posSamplesMin;
 	std::string negSamplesMin;
 
+	cv::Mat trainMat;
+	std::vector < int > labels;
+	std::vector< cv::Mat > posTestLst;
+	std::vector< cv::Mat > negTestLst;
+
+
 public:
 	SvmTest();
 	void setParams(int maxIter, double nu, double c, double p);
+	void setParams(int maxIter, double c, double gamma);
+	void preprocessing();
 	float process();
 	static void initResultFile(std::stringstream &ss);
 };

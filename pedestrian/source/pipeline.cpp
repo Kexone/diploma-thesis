@@ -6,7 +6,8 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	hog = Hog("48_96_16_8_8_9_01.yml");
+	hog = Hog("test.yml");
+//	hog = Hog("48_96_16_8_8_9_01.yml");
 
 }
 
@@ -17,6 +18,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	cv::Mat frame;
 	std::fstream sampleFile(testSamplesPath);
 	std::string oSample;
+
 	while (sampleFile >> oSample) {
 		frame = cv::imread(oSample, CV_32FC3);
         if(frame.empty()) {
@@ -60,6 +62,13 @@ void Pipeline::execute(std::string cameraFeed)
 
     for(int i = 0; ; i++) {
         cv::Mat frame = vs->getFrame();
+		if (i == 201) //DEBUG
+		{
+			delete vs;
+			saveResults("test.txt");
+			break;
+
+		}
         if(frame.empty()) {
 			delete vs;
 			saveResults("test.txt");
@@ -107,11 +116,11 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 		foundRect = hog.detect(croppedImages);
 		//foundRect = cc.detect(croppedImages);
 		rects2Eval[cFrame] = foundRect;
-	//	draw2mat(croppedImages, foundRect);
+		draw2mat(croppedImages, foundRect);
 	foundRect.clear();
 	}
 	// if(Settings::showVideoFrames)
-	//cv::imshow("Result", localFrame);
+	cv::imshow("Result", localFrame);
 	frame.release();
 	rect.clear();
 }
@@ -225,11 +234,12 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 	iss >> curLine;
 	rects = std::vector< std::vector<cv::Rect> >(curLine);
 	while (!iss.eof()) {
-
+		
 		iss >> cFrame >> x1 >> y1 >> x2 >> y2;
 		cv::Point p1(x1, y1);
 		cv::Point p2(x2, y2);
-		rects[cFrame].emplace_back(cv::Rect(p1, p2));
+		if(cFrame >= 0)
+			rects[cFrame].emplace_back(cv::Rect(p1, p2));
 	}
 }
 
@@ -241,19 +251,21 @@ void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 	loadRects("trained.txt", trained);
 	int truePos = 0, falsePos = 0;
 	int trueNeg = 0, falseNeg = 0;
-	for (int i = 0; i < test.size(); i++) {
+	for (int i = 0; i < trained.size(); i++) {
+		if (i == 201) break; //@DEBUG
 		if (test[i].empty() && trained[i].empty()) { trueNeg++;  continue; } // There is no pedestrian - OK
-		if (test[i].empty() && !trained[i].empty()) { falseNeg++; continue; } // There is no pedestrian but something detect
-		if (!test[i].empty() && trained[i].empty()) { falsePos++; continue; } // There is pedestrian but no detect
+		if (test[i].empty() && !trained[i].empty()) { falsePos+=trained[i].size(); continue; } // There is no pedestrian but something detect
+		if (!test[i].empty() && trained[i].empty()) { falseNeg+=test[i].size(); continue; } // There is pedestrian but no detect
 
-		for (int j = 0; j < test[i].size(); j++) {
+		for (int j = 0; j < trained[i].size(); j++) {
+		//	if(trained[i].size() < test[i].size() ) { falsePos++; continue; } // There is pedestrian but no detect
 			if (cv::norm(test[i][j].x - trained[i][j].x) < 51 &&  cv::norm(test[i][j].y - trained[i][j].y) < 51)
 			{
-				truePos++; // Pedestrian detected !
+				truePos += test[i].size(); // Pedestrian detected !
 			}
 			else
 			{
-				falsePos++; // Pedestrian no detected !
+				falsePos += trained[i].size(); // Pedestrian no detected !
 			}
 		}
 
@@ -266,6 +278,7 @@ void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 	std::cout << "True Negative: " << trueNeg << std::endl;
 	std::cout << "False Negative: " << falseNeg << std::endl;
 	std::cout << "Accuracy: " << acc << std::endl;
+	std::cout << "Accuracy (%): " << static_cast<int>(acc*100) << std::endl;
 
 	std::ofstream ofs;
 	ofs.open("results.txt");

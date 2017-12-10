@@ -4,7 +4,9 @@
 #define PARAMETER_C  2
 #define PARAMETER_P  3
 
-
+#define TYPE_TEST_RANDOM 1
+#define TYPE_TEST_DIFF_EVO 2
+#define TYPE_TEST_NESTED_ITER 3
 
 TestClass::TestClass()
 {
@@ -22,18 +24,20 @@ void TestClass::testingSvm()
 	std::cout << "\n\n******************" << std::endl;
 	std::cout << "***  SVM TEST  ***" << std::endl;
 	std::cout << "******************" << std::endl;
-	std::cout << "DIFFERENTIAL EVOLUTION (1)\nRANDOM TESTING (2)\nCHOOSE TYPE: ";
+	std::cout << "DIFFERENTIAL EVOLUTION (1)\nRANDOM TESTING (2)\nNESTED ITERATION (3)\nCHOOSE TYPE: ";
 	std::cin >> typeTest;
 
 
 	if (typeTest == 1)
 	{
-		initLog(3);
+		initLog(TYPE_TEST_DIFF_EVO);
 		SvmTest::initResultFile(ss);
 		diffEvoTest();
 	}
 	else if (typeTest == 2)
 		randomTest(typeTest);
+	else if (typeTest == 3)
+		iterationCycle();
 }
 
 void TestClass::randomTest(int typeTest)
@@ -73,13 +77,13 @@ void TestClass::randomTest(int typeTest)
 		std::cout << "NUMBER OF ITERATIONS PER CYCLE:";
 		std::cin >> iterChange;
 	}
-	initLog(typeTest,typeIncr,maxRepeatTest);
+	initLog(typeTest-1,typeIncr,maxRepeatTest);
 	nu = 0.0;
 	p = 0.0;
 	c = 0.0;
 	SvmTest svm;
-	
-	SvmTest::initResultFile(ss);
+	svm.preprocessing();
+	svm.initResultFile(ss);
 
 	std::cout << std::endl << "*** TESTING HAS STARTED ***" << std::endl << std::endl;
 
@@ -130,6 +134,26 @@ void TestClass::incrementSvmValues(int typeIncr, int maxRepTest)
 
 }
 
+void TestClass::iterationCycle()
+{
+	std::cout << "This testing is only for type C_SVC" << std::endl;
+	initLog(TYPE_TEST_NESTED_ITER);
+	SvmTest svm;
+	svm.preprocessing();
+	svm.initResultFile(ss);
+	for (int iter = 50; iter < 500; iter += 50) {
+		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
+		{
+			for (double c = 0.0001; c < 1; c *= 5)
+			{
+				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << std::endl;
+				svm.setParams(iter, c, gamma);
+				svm.process();
+			}
+		}
+	}
+}
+
 void TestClass::diffEvoTest()
 {
 	int dimsCount = 4;
@@ -147,8 +171,9 @@ void TestClass::initLog(int typeTest, int typeIncr, int maxRepeatTest)
 	std::string incrType = "SOFT";
 	std::string iterType = "SINGLE";
 	std::string testName = "SVM";
-	if (typeTest == 2) incrType = "GROSS";
-	if (typeTest == 3) incrType = "DIFFERENTIAL EVOLUTION";
+	if (typeTest == TYPE_TEST_RANDOM) incrType = "GROSS";
+	if (typeTest == TYPE_TEST_DIFF_EVO) incrType = "DIFFERENTIAL EVOLUTION";
+	if (typeTest == TYPE_TEST_NESTED_ITER) incrType = "NESTED ITERATION";
 	else if (typeIncr == 2) iterType = "ALL AT ONCE";
 	else if (typeIncr == 3) iterType = "ONLY ITERATION";
 
@@ -157,7 +182,7 @@ void TestClass::initLog(int typeTest, int typeIncr, int maxRepeatTest)
 	ss << "\t\t******************" << std::endl;
 	ss << "\t\t***  "<< testName <<" TEST  ***" << std::endl;
 	ss << "\t\t******************" << std::endl;
-	if (typeTest != 3) {
+	if (typeTest != TYPE_TEST_DIFF_EVO && typeTest != TYPE_TEST_NESTED_ITER) {
 		ss << "NUMBER OF REPEATS: " << maxRepeatTest << std::endl;
 		ss << "REGRESSION TYPE: " << incrType << std::endl;
 		ss << "INCREMENT TYPE: " << iterType << std::endl;

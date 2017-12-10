@@ -26,6 +26,12 @@ std::string negSamplesMin = "samples/listNegMin.txt";
 //////////////////////
 
 void train();
+/*
+* Print the results on screen
+*
+* @param timer represent time of the duration of the algorithm
+*
+*/
 void printResults(clock_t timer);
 
 ///////////////////////
@@ -35,17 +41,23 @@ void printResults(clock_t timer);
 //////////////////////
 
 /*
+ *
+ * @TODO train on same samples --DONE
+ * @TODO saving ROI frames from HOG --DONE
+ * @TODO method for cropping from img with sliding window -- DONE
+ * @TODO sliding window for negative samples --DONE
+ * 
+ * 
  * @TODO command line parser
  * @TODO docs
  * @TODO add choose to set all params
  * @TODO ROC curves
  * 
- * 
+ * @TODO clear all global variables
  * @TODO calc confidence
  * @TODO testing cycl for c_svc type --DONE
  * @TODO clear bad samples from dataset
- * @TODO train on same samples --DONE
- * @TODO saving ROI frames from HOG --DONE
+
  * @TODO train on siluette samples
  * 
  * @TODO train cascade classificator
@@ -61,8 +73,7 @@ void printResults(clock_t timer);
  * @TODO refactor Utils class
  * @TODO implement cv::groupRectangles();
  * @TODO own implementation of detectMultiScale()
- * @TODO method for cropping from img with sliding window
- * @TODO sliding window for negative samples
+
  */
 
 int main(int argc, char *argv[])
@@ -79,7 +90,7 @@ int main(int argc, char *argv[])
 		"{vizualize      | 0        | show result in window   }"
 		"{cs createSample      | 0        |  creating samples from image  }"
 		;
-
+	
 	cv::CommandLineParser parser(argc, argv, keys);
 	parser.about("DIPLOMA THESIS -- Pedestrian Detection v1.0.0");
 	if (parser.has("help"))
@@ -117,10 +128,10 @@ int main(int argc, char *argv[])
 		Pipeline pl;
 		clock_t timer;
 		timer = clock();
-		pl.execute(parser.get<std::string>("video"));
+	//	pl.execute(parser.get<std::string>("video"));
 		timer = clock() - timer;
 		printResults(timer);
-		pl.evaluate("test.txt", "Result.txt");
+		pl.evaluate("test.txt", "trained.txt");
 		cv::waitKey(0);
 	}
 	else if (parser.has("image"))	{
@@ -129,7 +140,7 @@ int main(int argc, char *argv[])
 		std::cout << parser.get<std::string>("image") << std::endl;
 		cv::waitKey(0);
 	}
-
+		
 	else if (parser.has("extract")) {
 		std::cout << "extracting ROI" << std::endl;
 		ExtractorROI eroi = ExtractorROI(2);

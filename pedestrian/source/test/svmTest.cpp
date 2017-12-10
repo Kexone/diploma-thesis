@@ -5,16 +5,16 @@
  */
 
 #include "svmTest.h"
+#include "../utils/utils.h"
 
- // The number of clock ticks per minute
+// The number of clock ticks per minute
 #define CLOCKS_PER_MIN  ((clock_t)60000)
 
 int counterTest = 1;
 std::string classifierName = "test.yml";
-std::string posTest = "samples/listPosTestMin.txt";
-std::string negTest = "samples/listNegTestMin.txt";
-std::vector< cv::Mat > posTestLst;
-std::vector< cv::Mat > negTestLst;
+std::string posTest = "samples/posSamples.txt";
+std::string negTest = "samples/negSamples.txt";
+
 
 SvmTest::SvmTest()
 {
@@ -25,22 +25,40 @@ SvmTest::SvmTest()
 	this->coef0 = 0.0;
 	this->degree = 3;
 	this->gamma = 0.1;
-	if (posTestLst.empty() || negTestLst.empty()) {
-		loadMats(posTest, posTestLst);
-		loadMats(negTest, negTestLst);
-	}
-	posSamplesMin = "samples/listPosMin.txt";
-	negSamplesMin = "samples/listNegMin.txt";
+	
 
 
 }
 
 void SvmTest::setParams(int maxIter, double nu, double c, double p)
 {
-	this->maxIterations =  maxIter;
+	this->maxIterations = maxIter;
 	this->nu = nu;
 	this->c = c;
 	this->p = p;
+}
+
+void SvmTest::setParams(int maxIter, double c, double gamma)
+{
+	this->maxIterations = maxIter;
+	this->c = c;
+	this->gamma = gamma;
+}
+
+void SvmTest::preprocessing()
+{
+	TrainHog th;
+	posSamplesMin = "samples/listPos.txt";
+	//posTest = "samples/listPosGridIlid.txt";
+	//posSamplesMin = "samples/listPosTownCenterSarc3d.txt";
+	//posTest = "samples/listPosTownCenterSarc3d.txt";
+	//posSamplesMin = "samples/listPos3DPES_CAVIAR4REID.txt";
+	negSamplesMin = "samples/negSamplesCustom.txt";
+	th.calcMatForTraining(posSamplesMin, negSamplesMin,trainMat,labels);
+	if (posTestLst.empty() || negTestLst.empty()) {
+		loadMats(posTest, posTestLst);
+		loadMats(negTest, negTestLst);
+	}
 }
 
 void SvmTest::initResultFile(std::stringstream &ss)
@@ -65,7 +83,7 @@ float SvmTest::process()
 	TrainHog th = TrainHog(maxIterations, termCriteria, kernel, type, epsilon, coef0, degree, gamma, nu, p, c, classifierName);
 
 	trainTime = clock();
-	th.train(posSamplesMin, negSamplesMin, false);
+	th.trainFromMat(trainMat, labels);
 	trainTime = clock() - trainTime;
 
 	Hog h = Hog(classifierName);
@@ -90,7 +108,7 @@ float SvmTest::process()
 void SvmTest::print2File(int currentTestNumb,int *valuation)
 {
 	std::ofstream file;
-	file.open("result.txt", std::ios::app);
+	file.open("testinResults.txt", std::ios::app);
 
 	file << "\n\t<< START" << currentTestNumb << ".ITERATION>>" << std::endl << std::endl;
 	file << "\t__SVM SETTINGS__" << std::endl;

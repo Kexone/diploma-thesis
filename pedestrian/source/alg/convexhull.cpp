@@ -7,7 +7,8 @@ ConvexHull::ConvexHull() {
 	this->extensionSize = 10;
 }
 
-std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat src_gray)
+// @TODO refactor this class 
+std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat srcGray)
 {
 	assert(!src_gray.empty());
 	
@@ -15,8 +16,8 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat src_gray)
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 	
-	convexHullImage = src_gray.clone();
-    cv::threshold(src_gray, convexHullImage, 180, 255, cv::THRESH_BINARY);
+	convexHullImage = srcGray.clone();
+    cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
     /// Find contours
     cv::findContours(convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
 

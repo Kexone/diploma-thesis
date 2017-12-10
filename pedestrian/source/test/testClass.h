@@ -27,7 +27,7 @@ private:
 	void randomTest(int typeTest);
 	void diffEvoTest();
 	void incrementSvmValues(int typeIncr, int maxRepTest);
-
+	void iterationCycle();
 	void initLog(int typeTest, int typeIncr = 0, int maxRepeatTest = 0);
 
 };

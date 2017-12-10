@@ -1,4 +1,5 @@
 #include "hog.h"
+#include <random>
 
 
 Hog::Hog()
@@ -66,16 +67,24 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 			1,						// finalThreshold = 2 // 0
 			false					// use meanshift grouping = false
 		);
-		test.release();
+		
 		//	std::cout << found.size() << std::endl;
 
 		if (found.empty()) {
 			continue;
 		}
+	
 		size_t i, j;
 
 		for (i = 0; i< found.size(); i++)
 		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<> dis(0, 1000);
+			char imgName[30];
+			std::sprintf(imgName, "bad/%d_negSample_%d.jpg", frames[x].id, dis(gen));
+			cv::Mat cropped(test(found[i]));
+			cv::imwrite(imgName, cropped);
 			//cv::Rect r = found[i];
 
 			//for (j = 0; j<found.size(); j++)
@@ -86,6 +95,7 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 			//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
 			//          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
 		}
+		test.release();
 		//   cv::imshow("test", test);
 		//found.clear();
 	}
