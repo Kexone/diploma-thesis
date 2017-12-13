@@ -7,6 +7,11 @@ class Mog
 {
 public:
     Mog();
+
+	/**
+	 * @brief Applicates MoG mask on frame
+	 * @TODO no return
+	 */
 	cv::Mat processMat(cv::Mat &frame);
 private:
     cv::Ptr< cv::BackgroundSubtractor > pMOG1;  //MOG  Background subtractor

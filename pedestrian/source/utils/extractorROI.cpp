@@ -19,7 +19,7 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	std::cout << "'I' decrease the bottom" << std::endl;
 	std::cout << "'K' increase the bottom" << std::endl;
 
-	std::cout << "'0-"<<rectCount-1<<"' changes active rect" << std::endl << std::endl;
+	std::cout << "'0-"<< N_RECT -1 <<"' changes active rect" << std::endl << std::endl;
 
 
 	SetConsoleTextAttribute(hConsole, 8);
@@ -38,10 +38,10 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	int countFrame = 0;
 	int totalFrames = VideoStream::totalFrames;
 	rects2Save = std::vector < std::vector < cv::Rect > >(totalFrames);
-	ROIs = std::vector< cv::Mat >(rectCount);
+	ROIs = std::vector< cv::Mat >(N_RECT);
 	rects.clear();
 
-	for (int i = 0; i < rectCount; i++)
+	for (int i = 0; i < N_RECT; i++)
 		rects.push_back(cv::Rect());
 	while (true) {
 		cv::Mat frame = vs->getFrame();
@@ -68,6 +68,7 @@ void ExtractorROI::write2File()
 	fs.open(path+".txt", std::ios::app);
 	int ind = 0;
 	fs << rects2Save.size() << std::endl;
+
 	for (auto rects : rects2Save)
 	{
 		for (int i = 0; i < rects.size(); i++)
@@ -80,6 +81,11 @@ void ExtractorROI::write2File()
 	fs.close();
 }
 
+void ExtractorROI::onMouse(int event, int x, int y, int, void* userdata)
+{
+	ExtractorROI* extract = reinterpret_cast<ExtractorROI*>(userdata);
+	extract->onMouse(event, x, y);
+}
 
 void ExtractorROI::onMouse(int event, int x, int y) {
 	switch (event) {
@@ -133,13 +139,13 @@ void ExtractorROI::onMouse(int event, int x, int y) {
 
 void ExtractorROI::process(int cFrame)
 {
+	namedWindow(WIN_NAME, cv::WINDOW_AUTOSIZE);
+	cv::setMouseCallback(WIN_NAME, onMouse, this);
 	indRect = 0;
 	point1 = cv::Point(0, 0);
 	point2 = cv::Point(0, 0);
 	
-	namedWindow(winName, cv::WINDOW_AUTOSIZE);
-	cv::setMouseCallback(winName, onMouse, this);
-	cv::imshow(winName, fullFrame);
+	cv::imshow(WIN_NAME, fullFrame);
 	std::cout << "\tActive " << indRect << " rect" << std::endl;
 	bool nextOp = true;
 	while (nextOp) {
@@ -185,7 +191,7 @@ void ExtractorROI::process(int cFrame)
 			break;
 		}
 		int numb =  static_cast<int>(c - '0');
-		if(numb < rectCount && numb >=0)
+		if(numb < N_RECT && numb >=0)
 		{
 			indRect = numb;
 			SetConsoleTextAttribute(hConsole, 15);
@@ -206,7 +212,7 @@ void ExtractorROI::showImage() {
 	if(clicked)
 		img = fullFrame.clone();
 	cv::rectangle(img, rects[indRect], cv::Scalar(0, 255, 0), 1, 8, 0);
-	cv::imshow(winName, img);
+	cv::imshow(WIN_NAME, img);
 }
 
 void ExtractorROI::drawRects()
@@ -226,12 +232,6 @@ void ExtractorROI::drawRects()
 			cv::rectangle(img, rects[i], cv::Scalar(0, 255, 0), 1, 8, 0);
 		}
 	}
-}
-
-void ExtractorROI::onMouse(int event, int x, int y, int, void* userdata)
-{
-	ExtractorROI* extract = reinterpret_cast<ExtractorROI*>(userdata);
-	extract->onMouse(event, x, y);
 }
 
 void ExtractorROI::checkBoundary() {

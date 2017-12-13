@@ -4,6 +4,9 @@
 #include <opencv2/objdetect.hpp>
 #include <opencv2/videoio.hpp>
 
+/**
+ * class VideoStream
+ */
 class VideoStream
 {
 private:

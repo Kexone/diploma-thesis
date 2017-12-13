@@ -3,6 +3,11 @@
 
 #include "opencv2/imgcodecs.hpp"
 
+/**
+ * Struct CroppedImage
+ * 
+ * This struct serves for save clipping from frame and his offsets
+ */
 struct CroppedImage
 {
 public:

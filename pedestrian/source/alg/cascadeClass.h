@@ -7,12 +7,21 @@
 #include <opencv2/highgui.hpp>
 #include "../media/croppedimage.h"
 
+/**
+ * class CascadeClass
+ * 
+ * This class represents cascade classificator
+ */
 class CascadeClass
 {
 public:
 	CascadeClass();
 
-
+	/**
+	 * @brief
+	 * 
+	 * @param
+	 */
 	std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frames);
 
 private:

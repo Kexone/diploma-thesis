@@ -17,8 +17,20 @@ public:
 	using pixel_type = dlib::bgr_pixel;
 
 	TrainFHog();
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	void train(std::string posSamples, std::string negSamples);
 protected:
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	void testParams(std::vector< cv::Mat > samplesList, std::vector< int > labels);
 
 

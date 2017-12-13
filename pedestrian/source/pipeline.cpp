@@ -10,7 +10,9 @@ Pipeline::Pipeline()
 //	hog = Hog("48_96_16_8_8_9_01.yml");
 
 }
-
+std::vector< std::vector<cv::Rect> > trained;//@DEBUG
+std::vector< std::vector<cv::Rect> > tested;//@DEBUG
+int test;//@DEBUG
 void Pipeline::executeImages(std::string testSamplesPath)
 {
 	allDetections = 0;
@@ -50,7 +52,6 @@ void Pipeline::execute(int cameraFeed = 99)
   //  cv::destroyWindow("Test");
 }
 
-std::stringstream ss;
 
 void Pipeline::execute(std::string cameraFeed)
 {
@@ -59,16 +60,11 @@ void Pipeline::execute(std::string cameraFeed)
     vs->openCamera();
 	std::cout << "Videostream initialized." << std::endl;
 	rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(vs->totalFrames);
-
+	loadRects("trained.txt", trained); // @DEBUG
+	loadRects("test.txt", tested); // @DEBUG
     for(int i = 0; ; i++) {
+		test = i; //@DEBUG
         cv::Mat frame = vs->getFrame();
-		if (i == 201) //DEBUG
-		{
-			delete vs;
-			saveResults("test.txt");
-			break;
-
-		}
         if(frame.empty()) {
 			delete vs;
 			saveResults("test.txt");
@@ -82,7 +78,8 @@ void Pipeline::execute(std::string cameraFeed)
         frame.release();
         
 		cv::waitKey(5);
-		ss << "../img/mat_" << i << ".jpg";
+		std::stringstream ss;
+		ss << "img/mat_" << i << ".jpg";
 		cv::imwrite(ss.str(), localFrame);
 		ss.str("");
 		ss.clear();
@@ -108,14 +105,14 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
+			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		
 	//	foundRect = fhog.detect(croppedImages);
 		foundRect = hog.detect(croppedImages);
 		//foundRect = cc.detect(croppedImages);
-		rects2Eval[cFrame] = foundRect;
+		rects2Eval[cFrame] = rectOffset(foundRect, croppedImages);
 		draw2mat(croppedImages, foundRect);
 	foundRect.clear();
 	}
@@ -179,11 +176,19 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::Rect r = rect[j][i];
-			r.x += cvRound(croppedImages[j].offsetX);
+			//r.x += cvRound(croppedImages[j].offsetX);
 			//r.width = cvRound(croppedImages[j].croppedImg.cols);
-			r.y += cvRound(croppedImages[j].offsetY);
+		//	r.y += cvRound(croppedImages[j].offsetY);
 			//r.height = cvRound(croppedImages[j].croppedImg.rows);
+			if (!trained[test].empty()) {//@DEBUG
+				if (!tested[test].empty()) //@DEBUG
+					cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
+				cv::rectangle(localFrame, trained[test][0], cv::Scalar(0, 0, 255), 3);
+			//	cv::rectangle(localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
+				std::cout << (r & trained[test][0]).area() << std::endl;
+			}
 			cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
+			
 		}
 		allDetections += rect[j].size();
 	}
@@ -243,6 +248,20 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 	}
 }
 
+std::vector<std::vector<cv::Rect>> Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages)
+{
+	std::vector<std::vector<cv::Rect>> rects2Save(rects.size());
+	for (uint j = 0; j < rects.size(); j++) {
+		for (uint i = 0; i < rects[j].size(); i++) {
+			cv::Rect r = rects[j][i];
+			rects[j][i].x += cvRound(croppedImages[j].offsetX);
+			rects[j][i].y += cvRound(croppedImages[j].offsetY);
+			rects2Save[j].push_back(rects[j][i]);
+		}
+	}
+	return rects2Save;
+}
+
 void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 {
 	std::vector< std::vector<cv::Rect> > trained;
@@ -252,41 +271,33 @@ void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 	int truePos = 0, falsePos = 0;
 	int trueNeg = 0, falseNeg = 0;
 	for (int i = 0; i < trained.size(); i++) {
-		if (i == 201) break; //@DEBUG
-		if (test[i].empty() && trained[i].empty()) { trueNeg++;  continue; } // There is no pedestrian - OK
-		if (test[i].empty() && !trained[i].empty()) { falsePos+=trained[i].size(); continue; } // There is no pedestrian but something detect
-		if (!test[i].empty() && trained[i].empty()) { falseNeg+=test[i].size(); continue; } // There is pedestrian but no detect
-
-		for (int j = 0; j < trained[i].size(); j++) {
-		//	if(trained[i].size() < test[i].size() ) { falsePos++; continue; } // There is pedestrian but no detect
-			if (cv::norm(test[i][j].x - trained[i][j].x) < 51 &&  cv::norm(test[i][j].y - trained[i][j].y) < 51)
-			{
-				truePos += test[i].size(); // Pedestrian detected !
-			}
-			else
-			{
-				falsePos += trained[i].size(); // Pedestrian no detected !
+		//std::cout << i << " TESTING!" << std::endl;
+		if (test[i].empty() && trained[i].empty())	{ trueNeg++;  continue; } // There is no pedestrian - OK
+		if (test[i].empty() && !trained[i].empty()) { falsePos += trained[i].size(); continue; } // There is no pedestrian but something detect
+		if (!test[i].empty() && trained[i].empty()) { falseNeg += test[i].size(); continue; } // There is pedestrian but no detected
+		if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); }
+		for (int j = 0; j < test[i].size(); j++) {
+			for(int k = 0; k < trained[i].size(); k++)	{
+				if((trained[i][k] & test[i][j]).area()  > 0)
+				{
+					truePos++; // pedestrian founded
+				}
+				else
+				{
+					falsePos++; // pedestrian not founded
+					falseNeg++; // detect something else than pedestrian
+				}
 			}
 		}
-
 	}
 	float acc = (float)(truePos + trueNeg) /
 		(float)(truePos + trueNeg + falsePos + falseNeg);
+
 
 	std::cout << "True Positive: " << truePos << std::endl;
 	std::cout << "False Positive: " << falsePos << std::endl;
 	std::cout << "True Negative: " << trueNeg << std::endl;
 	std::cout << "False Negative: " << falseNeg << std::endl;
 	std::cout << "Accuracy: " << acc << std::endl;
-	std::cout << "Accuracy (%): " << static_cast<int>(acc*100) << std::endl;
-
-	std::ofstream ofs;
-	ofs.open("results.txt");
-	ofs << "Results" << std::endl;
-	ofs << "True Positive: " << truePos << std::endl;
-	ofs << "False Positive: " << falsePos << std::endl;
-	ofs << "True Negative: " << trueNeg << std::endl;
-	ofs << "False Negative: " << falseNeg << std::endl;
-	ofs << "Accuracy: " << acc << std::endl;
-
+	std::cout << "Accuracy (%): " << static_cast<int>(acc * 100) << std::endl;
 }

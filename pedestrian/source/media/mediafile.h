@@ -4,6 +4,9 @@
 #include <opencv2/highgui.hpp>
 #include <vector>
 
+/**
+ * class MediaFile
+ */
 class MediaFile
 {
 public:

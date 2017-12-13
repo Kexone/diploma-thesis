@@ -35,14 +35,14 @@ void TestClass::testingSvm()
 		diffEvoTest();
 	}
 	else if (typeTest == 2)
-		randomTest(typeTest);
+		randomTest();
 	else if (typeTest == 3)
 		iterationCycle();
 }
 
-void TestClass::randomTest(int typeTest)
+void TestClass::randomTest()
 {
-	int maxRepeatTest, typeIncr;
+	int maxRepeatTest, typeIncr, typeTest;
 	
 	std::cout << "NUMBER OF REPEATS: ";
 	std::cin >> maxRepeatTest;

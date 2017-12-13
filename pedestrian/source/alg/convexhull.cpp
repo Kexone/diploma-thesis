@@ -10,7 +10,7 @@ ConvexHull::ConvexHull() {
 // @TODO refactor this class 
 std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat srcGray)
 {
-	assert(!src_gray.empty());
+	assert(!srcGray.empty());
 	
 	cv::RNG rng(12345);
     std::vector<std::vector<cv::Point> > contours;

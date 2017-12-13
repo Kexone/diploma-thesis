@@ -3,7 +3,10 @@
 
 #include <opencv2/highgui/highgui.hpp>
 
-
+/**
+ * Old settings
+ * @TOOD use it in code
+ */
 struct Settings
 {
     static double mogThreshold;

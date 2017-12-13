@@ -12,6 +12,10 @@
 #include <type_traits>
 #include <filesystem>
 #include "../train/trainfhog.h"
+
+/*
+ * class Utils
+ */
 class Utils
 {
 
@@ -58,6 +62,11 @@ class Utils
 
 public:
 
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	static std::vector < cv::Rect > vecDlibRectangle2VecOpenCV(std::vector< dlib::rectangle > r)
 	{
 		std::vector < cv::Rect > rects;
@@ -67,6 +76,11 @@ public:
 		return rects;
 	}
 
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false)
 	{
 		assert(!path.empty());
@@ -87,6 +101,12 @@ public:
 			}
 		}
 	}
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	static void fillSamples2List(std::string &path, std::vector< dlib::matrix < TrainFHog::pixel_type> > &dstList, std::vector<float> &labels, cv::Size pedSize, bool isNeg = false)
 	{
 	//	int i = 0;
@@ -115,8 +135,8 @@ public:
 		}
 	}
 
-	/*
-	 * This method parsing image by sliding window to samples to train
+	/**
+	 * @brief This method parsing image by sliding window to samples to train
 	 */
 	static void createSamplesFromImage( std::string path, std::string folder )
 	{

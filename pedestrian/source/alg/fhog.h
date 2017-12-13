@@ -18,14 +18,30 @@
 #include <dlib/image_transforms.h>
 #include <dlib/opencv/cv_image.h>
 #include <opencv2/opencv.hpp>
+
+/**
+ * class FHog
+ */
 class FHog
 {
 public:
 	FHog();
 //	FHog(int def);
 	//FHog(std::string svmPath);
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	std::vector< std::vector < cv::Rect  > > detect(std::vector< CroppedImage > &frame);
 	//void detect(std::vector< CroppedImage > &frame);
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);
 
 private:
