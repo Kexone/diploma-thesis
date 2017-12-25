@@ -13,11 +13,8 @@
 //		DATA		 //
 //////////////////////
 
-std::string filename = "C:/Users/Jakub/Downloads/cctv2.mp4";
 std::string posSamples = "samples/posSamples.txt";
 std::string negSamples = "samples/negSamples.txt";
-std::string posSamplesMin = "samples/listPosMin.txt";
-std::string negSamplesMin = "samples/listNegMin.txt";
 
 ///////////////////////
 //					//
@@ -133,14 +130,15 @@ void mainFun::type(cv::CommandLineParser parser)
 	}
 	std::cout << parser.get<std::string>("type") << std::endl;
 	if (!type.compare("train"))	{
-		TrainHog th;
+		//TrainHog th;
 		//TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
+		TrainHog th = TrainHog(450, 3, 0, 100, 1.e-06, 0, 3, 0.0005, 0, 0, 0.0001, "2111_79_98.4.yml");
 		th.train(posSamples, negSamples, false);
 		//th.trainFromMat("test.yml", "labels.txt");
 	}
 	else if(!type.compare("combinedTrain"))	{
 		CombinedTrainHog cth;
-		cth.train(posSamplesMin, negSamplesMin);
+		cth.train(posSamples, negSamples);
 	}
 	else if (!type.compare("dlibTrain")) {
 		TrainFHog tfh;
@@ -168,7 +166,7 @@ void mainFun::video(cv::CommandLineParser parser)
 	Pipeline pl;
 	clock_t timer;
 	timer = clock();
-	//pl.execute(parser.get<std::string>("video"));
+	pl.execute(parser.get<std::string>("video"));
 	timer = clock() - timer;
 	printResults(timer);
 	pl.evaluate("test.txt", "trained.txt");

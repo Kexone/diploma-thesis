@@ -6,8 +6,9 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	hog = Hog("test.yml");
-//	hog = Hog("48_96_16_8_8_9_01.yml");
+	//hog = Hog(1);
+	//hog = Hog("test.yml");
+	hog = Hog("48_96_16_8_8_9_01.yml");
 
 }
 std::vector< std::vector<cv::Rect> > trained;//@DEBUG
@@ -105,14 +106,14 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
+			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		
 	//	foundRect = fhog.detect(croppedImages);
 		foundRect = hog.detect(croppedImages);
 		//foundRect = cc.detect(croppedImages);
-		rects2Eval[cFrame] = rectOffset(foundRect, croppedImages);
+		rectOffset(foundRect, croppedImages, rects2Eval[cFrame]);
 		draw2mat(croppedImages, foundRect);
 	foundRect.clear();
 	}
@@ -180,7 +181,7 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 			//r.width = cvRound(croppedImages[j].croppedImg.cols);
 		//	r.y += cvRound(croppedImages[j].offsetY);
 			//r.height = cvRound(croppedImages[j].croppedImg.rows);
-			if (!trained[test].empty()) {//@DEBUG
+			if (false && !trained[test].empty()) {//@DEBUG
 				if (!tested[test].empty()) //@DEBUG
 					cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
 				cv::rectangle(localFrame, trained[test][0], cv::Scalar(0, 0, 255), 3);
@@ -248,18 +249,15 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 	}
 }
 
-std::vector<std::vector<cv::Rect>> Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages)
+void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages, std::vector<std::vector<cv::Rect>> &rects2Save)
 {
-	std::vector<std::vector<cv::Rect>> rects2Save(rects.size());
 	for (uint j = 0; j < rects.size(); j++) {
 		for (uint i = 0; i < rects[j].size(); i++) {
-			cv::Rect r = rects[j][i];
 			rects[j][i].x += cvRound(croppedImages[j].offsetX);
 			rects[j][i].y += cvRound(croppedImages[j].offsetY);
-			rects2Save[j].push_back(rects[j][i]);
 		}
+		rects2Save.push_back(rects[j]);
 	}
-	return rects2Save;
 }
 
 void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)

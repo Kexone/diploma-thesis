@@ -124,7 +124,7 @@ private:
 	*
 	* @param
 	*/
-	std::vector<std::vector<cv::Rect>> rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages);
+	void rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages, std::vector<std::vector<cv::Rect>> &rects2Save);
 
 };
 
