@@ -102,49 +102,6 @@ cv::Size TrainHog::getPedSize()
 	return pedestrianSize;
 }
 
-cv::Mat featureSobel(const cv::Mat& mat, int minThreshold) {
-	cv::Mat src = mat.clone();
-	cv::Mat srcGray, gradX, gradY, grad;
-
-								   // Convert to gray and blur
-	cv::cvtColor(src, srcGray, CV_BGR2GRAY);
-	cv::medianBlur(srcGray, srcGray, 3);
-
-	/// Gradient X & Y
-	Sobel(srcGray, gradX, CV_16S, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT);
-	Sobel(srcGray, gradY, CV_16S, 0, 1, 3, 1, 0, cv::BORDER_DEFAULT);
-
-	// Convert to 8UC1
-	convertScaleAbs(gradX, gradX);
-	convertScaleAbs(gradY, gradY);
-
-	addWeighted(gradX, 0.5, gradY, 0.5, 0, grad);
-
-
-	return grad;
-}
-
-void sum(std::vector<float> &vec, float &channelsValues)
-{
-	float sum = 0;
-	for (auto& n : vec)
-		sum += n;
-	channelsValues = sum;
-}
-cv::Mat featureColorGradient(const cv::Mat &mat, cv::HOGDescriptor hog) {
-	float channelsValues[3];
-	std::vector < cv::Mat > channels(3);
-	std::vector < std::vector < float > > descriptors(3);
-
-	cv::split(mat, channels);
-	for (size_t i = 0; i < channels.size(); i++)
-	{
-		hog.compute(channels[i], descriptors[i], cv::Size(8, 8), cv::Size(0, 0));
-		sum(descriptors[i], channelsValues[i]);
-	}
-	return cv::Mat(descriptors[std::distance(channelsValues, std::find(channelsValues, channelsValues + 5, *std::max_element(channelsValues, channelsValues + 3)))]);
-}
-
 void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst)
 {
     cv::HOGDescriptor hog(

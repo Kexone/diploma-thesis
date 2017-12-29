@@ -9,10 +9,10 @@ public:
     Mog();
 
 	/**
-	 * @brief Applicates MoG mask on frame
-	 * @TODO no return
+	 * @brief Applicates MoG mask on current frame
+	 * @param frame current frame on which will be aplicate MoG mask
 	 */
-	cv::Mat processMat(cv::Mat &frame);
+	void processMat(cv::Mat &frame);
 private:
     cv::Ptr< cv::BackgroundSubtractor > pMOG1;  //MOG  Background subtractor
     cv::Ptr< cv::BackgroundSubtractor > pMOG2; //MOG2 Background subtractor

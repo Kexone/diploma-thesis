@@ -6,7 +6,7 @@ int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline()
 {
-	//hog = Hog(1);
+	//hog = Hog();
 	//hog = Hog("test.yml");
 	hog = Hog("48_96_16_8_8_9_01.yml");
 
@@ -95,13 +95,13 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 {
 	localFrame = frame.clone();
 	preprocessing(frame);
-	frame = mog.processMat(frame);
+	mog.processMat(frame);
 	preprocessing(frame, true);
 	///cv::blur(frame, frame, cv::Size(9, 9));
 	
 	//cv::imshow("MOG", frame);
 	//cv::imwrite("test.jpg", frame);
-	std::vector< cv::Rect > rect = ch.wrapObjects(localFrame, frame);
+	std::vector< cv::Rect > rect = ch.wrapObjects(frame);
 
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
@@ -144,10 +144,6 @@ void Pipeline::preprocessing(cv::Mat& frame, bool afterMog)
 	
 	if(afterMog)
 	{
-		int dilation_type = cv::MORPH_RECT;
-		int erosion_type = cv::MORPH_CROSS;
-		int dilation_size = 4;
-		int erosion_size = 3;
 		cv::Mat dilMat = getStructuringElement(dilation_type,
 			cv::Size(2 * dilation_size + 1, 2 * dilation_size + 1),
 			cv::Point(dilation_size, dilation_size));
@@ -181,12 +177,12 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 			//r.width = cvRound(croppedImages[j].croppedImg.cols);
 		//	r.y += cvRound(croppedImages[j].offsetY);
 			//r.height = cvRound(croppedImages[j].croppedImg.rows);
-			if (false && !trained[test].empty()) {//@DEBUG
-				if (!tested[test].empty()) //@DEBUG
-					cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
-				cv::rectangle(localFrame, trained[test][0], cv::Scalar(0, 0, 255), 3);
-			//	cv::rectangle(localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
-				std::cout << (r & trained[test][0]).area() << std::endl;
+			if (!trained[test].empty()) {//@DEBUG
+				//if (!tested[test].empty()) //@DEBUG
+					//cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
+				cv::rectangle(localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
+				cv::rectangle(localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
+			//	std::cout << (r & trained[test][0]).area() << std::endl;
 			}
 			cv::rectangle(localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
 			
@@ -276,7 +272,7 @@ void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 		if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); }
 		for (int j = 0; j < test[i].size(); j++) {
 			for(int k = 0; k < trained[i].size(); k++)	{
-				if((trained[i][k] & test[i][j]).area()  > 0)
+				if((trained[i][k] & test[i][j]).area()  > (trained[i][k].area()/2))
 				{
 					truePos++; // pedestrian founded
 				}
@@ -288,8 +284,8 @@ void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
 			}
 		}
 	}
-	float acc = (float)(truePos + trueNeg) /
-		(float)(truePos + trueNeg + falsePos + falseNeg);
+	float acc = static_cast<float>(truePos + trueNeg) /
+		static_cast<float>(truePos + trueNeg + falsePos + falseNeg);
 
 
 	std::cout << "True Positive: " << truePos << std::endl;

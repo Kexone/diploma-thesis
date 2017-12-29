@@ -42,6 +42,7 @@ private:
 
 	float accuracy;
 
+	std::string classifierName;
 	std::string posSamplesMin;
 	std::string negSamplesMin;
 

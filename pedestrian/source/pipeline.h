@@ -70,6 +70,11 @@ private:
     cv::Mat localFrame;
 	std::vector < std::vector < std::vector < cv::Rect > > > rects2Eval;
 
+	int dilation_type = cv::MORPH_CROSS;
+	int erosion_type = cv::MORPH_CROSS;
+	int dilation_size = 4;
+	int erosion_size = 3;
+
 	/**
 	* @brief
 	*

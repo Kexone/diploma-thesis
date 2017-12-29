@@ -29,14 +29,15 @@ namespace mainFun {
 	void image(cv::CommandLineParser parser);
 	void extract(cv::CommandLineParser parser);
 	void createSample(cv::CommandLineParser parser);
+	/**
+	* Print the results on screen
+	*
+	* @param timer represent time of the duration of the algorithm
+	*
+	*/
+	void printResults(clock_t timer);
 }
-/**
-* Print the results on screen
-*
-* @param timer represent time of the duration of the algorithm
-*
-*/
-void printResults(clock_t timer);
+
 
 ///////////////////////
 //					//
@@ -189,7 +190,7 @@ void mainFun::createSample(cv::CommandLineParser parser)
 	std::cout << "Parsing took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
 }
 
-void printResults(clock_t timer)
+void mainFun::printResults(clock_t timer)
 {
 	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;

@@ -57,7 +57,7 @@ private:
 	*/
     void getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector );
 
-
+	float predict(cv::Mat img, int flags = 0);
     cv::HOGDescriptor hog;
 	cv::Ptr<cv::ml::SVM> svm;
 };

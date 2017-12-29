@@ -8,11 +8,11 @@ ConvexHull::ConvexHull() {
 }
 
 // @TODO refactor this class 
-std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat srcGray)
+std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
 {
 	assert(!srcGray.empty());
 	
-	cv::RNG rng(12345);
+	//cv::RNG rng(12345);
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 	
@@ -23,38 +23,29 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat src, cv::Mat srcGray)
 
     /// Find the convex hull object for each contour
     std::vector<std::vector<cv::Point> > hulls( contours.size());
-    for (uint i = 0; i < contours.size(); i++)
-    {
-        convexHull(cv::Mat(contours[i]), hulls[i], true);
+    for (uint i = 0; i < contours.size(); i++)	{
+        cv::convexHull(cv::Mat(contours[i]), hulls[i], true);
     }
 
     std::vector <std::vector< cv::Point > > filteredHulls;
 	filterByArea(hulls, filteredHulls);
-
 
     std::vector< cv::Rect > rects (filteredHulls.size());
 	rects.clear();
     for (uint i = 0; i < filteredHulls.size(); i++)
     {
 		cv::Rect rectangle = extendContours(filteredHulls[i]);
-
-        cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-        cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-        cv::drawContours(convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-
         rects.push_back(rectangle);
+      //  cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+    //    cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+      //  cv::drawContours(convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
     }
     /// Show in a window
-    imshow("Hull demo", convexHullImage);
+  //  imshow("Hull demo", convexHullImage);
 
-	convexHullImage.release();
-
-	//std::cout << " CH size: " << rects.size() << std::endl;
+//	convexHullImage.release();
 	if(rects.size() > 1)
 	{
-		//std::cout << "		CH1 size: " << rects[0].size() << std::endl;
-		//		std::cout << "		CH2 size: " << rects[1].size() << std::endl;
-
 		clearInSameRegion(rects);
 	}
     return rects;
@@ -112,7 +103,6 @@ void ConvexHull::clearInSameRegion(std::vector<cv::Rect> &rects)
 		cv::Rect testRect = rects[i];
 		for(uint t = i+1; t < rects.size(); t++)
 		{
-		//	std::cout << testRect.x - rects[t].x << std::endl;
 			if(testRect.x - rects[t].x < deviation)
 			{
 				rects.erase(rects.begin() + t,rects.end());

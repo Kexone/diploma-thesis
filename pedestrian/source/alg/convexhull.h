@@ -19,7 +19,7 @@ public:
 	* @param srcGray binary frame after background substraction (default used MoG2)
 	* @return vector of cv::Rects
 	*/
-    std::vector< cv::Rect > wrapObjects(cv::Mat src, cv::Mat srcGray);
+    std::vector< cv::Rect > wrapObjects(cv::Mat srcGray);
 
 private:
 	cv::Mat convexHullImage;

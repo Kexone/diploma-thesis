@@ -31,7 +31,6 @@ Hog::Hog(std::string svmPath)
 	hog.svmDetector.clear();
 	std::vector< float > hogDetector;
 	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
-
 	getSvmDetector(svm, hogDetector);
 	hog.gammaCorrection = true;
 	hog.setSVMDetector(hogDetector);
@@ -73,9 +72,13 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 		if (found.empty()) {
 			continue;
 		}
-	
+		
+		//std::cout << (predicted) << std::endl;
+		//float confidence = 1.0 / (1.0 + exp(-predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT)));
+		//std::cout << confidence << std::endl;
+	//	std::cout << 1.0f / (1.0f + std::exp(predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT))) << std::endl;
 		size_t i, j;
-
+	
 		for (i = 0; i< found.size(); i++)
 		{
 			std::random_device rd;
@@ -128,13 +131,13 @@ std::vector < cv::Rect > Hog::detect(cv::Mat& frame) {
 
 void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)
 {
-	std::vector< cv::Point > location;
-	std::vector< float > descriptors;
+	//std::vector< cv::Point > location;
+//	std::vector< float > descriptors;
 	hog.winSize = cv::Size(48, 96);
 	for(auto &mat : testLst)
 	{
-		hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
-		int predicted = svm->predict(descriptors);
+		//hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
+		int predicted = predict(mat);
 		if(pedestrian)
 		{
 			if (predicted == 1) nTrue++;
@@ -166,4 +169,11 @@ void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float 
     hog_detector.resize(sv.cols + 1);
     memcpy( &hog_detector[0], sv.ptr(), sv.cols*sizeof( hog_detector[0] ) );
     hog_detector[sv.cols] = (float)-rho;
+}
+
+float Hog::predict(cv::Mat img, int flags)
+{
+	std::vector< float > descriptors;
+	hog.compute(img, descriptors, cv::Size(48, 96), cv::Size(0, 0));
+	return svm->predict(descriptors, cv::noArray(), flags);
 }

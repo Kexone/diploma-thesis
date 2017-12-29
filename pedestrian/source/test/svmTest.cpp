@@ -11,9 +11,6 @@
 #define CLOCKS_PER_MIN  ((clock_t)60000)
 
 int counterTest = 1;
-std::string classifierName = "test.yml";
-std::string posTest = "samples/posSamples.txt";
-std::string negTest = "samples/negSamples.txt";
 
 
 SvmTest::SvmTest()
@@ -25,6 +22,7 @@ SvmTest::SvmTest()
 	this->coef0 = 0.0;
 	this->degree = 3;
 	this->gamma = 0.1;
+	this->classifierName = "test.yml";
 	
 
 
@@ -47,6 +45,8 @@ void SvmTest::setParams(int maxIter, double c, double gamma)
 
 void SvmTest::preprocessing()
 {
+	std::string posTest = "samples/posSamples.txt";
+	std::string negTest = "samples/negSamples.txt";
 	TrainHog th;
 	posSamplesMin = "samples/listPos.txt";
 	//posTest = "samples/listPosGridIlid.txt";
