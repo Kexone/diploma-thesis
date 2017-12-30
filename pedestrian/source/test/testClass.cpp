@@ -141,7 +141,7 @@ void TestClass::iterationCycle()
 	SvmTest svm;
 	svm.preprocessing();
 	svm.initResultFile(ss);
-	for (int iter = 50; iter < 500; iter += 50) {
+	for (int iter = 200; iter < 500; iter += 50) {
 		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
 		{
 			for (double c = 0.0001; c < 1; c *= 5)

@@ -8,7 +8,6 @@
  * class CombinedTrainHog
  * 
  * This class combining calculated features from OpenCV HOG to Dlib SVM classification training
- * @TODO train Dlib SVM from OpenCV HOG features
  */
 class CombinedTrainHog : public TrainHog, TrainFHog
 {
@@ -16,9 +15,11 @@ class CombinedTrainHog : public TrainHog, TrainFHog
 public:
 
 	/**
-	* @brief
+	* @brief This method combine OpenCV computing HOG features and dlib training
+	* Output from this method is Dlib trained classifier
 	*
-	* @param
+	* @param posSamplesPath path of positive samples
+	* @param negSamplesPath path of negative samples
 	*/
 	void train(std::string posSamplesPath, std::string negSamplesPath);
 	

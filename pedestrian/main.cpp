@@ -47,7 +47,7 @@ namespace mainFun {
 
 /* 
  * @TODO command line parser
- * @TODO docs on trainfHog, combinedTrainHog, hog, videostream, mediafile, utils,pipeline,trainhog, fhog, cascadeClass
+ * @TODO docs on trainfHog, hog, videostream, mediafile, utils,pipeline, fhog, cascadeClass
  * @TODO add choose to set all params
  * @TODO ROC curves
  * 
@@ -56,6 +56,7 @@ namespace mainFun {
  * @TODO clear bad samples from dataset
  * @TODO train on siluette samples
  * @TODO parse main body
+ * @TODO train Dlib SVM from OpenCV HOG features
  * 
  * @TODO train cascade classificator
  * @TODO HAAR cascade classificator
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 		"{ image i            |        |  use list of images as input              }"
 		"{ camera c           |        |  enable camera capturing                  }"
 		"{ class svm          |    0   |  trained clasifier path                   }"
-		"{ type  t            |        |  type of alg (train, test, video, picture }"
+		"{ type  t            |        |  type of alg (train, combinedTrain, dlibTrain, test, video, picture }"
 		"{ extract e          |        |  extract ROI from videostream             }"
 		"{ vizualize          |    0   |  show result in window                    }"
 		"{ createSample cs    |    0   |  creating samples from image              }"
@@ -95,11 +96,12 @@ int main(int argc, char *argv[])
 	
 	cv::CommandLineParser parser(argc, argv, keys);
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v1.0.0");
+
 	if (parser.has("help"))	{
 		parser.printMessage();
 		return 0;
 	}
-	else if (parser.has("type"))	{
+	if (parser.has("type"))	{
 		mainFun::type(parser);
 	}
 	else if (parser.has("camera"))	{
@@ -123,7 +125,6 @@ int main(int argc, char *argv[])
 
 void mainFun::type(cv::CommandLineParser parser)
 {
-	std::cout << "training" << std::endl;
 	std::string type = parser.get<std::string>("type");
 	if (!type.compare("test"))	{
 		TestClass tc;

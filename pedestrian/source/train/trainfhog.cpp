@@ -5,11 +5,9 @@
 #include <dlib/gui_widgets.h>
 #include <dlib/image_processing.h>
 #include <dlib/data_io.h>
-using namespace std;
-using namespace dlib;
 
 void pick_best_window_size(
-	const std::vector<std::vector<rectangle> >& boxes,
+	const std::vector<std::vector<dlib::rectangle> >& boxes,
 	unsigned long& width,
 	unsigned long& height,
 	const unsigned long target_size
@@ -24,7 +22,7 @@ area is equal to target_size.  That is, the following will be approximately true
 !*/
 {
 	// find the average width and height
-	running_stats<double> avg_width, avg_height;
+	dlib::running_stats<double> avg_width, avg_height;
 	for (unsigned long i = 0; i < boxes.size(); ++i)
 	{
 		for (unsigned long j = 0; j < boxes[i].size(); ++j)
@@ -48,7 +46,7 @@ area is equal to target_size.  That is, the following will be approximately true
 }
 
 bool contains_any_boxes(
-	const std::vector<std::vector<rectangle> >& boxes
+	const std::vector<std::vector<dlib::rectangle> >& boxes
 )
 {
 	for (unsigned long i = 0; i < boxes.size(); ++i)
@@ -61,11 +59,11 @@ bool contains_any_boxes(
 
 void throw_invalid_box_error_message(
 	const std::string& dataset_filename,
-	const std::vector<std::vector<rectangle> >& removed,
+	const std::vector<std::vector<dlib::rectangle> >& removed,
 	const unsigned long target_size
 )
 {
-	image_dataset_metadata::dataset data;
+	dlib::image_dataset_metadata::dataset data;
 	load_image_dataset_metadata(data, dataset_filename);
 
 	std::ostringstream sout;
@@ -82,7 +80,7 @@ void throw_invalid_box_error_message(
 			sout2 << "  " << imgname << "\n";
 		}
 	}
-	throw error("\n" + wrap_string(sout.str()) + "\n" + sout2.str());
+	throw dlib::error("\n" + dlib::wrap_string(sout.str()) + "\n" + sout2.str());
 }
 
 
@@ -97,7 +95,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	const std::string parser = "dataset/training.xml";
 	const std::string samplesPath = "dataset/imgSamples.txt";
 
-	dlib::array<array2d<unsigned char> > images;
+	dlib::array<dlib::array2d<unsigned char> > images;
 	
 
 	std::fstream sampleFile(samplesPath);
@@ -107,11 +105,11 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 		//dlib::matrix<TrainFHog::pixel_type> test = dlib::mat(cvTmp);
 	//	dstList.push_back(test);
 
-	std::vector<std::vector<rectangle> > objectLocations, ignore;
+	std::vector<std::vector<dlib::rectangle> > objectLocations, ignore;
 	ignore = load_image_dataset(images, objectLocations,parser);
 
-	cout << "Number of images loaded: " << images.size() << endl;
-	cout << "Number of obj loaded: " << objectLocations[0].size() << endl;
+	std::cout << "Number of images loaded: " << images.size() << std::endl;
+	std::cout << "Number of obj loaded: " << objectLocations[0].size() << std::endl;
 
 	const unsigned int numFolds = images.size();
 
@@ -134,13 +132,13 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	//typedef dlib::matrix<float,31,1> sample_type;
 //	typedef radial_basis_kernel<sample_type> kernel_type;
 	//svm_c_trainer<kernel_type> trainer;
-	typedef scan_fhog_pyramid<pyramid_down<6> > image_scanner_type;
+	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
 	const unsigned long targetSize= 96 * 48;
 	image_scanner_type scanner;
 	unsigned long width, height;
 	pick_best_window_size(objectLocations, width, height, targetSize);
 	scanner.set_detection_window_size(width, height);
-	structural_object_detection_trainer<image_scanner_type> trainer(scanner);
+	dlib::structural_object_detection_trainer<image_scanner_type> trainer(scanner);
 
 
 	trainer.be_verbose();
@@ -149,7 +147,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	trainer.set_num_threads(8);
 	
 	const unsigned long upsample_amount = 0;
-	std::vector<std::vector<rectangle> > removed;
+	std::vector<std::vector<dlib::rectangle> > removed;
 	removed = remove_unobtainable_rectangles(trainer, images, objectLocations);
 	// if we weren't able to get all the boxes to match then throw an error 
 	if (contains_any_boxes(removed))
@@ -158,7 +156,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 		scale = scale*scale;
 		throw_invalid_box_error_message(parser, removed, targetSize / scale);
 	}
-	std::vector<std::vector<rectangle>> rects;
+	std::vector<std::vector<dlib::rectangle>> rects;
 	//object_detector<image_scanner_type> detector = trainer.train(images, object_locations, ignore);
 
 	//cout << "Saving trained detector to object_detector.svm" << endl;
@@ -170,8 +168,8 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	
 	randomize_samples(images, objectLocations);
 
-	cout << numFolds << "-fold cross validation (precision,recall,AP): "
-		<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << endl;
+	std::cout << numFolds << "-fold cross validation (precision,recall,AP): "
+		<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
 	
 	//typedef scan_fhog_pyramid<pyramid_down<6>> image_scanner_type;
 	//image_scanner_type scanner;
@@ -195,42 +193,55 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 
 void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> labels)
 {
-	typedef dlib::matrix < float, 1980, 1 > sample_type;
-	typedef linear_kernel< sample_type > kernel_type;
+	typedef dlib::matrix < double, 1980, 1 > sample_type;
+	typedef dlib::linear_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
-	std::vector < float > flLabels(labels.begin(), labels.end());
-	svm_nu_trainer < kernel_type > trainer;
+	std::vector < double > flLabels(labels.begin(), labels.end());
+	dlib::svm_nu_trainer < kernel_type > trainer;
 
 	const double max_nu = 1;
 
 	for(auto &sample :  samplesList)
 	{
 		dlib::cv_image<float> cvTmp(sample);
-		dlib::matrix<float,1980,1> mtxTmp = dlib::mat(cvTmp);
+		dlib::matrix<double,1980,1> mtxTmp = dlib::mat(cvTmp);
 		samples.push_back(mtxTmp);
 	}
 
 	std::cout << "All samples : " <<  samples.size() << std::endl;
 
-	cout << "doing cross validation" << endl;
-	//for (float gamma = 0.0001; gamma <= 1; gamma *= 5)
+	std::cout << "doing cross validation" << std::endl;
+	for (float gamma = 0.0001; gamma <= 1; gamma *= 5)
 	{
 		for (double nu = 0.0001; nu < max_nu; nu *= 5)
 		{
 			// tell the trainer the parameters we want to use
 			trainer.set_kernel(kernel_type());
 			trainer.set_nu(nu);
-
-
-		//	cout << "gamma: " << gamma << "    nu: " << nu;
+		//	trainer.set_cache_size(samples.size());
+			std::cout << "gamma: " << gamma << "    nu: " << nu;
 			// Print out the cross validation accuracy for 3-fold cross validation using
 			// the current gamma and nu.  cross_validate_trainer() returns a row vector.
 			// The first element of the vector is the fraction of +1 training examples
 			// correctly classified and the second number is the fraction of -1 training
 			// examples correctly classified.
-			cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
+			std::cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
 		}
 	}
+		//typedef dlib::decision_function<kernel_type> dec_funct_type;
+		//typedef dlib::normalized_function<dec_funct_type> funct_type;
+		//funct_type learned_function;
+		//learned_function.normalizer = normalizer;
+		//learned_function.function = trainer.train(samples, flLabels);
+
+		typedef dlib::probabilistic_decision_function<kernel_type> probabilistic_funct_type;
+		typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
+
+		pfunct_type learned_pfunct;
+//		learned_pfunct.normalizer = normalizer;
+		learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
+		dlib::serialize("data.dat") << learned_pfunct;
+	//}
 }
 
 void bs()

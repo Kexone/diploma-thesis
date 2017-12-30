@@ -15,7 +15,6 @@ public:
 	* @brief Finds contours in cropped binary image from the original frame.
 	* Method is threaded by filtering sizes and  same position of contours.
 	*
-	* @param src default frame
 	* @param srcGray binary frame after background substraction (default used MoG2)
 	* @return vector of cv::Rects
 	*/
@@ -40,6 +39,7 @@ private:
 	 * @brief Extends the contours in image about 10 pixels four-times
 	 * 
 	 * @param hull vector of cv::Points to resize
+	 * @return extendend rectangles
 	 */
 	cv::Rect extendContours(std::vector< cv::Point > &hull);
 

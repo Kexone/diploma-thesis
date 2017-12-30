@@ -8,7 +8,7 @@ Pipeline::Pipeline()
 {
 	//hog = Hog();
 	//hog = Hog("test.yml");
-	hog = Hog("48_96_16_8_8_9_01.yml");
+	hog = Hog("siluety_48_96_16_8_8_9_01.yml");
 
 }
 std::vector< std::vector<cv::Rect> > trained;//@DEBUG
@@ -106,7 +106,7 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, localFrame.clone(), rect[i]));
+			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		

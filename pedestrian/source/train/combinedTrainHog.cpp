@@ -12,6 +12,7 @@ void CombinedTrainHog::train(std::string posSamplesPath, std::string negSamplesP
 
 	Utils::fillSamples2List(posSamplesPath, posSamplesLst, labels, pedestrianSize);
 	Utils::fillSamples2List(negSamplesPath, negSamplesLst, labels, pedestrianSize, true);
+
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 

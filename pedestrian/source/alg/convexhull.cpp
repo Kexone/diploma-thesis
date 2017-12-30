@@ -13,10 +13,12 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
 	assert(!srcGray.empty());
 	
 	//cv::RNG rng(12345);
+
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 	
 	convexHullImage = srcGray.clone();
+
     cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
     /// Find contours
     cv::findContours(convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
@@ -29,9 +31,11 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
 
     std::vector <std::vector< cv::Point > > filteredHulls;
 	filterByArea(hulls, filteredHulls);
+	hulls.clear();
 
     std::vector< cv::Rect > rects (filteredHulls.size());
 	rects.clear();
+
     for (uint i = 0; i < filteredHulls.size(); i++)
     {
 		cv::Rect rectangle = extendContours(filteredHulls[i]);
@@ -40,10 +44,10 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
     //    cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
       //  cv::drawContours(convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
     }
-    /// Show in a window
-  //  imshow("Hull demo", convexHullImage);
 
-//	convexHullImage.release();
+  //  imshow("Hull demo", convexHullImage);
+  //  convexHullImage.release();
+
 	if(rects.size() > 1)
 	{
 		clearInSameRegion(rects);
@@ -72,7 +76,6 @@ void ConvexHull::filterByArea(std::vector<std::vector<cv::Point>>& hulls, std::v
 			filteredHulls.push_back(hulls[i]);
 		}
 	}
-	hulls.clear();
 }
 
 cv::Rect ConvexHull::extendContours(std::vector<cv::Point>& hull)
@@ -108,6 +111,5 @@ void ConvexHull::clearInSameRegion(std::vector<cv::Rect> &rects)
 				rects.erase(rects.begin() + t,rects.end());
 			}
 		}
-	
 	}
 }

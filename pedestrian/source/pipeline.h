@@ -72,8 +72,8 @@ private:
 
 	int dilation_type = cv::MORPH_CROSS;
 	int erosion_type = cv::MORPH_CROSS;
-	int dilation_size = 4;
-	int erosion_size = 3;
+	int dilation_size = 6;
+	int erosion_size = 1;
 
 	/**
 	* @brief

@@ -5,7 +5,7 @@
 
 /**
  * Old settings
- * @TOOD use it in code
+ * @TODO use it in code
  */
 struct Settings
 {
@@ -18,6 +18,7 @@ struct Settings
     static bool trainHog;
     static int algorithm;
     static int positiveFrames;
+
 
 };
 
