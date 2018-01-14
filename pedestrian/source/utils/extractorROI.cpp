@@ -26,9 +26,21 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	unsigned first = videoStreamPath.find("/");
 	unsigned last = videoStreamPath.find(".");
 	path = videoStreamPath.substr(first+1, last - first-1);
-	if (!std::experimental::filesystem::exists(path))	{
+	
+	char *temp = new char[path.length()];
+	for (int i = 0; i < path.length(); i++)
+		temp[i] = path[i];
+
+	struct stat st;
+	if (stat(temp, &st) == 0)	{
+		std::ofstream write(path);
+#ifdef __linux__ 
+		std::mkdir(path.c_str());
+		std::mkdir(path.c_str()+"\\ROI");
+#elif _WIN32
 		std::experimental::filesystem::create_directory(path);
 		std::experimental::filesystem::create_directory(path + "\\ROI");
+#endif 
 	}
 	vs = new VideoStream(videoStreamPath);
 	vs->openCamera();

@@ -4,12 +4,16 @@
 #include <opencv2/highgui.hpp>
 #include <fstream>
 #include <iostream>
-#include <filesystem>
 #include <opencv2/videostab/ring_buffer.hpp>
-#include <windows.h>
 #include <processenv.h>
-#include <winbase.h>
 #include <wincon.h>
+
+#ifdef _WIN32
+#include <filesystem>
+#include <winbase.h>
+#include <windows.h>
+
+#endif
 /**
  * class ExtractorROI
  * 
