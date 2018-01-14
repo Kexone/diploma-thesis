@@ -10,7 +10,7 @@
 #include <dlib/opencv/cv_image.h>
 #include <opencv2/opencv.hpp>
 #include <type_traits>
-#include <filesystem>
+
 #include "../train/trainfhog.h"
 
 /*
@@ -19,7 +19,7 @@
 class Utils
 {
 
-//	void fillMat(std::string &path, std::vector<cv::Mat> &dstList, std::vector<int> &labels, cv::Size pedSize, bool isNeg = false)
+	//	void fillMat(std::string &path, std::vector<cv::Mat> &dstList, std::vector<int> &labels, cv::Size pedSize, bool isNeg = false)
 //	{
 //		assert(!path.empty());
 //		cv::Mat frame;
@@ -61,6 +61,25 @@ class Utils
 //	}
 
 public:
+
+	/**
+	* @brief This function create new directory if not exists. Using the bad practise (call system() func), use carefully
+	* 
+	* @param path path with name making directory
+	*/
+	static void makeDir(std::string path)
+	{
+		char * mkDirStr = "mkdir ";
+		int lenComm = 6;
+		char *temp = new char[path.length()];
+		std::strcpy(temp, mkDirStr);
+		for (int i = 0; i < path.length(); i++)
+			temp[lenComm + i] = path[i];
+		struct stat st;
+		if (stat(temp, &st) != 0) {
+			system(temp);
+		}
+	}
 
 	/**
 	* @brief
@@ -148,9 +167,9 @@ public:
 		int nSample = 0;
 		char imgName[30];
 		sampleFile.open(path);
-		if (!std::experimental::filesystem::exists(folder)) {
-			std::experimental::filesystem::create_directory(folder);
-		}
+		
+		makeDir(folder);
+		
 		folder.append("/");
 		while (sampleFile >> oSample) {
 			img = imread(oSample, cv::IMREAD_COLOR);
