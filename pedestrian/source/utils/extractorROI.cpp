@@ -27,7 +27,6 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	unsigned last = videoStreamPath.find(".");
 	path = videoStreamPath.substr(first+1, last - first-1);
 	
-//	Utils::makeDir(path);
 	Utils::makeDir(path+"\\ROI");
 	
 	vs = new VideoStream(videoStreamPath);
