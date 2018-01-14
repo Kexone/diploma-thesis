@@ -5,7 +5,8 @@
 #include <fstream>
 #include <iostream>
 #include <opencv2/videostab/ring_buffer.hpp>
-#include <windows.h>
+
+//#include <windows.h>
 
 /**
  * class ExtractorROI
@@ -31,7 +32,6 @@ private:
 	std::vector < cv::Mat > ROIs;
 	std::vector < cv::Rect > rects;
 	std::vector < std::vector  < cv::Rect > > rects2Save;
-	HANDLE hConsole;
 
 public:
 	/**

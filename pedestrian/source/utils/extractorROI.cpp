@@ -4,25 +4,12 @@
 
 void ExtractorROI::extractROI(std::string videoStreamPath)
 {
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 14);
-	std::cout << "\n's' save" << std::endl;
-	std::cout << "'n' next frame"  << std::endl;
-	std::cout << "'r' to reset" << std::endl;
-	std::cout << "'x' immediately write to file (not recommend)" << std::endl << std::endl;
-	std::cout << "'j' move actual rect to left" << std::endl;
-	std::cout << "'l' move actual rect to right" << std::endl;
-	std::cout << "'i' move actual rect to up" << std::endl;
-	std::cout << "'k' move actual rect to down" << std::endl;
-	std::cout << "'J' decrease the left" << std::endl;
-	std::cout << "'L' increase the left" << std::endl;
-	std::cout << "'I' decrease the bottom" << std::endl;
-	std::cout << "'K' increase the bottom" << std::endl;
+	std::string color = "\033[7;49;91m";
+	std::string greenColor = "\033[0;49;92m";
+	std::string yellowColor = "\033[0;49;93m";
+	std::string grayColor = "\033[0;49;90m";
+	std::string redBackground = "\033[0;41m";
 
-	std::cout << "'0-"<< N_RECT -1 <<"' changes active rect" << std::endl << std::endl;
-
-
-	SetConsoleTextAttribute(hConsole, 8);
 	unsigned first = videoStreamPath.find("/");
 	unsigned last = videoStreamPath.find(".");
 	path = videoStreamPath.substr(first+1, last - first-1);
@@ -32,8 +19,6 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 	vs = new VideoStream(videoStreamPath);
 	vs->openCamera();
 
-	std::cout << "Videostream initialized.\n\n" << std::endl;
-
 	int countFrame = 0;
 	int totalFrames = VideoStream::totalFrames;
 	rects2Save = std::vector < std::vector < cv::Rect > >(totalFrames);
@@ -42,6 +27,25 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 
 	for (int i = 0; i < N_RECT; i++)
 		rects.push_back(cv::Rect());
+
+	std::cout << std::endl;
+	std::cout << yellowColor << " 's' save\n";
+	std::cout << yellowColor << "test " << 0 << " bold" << std::endl;
+	std::cout << yellowColor << "'n' next frame" << std::endl;
+	std::cout << yellowColor << "'r' to reset" << std::endl;
+	std::cout << yellowColor << "'x' immediately write to file (not recommend)" << std::endl << std::endl;
+	std::cout << yellowColor << "'j' move actual rect to left" << std::endl;
+	std::cout << yellowColor << "'l' move actual rect to right" << std::endl;
+	std::cout << yellowColor << "'i' move actual rect to up" << std::endl;
+	std::cout << yellowColor << "'k' move actual rect to down" << std::endl;
+	std::cout << yellowColor << "'J' decrease the left" << std::endl;
+	std::cout << yellowColor << "'L' increase the left" << std::endl;
+	std::cout << yellowColor << "'I' decrease the bottom" << std::endl;
+	std::cout << yellowColor << "'K' increase the bottom" << std::endl;
+
+	std::cout << yellowColor << "'0-" << N_RECT - 1 << "' changes active rect" << std::endl << std::endl;
+	std::cout << grayColor << "\nVideostream initialized.\n\n" << std::endl;
+
 	while (true) {
 		cv::Mat frame = vs->getFrame();
 		if (frame.empty()) {
@@ -52,9 +56,7 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 		}
 		fullFrame = frame.clone();
 		img = frame.clone();
-		SetConsoleTextAttribute(hConsole, 10);
-		std::cout  << countFrame << "/" << totalFrames << " FRAME " << std::endl;
-		SetConsoleTextAttribute(hConsole, 8);
+		std::cout  << greenColor << countFrame << "/" << totalFrames << " FRAME " << std::endl;
 		process(countFrame);
 		countFrame++;
 	}
@@ -68,10 +70,8 @@ void ExtractorROI::write2File()
 	int ind = 0;
 	fs << rects2Save.size() << std::endl;
 
-	for (auto rects : rects2Save)
-	{
-		for (int i = 0; i < rects.size(); i++)
-		{
+	for (auto rects : rects2Save)	{
+		for (int i = 0; i < rects.size(); i++)		{
 			if (rects[i].area() == 0) continue;
 			fs << ind << " "<< rects[i].tl().x << " " << rects[i].tl().y << " " << rects[i].br().x  << " " << rects[i].br().y << std::endl;
 		}
@@ -145,7 +145,7 @@ void ExtractorROI::process(int cFrame)
 	point2 = cv::Point(0, 0);
 	
 	cv::imshow(WIN_NAME, fullFrame);
-	std::cout << "\tActive " << indRect << " rect" << std::endl;
+	std::cout << "\033[0;49;90m" << "\tActive " << indRect << " rect" << std::endl;
 	bool nextOp = true;
 	while (nextOp) {
 		char c = cv::waitKey();
@@ -180,7 +180,7 @@ void ExtractorROI::process(int cFrame)
 				nextOp = false;
 			}
 			rects2Save[cFrame] = rects;
-			std::cout << "\tSaved" << std::endl;
+			std::cout << "\033[0;49;90m" << "\tSaved" << std::endl;
 			break;
 		case 'r': { rects[indRect].x = 0; rects[indRect].y = 0; rects[indRect].width = 0; rects[indRect].height = 0; }
 				  img = fullFrame.clone();
@@ -193,14 +193,10 @@ void ExtractorROI::process(int cFrame)
 		if(numb < N_RECT && numb >=0)
 		{
 			indRect = numb;
-			SetConsoleTextAttribute(hConsole, 15);
-			std::cout << "\tActive " << indRect << " rect" << std::endl;
-			SetConsoleTextAttribute(hConsole, 8);
+			std::cout << "\033[0;49;97m" << "\tActive " << indRect << " rect" << std::endl;
 		}
 		/*else {
-			SetConsoleTextAttribute(hConsole, 12);
 			std::cout << "Too much large number or pressed bad key. " << std::endl;
-			SetConsoleTextAttribute(hConsole, 8);
 		}*/
 		showImage();
 		drawRects();
