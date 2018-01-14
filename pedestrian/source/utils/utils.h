@@ -69,7 +69,7 @@ public:
 	*/
 	static void makeDir(std::string path)
 	{
-		char * mkDirStr = "mkdir ";
+		char * mkDirStr = static_cast<char *>("mkdir ");
 		int lenComm = 6;
 		char *temp = new char[path.length()];
 		std::strcpy(temp, mkDirStr);
