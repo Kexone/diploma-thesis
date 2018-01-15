@@ -78,76 +78,40 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	loadRects("trained.txt", trained); // @DEBUG
 	loadRects("test.txt", tested); // @DEBUG
 
-	if (algorithmType == PURE_HOG )	{
-		std::cout << "\nONLY HOG" << std::endl;
-		for (int i = 0; ; i++) {
-			test = i; //@DEBUG
-			cv::Mat frame = _vs->getFrame();
-			if (frame.empty()) {
-				delete _vs;
-				saveResults("test.txt");
-				break;
-			}
-			//time_t time = clock(); // @DEBUG
+
+	std::cout << "\nONLY HOG" << std::endl;
+	for (int i = 0; ; i++)	{
+		test = i; //@DEBUG
+		cv::Mat frame = _vs->getFrame();
+		if (frame.empty())	{
+			delete _vs;
+			saveResults("test.txt");
+			break;
+		}
+		//time_t time = clock(); // @DEBUG
+		if (algorithmType == PURE_HOG)
 			pureHoG(frame, i);
-			//time = clock() - time; // @DEBUG 
-			//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
-
-			frame.release();
-
-			cv::waitKey(5);
-
-			// DEBUG >>>>>>
-			std::stringstream ss;
-			ss << "img/mat_" << i << ".jpg";
-			cv::imwrite(ss.str(), _localFrame);
-			ss.str("");
-			ss.clear();
-			// <<<<<< DEBUG
-			_localFrame.release();
-		}
-	}
-	else if (algorithmType == MIXTURED_HOG )	{
-		for (int i = 0; ; i++) {
-			cv::Mat frame = _vs->getFrame();
-			if (frame.empty()) {
-				delete _vs;
-				saveResults("test.txt");
-				break;
-			}
-
+		else if (algorithmType == MIXTURED_HOG)
 			process(frame, i);
-			frame.release();
-			cv::waitKey(5);
-		}
-	}
-	else if (algorithmType == PURE_FHOG)	{
-		for (int i = 0; ; i++) {
-			cv::Mat frame = _vs->getFrame();
-			if (frame.empty()) {
-				delete _vs;
-				saveResults("test.txt");
-				break;
-			}
+		else if (algorithmType == PURE_FHOG)
+			pureFHoG(frame, i);
+		else if (algorithmType == MIXTURED_FHOG)
+			mixturedFHoG(frame, i);
+		//time = clock() - time; // @DEBUG 
+		//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
 
-			process(frame, i);
-			frame.release();
-			cv::waitKey(5);
-		}
-	}
-	else if ( algorithmType == MIXTURED_FHOG )	{
-		for (int i = 0; ; i++) {
-			cv::Mat frame = _vs->getFrame();
-			if (frame.empty()) {
-				delete _vs;
-				saveResults("test.txt");
-				break;
-			}
+		frame.release();
 
-			process(frame, i);
-			frame.release();
-			cv::waitKey(5);
-		}
+		cv::waitKey(5);
+
+		// DEBUG >>>>>>
+		std::stringstream ss;
+		ss << "img/mat_" << i << ".jpg";
+		cv::imwrite(ss.str(), _localFrame);
+		ss.str("");
+		ss.clear();
+		// <<<<<< DEBUG
+		_localFrame.release();
 	}
     cv::destroyWindow("Test"); // @TODO WTF?
 }
