@@ -4,39 +4,39 @@
 
 Hog::Hog()
 {
-}
 
-Hog::Hog(int def)
-{
-	hog.gammaCorrection = true;
-	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
-	std::cout << "Initialized default people detector" << std::endl;
 }
 
 Hog::Hog(std::string svmPath)
 {
-	hog = cv::HOGDescriptor(
-									cv::Size(48,96), //winSize
-									cv::Size(16, 16), //,blocksize
-									cv::Size(8, 8), //blockStride
-									cv::Size(8, 8), //cellSize,
-									9, //nbins,
-									0, //derivAper,
-									-1, //winSigma,
-									0, //histogramNormType,
-									0.2, //L2HysThresh,
-									0 //gammal corRection,
-									  //nlevels=64
+	if (svmPath.compare("default")) {
+		hog = cv::HOGDescriptor(
+			cv::Size(48, 96), //winSize
+			cv::Size(16, 16), //,blocksize
+			cv::Size(8, 8), //blockStride
+			cv::Size(8, 8), //cellSize,
+			9, //nbins,
+			0, //derivAper,
+			-1, //winSigma,
+			0, //histogramNormType,
+			0.2, //L2HysThresh,
+			0 //gammal corRection,
+			  //nlevels=64
 		);
-	hog.svmDetector.clear();
-	std::vector< float > hogDetector;
-	svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
-	getSvmDetector(svm, hogDetector);
+		hog.svmDetector.clear();
+		std::vector< float > hogDetector;
+		svm = cv::Algorithm::load<cv::ml::SVM>(svmPath);
+		getSvmDetector(svm, hogDetector);
+		hog.setSVMDetector(hogDetector);
+		std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() << std::endl;
+		hogDetector.clear();
+	}
+	else
+	{
+		hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+		std::cout << "Initialized default people detector" << std::endl;
+	}
 	hog.gammaCorrection = true;
-	hog.setSVMDetector(hogDetector);
-	std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() <<  std::endl;
-	hogDetector.clear();
-
 }
 
 
@@ -114,16 +114,16 @@ std::vector < cv::Rect > Hog::detect(cv::Mat& frame) {
 
 		//cv::cvtColor(test, test, CV_BGR2GRAY);
 		//cv::equalizeHist(test, test);
-
+		cv::imshow("hog", frame);
 		hog.detectMultiScale(
 			frame,					// testing img
 			found,					// foundLocation <rect>
-			1,						// hitThreshold = 0 // 1
+			0,						// hitThreshold = 0 // 1
 			cv::Size(8, 8),			// winStride size(8, 8)
 			cv::Size(0, 0),			// padding size(0, 0)
 			1.05,					// scale = 1,05
-			1,						// finalThreshold = 2 // 0
-			false					// use meanshift grouping = false
+			0,						// finalThreshold = 2 // 0
+			true					// use meanshift grouping = false
 		);
 
 	return found;

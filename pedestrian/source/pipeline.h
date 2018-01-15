@@ -18,43 +18,46 @@
 class Pipeline
 {
 public:
-    Pipeline();
+	Pipeline() : Pipeline("default") {};
+	Pipeline(std::string svmPath);
 
 	/**
-	* @brief
+	* @brief Executed for images. Function for ran detection on images. 
 	*
-	* @param
+	* @param testSamplesPath path to file with images paths
 	*/
     void executeImages(std::string testSamplesPath);
 
 	/**
-	* @brief
+	* @brief Executed for camera feed. Function for ran in videostream
 	*
-	* @param
+	* @param cameraFeed choose camera type
 	*/
     void execute(int cameraFeed);
 
 	/**
-	* @brief
+	* @brief Executed for videostream. Function for ran detection in videostream
 	*
-	* @param
+	* @param cameraFeed path to video file
+	* @param algorithmType type of executed algorithm to test it (e.g. with or without mixture Gaussian)
 	*/
-    void execute(std::string cameraFeed);
+    void execute(std::string cameraFeed, int algorithmType);
 
 	/**
-	* @brief
+	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
 	*
-	* @param
+	* @param testResultPath path to file with testing rects 
+	* @param trainedPosPath path to file with trained rects
 	*/
 	void evaluate(std::string testResultPath, std::string trainedPosPath);
 	static int allDetections;
 
 private:
-    Mog mog;
-//	FHog fhog;
-	//Hog hog = Hog("3.yml");
-	Hog hog;
-	//Hog hog = Hog("48_96_16_8_8_9_01.yml");
+    Mog _mog;
+	Hog		_hog;
+//	FHog _fhog;
+	//Hog _hog = Hog("3.yml");
+	//Hog _hog = Hog("48_96_16_8_8_9_01.yml");
 
 
 	//	Hog hog = Hog("2292_78_98.3.yml");
@@ -64,70 +67,116 @@ private:
 	//	Hog hog = Hog("3111_79_98.4.yml");
 
 	
-	//CascadeClass cc;
-    ConvexHull ch;
-    VideoStream *vs;
-    cv::Mat localFrame;
-	std::vector < std::vector < std::vector < cv::Rect > > > rects2Eval;
+	//CascadeClass _cc;
+    ConvexHull _ch;
+    VideoStream *_vs;
+    cv::Mat _localFrame;
+	std::vector < std::vector < std::vector < cv::Rect > > > _rects2Eval;
 
-	int dilation_type = cv::MORPH_CROSS;
-	int erosion_type = cv::MORPH_CROSS;
-	int dilation_size = 6;
-	int erosion_size = 1;
+	int _dilation_type = cv::MORPH_CROSS;
+	int _erosion_type = cv::MORPH_CROSS;
+	int _dilation_size = 6;
+	int _erosion_size = 1;
+	int _typeAlgorithm;
 
+	cv::Mat _dilMat, _eroMat;
 	/**
 	* @brief
-	*
-	* @param
+	* @TODO prepare to delete
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
 	*/
     void process(cv::Mat &frame, int cFrame);
 
 	/**
-	* @brief
+	* @brief This testing function uses only HoG from OpenCV on full image.
 	*
-	* @param
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
 	*/
-	void processStandaloneIm(cv::Mat &frame);
+	void pureHoG(cv::Mat &frame, int cFrame);
 
 	/**
-	* @brief
+	* @brief This testing function uses only FHoG from dlib on full image. Like published by Dalal and Triggs in 2005 in the paper
+    Histograms of Oriented Gradients for Human Detection.
 	*
-	* @param
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
 	*/
-	void preprocessing(cv::Mat &frame, bool afterMog = false);
+	void pureFHoG(cv::Mat &frame, int cFrame);
 
 	/**
-	* @brief
+	* @brief This testing function uses Gaussian mixture to analyzes and substraction of motion segments and thereafter uses HoG from openCV
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
+	*/
+	void mixturedHoG(cv::Mat &frame, int cFrame);
+
+	/**
+	* @brief This testing function uses Gaussian mixture to analyzes and substraction of motion segments and thereafter uses HoG from dlib
 	*
-	* @param
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
+	*/
+	void mixturedFHoG(cv::Mat &frame, int cFrame);
+
+	/**
+	* @brief @TODO this doc
+	*
+	* @param frame actual frame
+	*/
+	void processStandaloneImage(cv::Mat &frame);
+
+	/**
+	* @brief @TODO this doc
+	*
+	* @param frame actual frame
+	*/
+	void preprocessing(cv::Mat &frame);
+
+	/**
+	* @brief performs dilation and erosion on frame
+	*
+	* @param frame actual frame
+	*/
+	void dilateErode(cv::Mat &frame);
+
+	/** 
+	* @brief @TODO this doc
+	*
+	* @param croppedImages
+	* @param rect
 	*/
     void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
 
 	/**
-	* @brief
+	* @brief @TODO this doc
 	*
-	* @param
+	* @param rect
 	*/
 	void draw2mat(std::vector < cv::Rect > &rect);
 
 	/**
-	* @brief
+	* @brief  @TODO this doc
 	*
-	* @param
+	* @param filePath
 	*/
 	void saveResults(std::string filePath);
 
 	/**
-	* @brief
+	* @brief @TODO this doc
 	*
-	* @param
+	* @param filePath
+	* @param rects
 	*/
 	void loadRects(std::string filePath, std::vector< std::vector<cv::Rect> > & rects);
 
 	/**
-	* @brief
+	* @brief @TODO this doc
 	*
-	* @param
+	* @param rects
+	* @param croppedImages
+	* @param rects2Save
 	*/
 	void rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages, std::vector<std::vector<cv::Rect>> &rects2Save);
 

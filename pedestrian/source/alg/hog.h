@@ -13,13 +13,13 @@
 class Hog
 {
 public:
-    Hog();
+
 	/**
 	* @brief
 	*
 	* @param
 	*/
-	Hog(int def);
+	Hog();
 	/**
 	* @brief
 	*
