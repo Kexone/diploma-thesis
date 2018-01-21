@@ -8,7 +8,7 @@
 #include "source/utils/utils.h"
 #include "source/test/testClass.h"
 #include <csignal>
-#include <signal.h>
+#include "source/train/trainCascade.h"
 ////////////////////////////////////////////////////////
 //		DATA		 //
 //////////////////////
@@ -51,11 +51,7 @@ namespace mainFun {
  * @TODO add choose to set all params
  * @TODO ROC curves
  * 
- * @TODO clear all global variables
  * @TODO calc confidence
- * @TODO clear bad samples from dataset
- * @TODO train on siluette samples
- * @TODO parse main body
  * @TODO train Dlib SVM from OpenCV HOG features
  * 
  * @TODO train cascade classificator
@@ -88,7 +84,7 @@ int main(int argc, char *argv[])
 		"{ image i            |        |  use list of images as input              }"
 		"{ camera c           |        |  enable camera capturing                  }"
 		"{ class svm          |    0   |  trained clasifier path                   }"
-		"{ type  t            |        |  type of alg (train, test, video, picture }"
+		"{ type  t            |        |  type of alg (train, test)                }"
 		"{ extract e          |        |  extract ROI from videostream             }"
 		"{ vizualize          |    0   |  show result in window                    }"
 		"{ createSample cs    |    0   |  creating samples from image              }"
@@ -133,24 +129,32 @@ void mainFun::type(cv::CommandLineParser parser)
 	int chosenType;
 	if (!type.compare("train"))	{
 
-		std::cout << "\n1) openCV SVM train \n2) combined train (extract features by opencv HOG and train by dlib SVM) \n3) dlib SVM train \nType of train: ";
+		std::cout << "\n1) openCV SVM train \n2) combined train (extract features by opencv HOG and train by dlib SVM) \n \
+		3) dlib SVM train \n4) cascade classificator train \nType of train: ";
 		std::cin >> chosenType;
 
-		if (chosenType == 0 )	{  // @TODO train from mat and select own params?
+		if (chosenType == 1 )	{  // @TODO train from mat and select own params?
 			//TrainHog th;
 			TrainHog th = TrainHog(450, 3, 0, 100, 1.e-06, 0, 3, 0.0005, 0, 0, 0.0001, "2111_79_98.4.yml");
 			//TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
 			//th.trainFromMat("test.yml", "labels.txt");
 			th.train(posSamples, negSamples, false);
 		}
-		else if (chosenType == 1 )	{
+		else if (chosenType == 2 ) {
 			CombinedTrainHog cth;
 			cth.train(posSamples, negSamples);
 		}
-		else if(chosenType == 2)	{
+		else if(chosenType == 3)  {
 			TrainFHog tfh;
 			tfh.train(posSamples, negSamples);
 		}
+		else if (chosenType == 4) {
+			TrainCascade tc = TrainCascade("","","");
+			tc.train();
+		}
+		else
+			std::cout << "Bad selection.\n";
+			return;
 	}
 }
 
@@ -175,11 +179,13 @@ void mainFun::video(cv::CommandLineParser parser)
 	int typeAlg;
 	clock_t timer;
 	
-	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) Mixtured HoG (openCV) \n 3) only FHoG (dlib) \n 4) mixtured FHoG (dlib) \n 5) cascade classificator \n 6) TEST MODE \n" << std::endl;
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n \
+	2) Mixtured HoG (openCV) \n 3) only FHoG (dlib) \n 4) mixtured FHoG (dlib) \n \
+	5) cascade classificator \n 6) TEST MODE \n" << std::endl;
 	std::cin >> typeAlg;
 	
-	if(typeAlg == 0 || (unsigned) typeAlg > 6)	{
-		std::cout << "Bad selection.";
+	if(typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6)	{
+		std::cout << "Bad selection.\n";
 		return;
 	}
 
@@ -193,8 +199,15 @@ void mainFun::video(cv::CommandLineParser parser)
 
 void mainFun::extract(cv::CommandLineParser parser)
 {
-	std::cout << "extracting ROI" << std::endl;
-	ExtractorROI eroi = ExtractorROI(2);
+	int nRects;
+	std::cout << "extracting ROI\n How many persons are in stream? ( max 5)" << std::endl;
+	std::cin >> nRects;
+	if ( static_cast<unsigned>(nRects - 1) >= 5)
+	{
+		std::cout << "Bad chosen. Selected 2 persons." << std::endl;
+		nRects = 2;
+	}
+	ExtractorROI eroi = ExtractorROI(nRects);
 	eroi.extractROI(parser.get<std::string>("extract"));
 }
 
