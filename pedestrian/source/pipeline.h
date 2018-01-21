@@ -45,30 +45,20 @@ public:
 
 	/**
 	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
-	*
 	*/
 	void evaluate();
+
 	static int allDetections;
 
 private:
     Mog _mog;
-	Hog		_hog;
-//	FHog _fhog;
-	//Hog _hog = Hog("3.yml");
-	//Hog _hog = Hog("48_96_16_8_8_9_01.yml");
-
-
-	//	Hog hog = Hog("2292_78_98.3.yml");
-	//	Hog hog = Hog("2717_78_98.4.yml");
-	//	Hog hog = Hog("2717_78_98.4.yml");
-	//	Hog hog = Hog("3111_79_98.4.yml");
-	//	Hog hog = Hog("3111_79_98.4.yml");
-
-	
-	//CascadeClass _cc;
+	Hog _hog;
+	FHog _fhog;
+	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;
-    cv::Mat _localFrame;
+
+	cv::Mat _localFrame;
 	std::vector < std::vector < std::vector < cv::Rect > > > _rects2Eval;
 
 	int _dilation_type = cv::MORPH_CROSS;
@@ -119,14 +109,14 @@ private:
 	void mixturedFHoG(cv::Mat &frame, int cFrame);
 
 	/**
-	* @brief @TODO this doc
+	* @brief Method for processing one image where used classic HoG to detection pedestrian
 	*
 	* @param frame actual frame
 	*/
 	void processStandaloneImage(cv::Mat &frame);
 
 	/**
-	* @brief @TODO this doc
+	* @brief Method for preprocessing, convert to gray is standard
 	*
 	* @param frame actual frame
 	*/
@@ -140,7 +130,8 @@ private:
 	void dilateErode(cv::Mat &frame);
 
 	/** 
-	* @brief @TODO this doc
+	* @brief Draw rectangles into mat and also increment the allDetections counter
+	*  Used for cropped images to set the default position in frame
 	*
 	* @param croppedImages
 	* @param rect
@@ -148,21 +139,21 @@ private:
     void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
 
 	/**
-	* @brief @TODO this doc
+	* @brief Draw rectangles into mat and also increment the allDetections counter
+	* Used for non-cropped images, only drews the rectangles into the frame
 	*
 	* @param rect
 	*/
 	void draw2mat(std::vector < cv::Rect > &rect);
 
 	/**
-	* @brief  @TODO this doc
-	*
-	* @param filePath
+	* @brief Saving method. This method saves the rectangles and numbers of frame where was found. On each line is frame number and points of rectangle.
+	* The first line is count of all frames
 	*/
 	void saveResults();
 
 	/**
-	* @brief @TODO this doc
+	* @brief Loads the rectangles from file for evaluate detection
 	*
 	* @param filePath
 	* @param rects
@@ -170,7 +161,7 @@ private:
 	void loadRects(std::string filePath, std::vector< std::vector<cv::Rect> > & rects);
 
 	/**
-	* @brief @TODO this doc
+	* @brief This method adds the offset of cropped images to be have default position in frame
 	*
 	* @param rects
 	* @param croppedImages

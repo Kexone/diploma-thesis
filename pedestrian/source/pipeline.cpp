@@ -6,6 +6,7 @@
 #define MIXTURED_HOG 2
 #define PURE_FHOG 3
 #define MIXTURED_FHOG 4
+#define CASCADE 5
 // @TODO define all methos which were used in this solution
 
 int Pipeline::allDetections = 0;
@@ -207,7 +208,7 @@ void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 
-		foundRect = _hog.detect(croppedImages);
+		_fhog.detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
@@ -220,12 +221,10 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	preprocessing(frame);
-	//_mog.processMat(frame);
-	//dilateErode(frame);
 
 	std::vector < cv::Rect > foundRect;
 
-	foundRect = _hog.detect(frame);
+	_fhog.detect(frame, foundRect);
 	draw2mat(foundRect);
 	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
@@ -272,10 +271,6 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::Rect r = rect[j][i];
-			//r.x += cvRound(croppedImages[j].offsetX);
-			//r.width = cvRound(croppedImages[j].croppedImg.cols);
-		//	r.y += cvRound(croppedImages[j].offsetY);
-			//r.height = cvRound(croppedImages[j].croppedImg.rows);
 			if (!trained[test].empty()) {//@DEBUG
 				//if (!tested[test].empty()) //@DEBUG
 					//cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);

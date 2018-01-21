@@ -27,14 +27,14 @@ class FHog
 public:
 	FHog();
 //	FHog(int def);
-	//FHog(std::string svmPath);
+	FHog(std::string classPath);
 
 	/**
 	* @brief
 	*
 	* @param
 	*/
-	std::vector< std::vector < cv::Rect  > > detect(std::vector< CroppedImage > &frame);
+	void detect(std::vector<CroppedImage>& frame, std::vector< std::vector < cv::Rect  > > &rects)
 	//void detect(std::vector< CroppedImage > &frame);
 
 	/**
@@ -44,10 +44,17 @@ public:
 	*/
 	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);
 
+	/**
+	* @brief
+	*
+	* @param
+	*/
+	void detect(cv::Mat& frame, std::vector< cv::Rect > &rects);
 private:
-	//void getSvmDetector(const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector);
-	//cv::HOGDescriptor hog;
-	//cv::Ptr<cv::ml::SVM> svm;
+	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
+	dlib::object_detector<image_scanner_type> detector;
+	image_scanner_type scanner;
+
 };
 
 #endif // FHOG_H

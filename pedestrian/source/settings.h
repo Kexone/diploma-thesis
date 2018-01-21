@@ -4,8 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 /**
- * Old settings
- * @TODO use it in code
+ * @brief Setting struct for program
  */
 struct Settings
 {
