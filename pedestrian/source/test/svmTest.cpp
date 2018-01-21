@@ -64,7 +64,7 @@ void SvmTest::preprocessing()
 void SvmTest::initResultFile(std::stringstream &ss)
 {
 	std::ofstream file;
-	file.open("result.txt", std::ios::app);
+	file.open("data/testing_result.txt", std::ios::app);
 
 	file << ss.str();
 	file.close();
@@ -108,7 +108,7 @@ float SvmTest::process()
 void SvmTest::print2File(int currentTestNumb,int *valuation)
 {
 	std::ofstream file;
-	file.open("testinResults.txt", std::ios::app);
+	file.open("data/testing_result.txt", std::ios::app);
 
 	file << "\n\t<< START" << currentTestNumb << ".ITERATION>>" << std::endl << std::endl;
 	file << "\t__SVM SETTINGS__" << std::endl;
@@ -133,11 +133,6 @@ void SvmTest::print2File(int currentTestNumb,int *valuation)
 	file << "\t<< END" << currentTestNumb << ".ITERATION>>" << std::endl;
 
 	file.close();
-	if((float)1 - ((float)valuation[1] / (float)valuation[0]) > 0.9888)
-	{		
-		std::cout << (float)1 - ((float)valuation[1] / (float)valuation[0])  << "  !!!!!nice in " << currentTestNumb << " iter/" << std::endl;
-		std::cout << '\a';
-	}
 }
 
 
