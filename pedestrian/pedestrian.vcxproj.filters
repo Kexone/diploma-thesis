@@ -46,6 +46,9 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{4806f9f6-5432-463c-af77-30c4fbeae7ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\3dparty">
+      <UniqueIdentifier>{2492c6f4-6ecb-4a5b-9626-2d3236b73b22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -95,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="source\utils\extractorROI.cpp">
       <Filter>Source Files\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="source\train\trainCascade.cpp">
+      <Filter>Source Files\train</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="source\utils\extractorROI.h">
       <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="source\train\trainCascade.h">
+      <Filter>Header Files\train</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

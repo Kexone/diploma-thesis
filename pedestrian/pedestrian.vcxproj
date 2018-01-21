@@ -171,6 +171,7 @@
     <ClCompile Include="source\test\svmTest.cpp" />
     <ClCompile Include="source\test\testClass.cpp" />
     <ClCompile Include="source\train\combinedTrainHog.cpp" />
+    <ClCompile Include="source\train\trainCascade.cpp" />
     <ClCompile Include="source\train\trainfhog.cpp" />
     <ClCompile Include="source\train\trainhog.cpp" />
     <ClCompile Include="source\utils\extractorROI.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="source\test\svmTest.h" />
     <ClInclude Include="source\test\testClass.h" />
     <ClInclude Include="source\train\combinedTrainHog.h" />
+    <ClInclude Include="source\train\trainCascade.h" />
     <ClInclude Include="source\train\trainfhog.h" />
     <ClInclude Include="source\train\trainhog.h" />
     <ClInclude Include="source\utils\extractorROI.h" />
