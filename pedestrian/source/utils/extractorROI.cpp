@@ -206,7 +206,7 @@ void ExtractorROI::process(int cFrame)
 void ExtractorROI::showImage() {
 	if(clicked)
 		img = fullFrame.clone();
-	cv::rectangle(img, rects[indRect], cv::Scalar(0, 255, 0), 1, 8, 0);
+	cv::rectangle(img, rects[indRect], rectColors[indRect], 1, 8, 0);
 	cv::imshow(WIN_NAME, img);
 }
 

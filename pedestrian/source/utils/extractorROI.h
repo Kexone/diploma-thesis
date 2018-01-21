@@ -32,6 +32,7 @@ private:
 	std::vector < cv::Mat > ROIs;
 	std::vector < cv::Rect > rects;
 	std::vector < std::vector  < cv::Rect > > rects2Save;
+	cv::Scalar rectColors[5] = { cv::Scalar(0, 255, 0), cv::Scalar(255, 0, 0) , cv::Scalar(0, 0, 255) , cv::Scalar(0, 255, 255) , cv::Scalar(255, 255, 0)};
 
 public:
 	/**
