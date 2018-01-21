@@ -6,16 +6,14 @@
 #define MIXTURED_HOG 2
 #define PURE_FHOG 3
 #define MIXTURED_FHOG 4
-#define CASCADE 5
-// @TODO define all methos which were used in this solution
+#define PURE_CASCADE 5
+#define MIXTURED_CASCADE 6
 
 int Pipeline::allDetections = 0;
 
 
 Pipeline::Pipeline(std::string svmPath)
 {
-	//_hog = Hog();
-	//_hog = Hog("test.yml");
 	_hog = Hog(svmPath);
 	allDetections = 0;
 	_dilMat = getStructuringElement(_dilation_type,

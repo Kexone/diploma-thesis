@@ -14,11 +14,6 @@ class Hog
 {
 public:
 
-	/**
-	* @brief
-	*
-	* @param
-	*/
 	Hog();
 	/**
 	* @brief

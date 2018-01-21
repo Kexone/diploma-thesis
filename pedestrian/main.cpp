@@ -46,8 +46,7 @@ namespace mainFun {
 //////////////////////
 
 /* 
- * @TODO command line parser
- * @TODO docs on trainfHog, hog, videostream, mediafile, utils,pipeline, fhog, cascadeClass
+ * @TODO docs on trainfHog, hog, videostream, mediafile, utils, fhog, cascadeClass
  * @TODO add choose to set all params
  * @TODO ROC curves
  * 
@@ -60,10 +59,7 @@ namespace mainFun {
  * @TODO ADA BOOST train
  * @TODO LBP train
  * @TODO HAAR train
- * @TODO replace convex hull with something more effiness
  * 
- * 
- * @TODO optimalize pipeline for all algorithms
  * @TODO refactor Utils class
  * @TODO implement cv::groupRectangles();
  * @TODO own implementation of detectMultiScale()
@@ -168,22 +164,27 @@ void mainFun::type(cv::CommandLineParser parser)
 
 void mainFun::camera(cv::CommandLineParser parser)
 {
-	Pipeline pl;
+	Pipeline *pl;
+	pl = new Pipeline(parser.get<std::string>("class"));
 	std::cout << "camera" << std::endl;
-	pl.execute(0);
+	pl->execute(0);
+
+	delete pl;
 }
 
 void mainFun::image(cv::CommandLineParser parser)
 {
-	Pipeline pl;
-	pl.executeImages(parser.get<std::string>("image"));
+	Pipeline *pl = new Pipeline(parser.get<std::string>("class"));
+	pl->executeImages(parser.get<std::string>("image"));
 	std::cout << parser.get<std::string>("image") << std::endl;
 	cv::waitKey(0);
+
+	delete pl;
 }
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	Pipeline pl = Pipeline(parser.get<std::string>("class"));
+	Pipeline *pl = new Pipeline(parser.get<std::string>("class"));
 	int typeAlg;
 	clock_t timer;
 	
@@ -205,11 +206,13 @@ void mainFun::video(cv::CommandLineParser parser)
 	Settings::nameTrainedFile.append("_trained.txt");
 	Settings::nameFile.append(".txt");
 
-	pl.execute(parser.get<std::string>("video"),typeAlg);
+	pl->execute(parser.get<std::string>("video"),typeAlg);
 	timer = clock() - timer;
 	printResults(timer);
-	pl.evaluate();
+	pl->evaluate();
 	cv::waitKey(0);
+
+	delete pl;
 }
 
 void mainFun::extract(cv::CommandLineParser parser)

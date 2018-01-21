@@ -34,7 +34,7 @@ public:
 	*
 	* @param
 	*/
-	void detect(std::vector<CroppedImage>& frame, std::vector< std::vector < cv::Rect  > > &rects)
+	void detect(std::vector<CroppedImage>& frame, std::vector< std::vector < cv::Rect  > > &rects);
 	//void detect(std::vector< CroppedImage > &frame);
 
 	/**
