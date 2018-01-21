@@ -46,10 +46,8 @@ public:
 	/**
 	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
 	*
-	* @param testResultPath path to file with testing rects 
-	* @param trainedPosPath path to file with trained rects
 	*/
-	void evaluate(std::string testResultPath, std::string trainedPosPath);
+	void evaluate();
 	static int allDetections;
 
 private:
@@ -161,7 +159,7 @@ private:
 	*
 	* @param filePath
 	*/
-	void saveResults(std::string filePath);
+	void saveResults();
 
 	/**
 	* @brief @TODO this doc

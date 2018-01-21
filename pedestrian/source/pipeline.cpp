@@ -75,17 +75,16 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	_vs->openCamera();
 	std::cout << "Videostream initialized." << std::endl;
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
-	loadRects("trained.txt", trained); // @DEBUG
-	loadRects("test.txt", tested); // @DEBUG
 
+//	loadRects("trained.txt", trained); // @DEBUG
+//	loadRects(Settings::nameFile, tested); // @DEBUG
 
-	std::cout << "\nONLY HOG" << std::endl;
 	for (int i = 0; ; i++)	{
 		test = i; //@DEBUG
 		cv::Mat frame = _vs->getFrame();
 		if (frame.empty())	{
 			delete _vs;
-			saveResults("test.txt");
+			saveResults();
 			break;
 		}
 		//time_t time = clock(); // @DEBUG
@@ -99,7 +98,8 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 			mixturedFHoG(frame, i);
 		//time = clock() - time; // @DEBUG 
 		//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
-
+		if (Settings::showVideoFrames)
+			cv::imshow("Result", _localFrame);
 		frame.release();
 
 		cv::waitKey(5);
@@ -144,8 +144,6 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
-	// if(Settings::showVideoFrames)
-	cv::imshow("Result", _localFrame);
 	frame.release();
 	rect.clear();
 }
@@ -172,7 +170,6 @@ void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
-	//	cv::imshow("Result", _localFrame);
 	frame.release();
 	rect.clear();
 }
@@ -188,8 +185,8 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 
 	foundRect = _hog.detect(frame);
 	draw2mat(foundRect);
+	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
-	cv::imshow("Result", _localFrame);
 	frame.release();
 }
 
@@ -215,7 +212,6 @@ void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
-	//	cv::imshow("Result", _localFrame);
 	frame.release();
 	rect.clear();
 }
@@ -231,8 +227,8 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 
 	foundRect = _hog.detect(frame);
 	draw2mat(foundRect);
+	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
-	cv::imshow("Result", _localFrame);
 	frame.release();
 }
 
@@ -298,17 +294,16 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 
 void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
 {
-	std::cout << rect.size() << std::endl;
 	for (uint i = 0; i < rect.size(); i++) {
 		cv::rectangle(_localFrame, rect[i], cv::Scalar(0, 255, 0), 3);
 	}
 	allDetections += rect.size();
 }
 
-void Pipeline::saveResults(std::string filePath)
+void Pipeline::saveResults()
 {
 	std::ofstream fs;
-	fs.open(filePath);
+	fs.open(Settings::nameFile);
 	fs << _rects2Eval.size() << std::endl;
 	for (uint i = 0; i < _rects2Eval.size(); i++)	{
 		for (uint j = 0; j < _rects2Eval[i].size(); j++)	{
@@ -360,12 +355,12 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 	}
 }
 
-void Pipeline::evaluate(std::string testResultPath, std::string trainedPosPath)
+void Pipeline::evaluate()
 {
 	std::vector< std::vector<cv::Rect> > trained;
 	std::vector< std::vector<cv::Rect> > test;
-	loadRects("test.txt", test);
-	loadRects("trained.txt", trained);
+	loadRects(Settings::nameFile, test);
+	loadRects(Settings::nameTrainedFile, trained);
 	int truePos = 0, falsePos = 0;
 	int trueNeg = 0, falseNeg = 0;
 	for (int i = 0; i < trained.size(); i++) {

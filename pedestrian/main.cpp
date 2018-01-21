@@ -69,6 +69,9 @@ namespace mainFun {
  * @TODO own implementation of detectMultiScale()
 
  */
+std::string Settings::nameFile = "";
+std::string Settings::nameTrainedFile = "";
+bool Settings::showVideoFrames = false;
 
 int main(int argc, char *argv[])
 {
@@ -78,21 +81,23 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	const cv::String keys =
-		"{ help h ?           |        |  print help message                       }"
-		"{ alg	              |    1   |  alg type                                 }"
-		"{ video v            |        |  use video as input                       }"
-		"{ image i            |        |  use list of images as input              }"
-		"{ camera c           |        |  enable camera capturing                  }"
-		"{ class svm          |    0   |  trained clasifier path                   }"
-		"{ type  t            |        |  type of alg (train, test)                }"
-		"{ extract e          |        |  extract ROI from videostream             }"
-		"{ vizualize          |    0   |  show result in window                    }"
-		"{ createSample cs    |    0   |  creating samples from image              }"
+		"{ help h ?           |         |  print help message                       }"
+		"{ alg	              |    1    |  alg type                                 }"
+		"{ video v            |         |  use video as input                       }"
+		"{ image i            |         |  use list of images as input              }"
+		"{ camera c           |         |  enable camera capturing                  }"
+		"{ class svm          | default |  trained clasifier path                   }"
+		"{ type  t            |         |  type of alg (train, test)                }"
+		"{ extract e          |         |  extract ROI from videostream             }"
+		"{ vizualize          |    1    |  show result in window                    }"
+		"{ createSample cs    |    0    |  creating samples from image              }"
 		;
 	
 	cv::CommandLineParser parser(argc, argv, keys);
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v1.0.0");
-
+	if (parser.get<std::string>("vizualize") == "1" || parser.get<std::string>("vizualize") == "true") {
+		Settings::showVideoFrames = true;
+	}
 	if (parser.has("help"))	{
 		parser.printMessage();
 		return 0;
@@ -118,6 +123,9 @@ int main(int argc, char *argv[])
 	
 	return 0;
 }
+
+
+
 
 void mainFun::type(cv::CommandLineParser parser)
 {
@@ -175,13 +183,11 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	Pipeline pl;
+	Pipeline pl = Pipeline(parser.get<std::string>("class"));
 	int typeAlg;
 	clock_t timer;
 	
-	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n \
-	2) Mixtured HoG (openCV) \n 3) only FHoG (dlib) \n 4) mixtured FHoG (dlib) \n \
-	5) cascade classificator \n 6) TEST MODE \n" << std::endl;
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) Mixtured HoG (openCV) \n 3) only FHoG (dlib) \n 4) mixtured FHoG (dlib)  \n 5) cascade classificator \n 6) TEST MODE \n" << std::endl;
 	std::cin >> typeAlg;
 	
 	if(typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6)	{
@@ -190,10 +196,19 @@ void mainFun::video(cv::CommandLineParser parser)
 	}
 
 	timer = clock();
+	Settings::nameFile = parser.get<std::string>("video");
+
+	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
+	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
+	Settings::nameTrainedFile = "data/trained/" + Settings::nameFile;
+	Settings::nameFile = "data/tested/" + Settings::nameFile;
+	Settings::nameTrainedFile.append("_trained.txt");
+	Settings::nameFile.append(".txt");
+
 	pl.execute(parser.get<std::string>("video"),typeAlg);
 	timer = clock() - timer;
 	printResults(timer);
-	pl.evaluate("test.txt", "trained.txt");
+	pl.evaluate();
 	cv::waitKey(0);
 }
 
