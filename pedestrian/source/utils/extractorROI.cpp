@@ -225,7 +225,6 @@ void ExtractorROI::drawRects()
 		if (rects[i].width > 0 && rects[i].height > 0)	{
 			ROIs[i] = fullFrame(rects[i]);
 			cv::imshow(ss.str().c_str(), ROIs[i]);
-			int font = cv::FONT_HERSHEY_SIMPLEX;
 			cv::putText(img, labels[i], cv::Point(rects[i].tl().x, rects[i].tl().y-5), cv::FONT_HERSHEY_SIMPLEX,0.5, rectColors[i], 1, cv::LINE_8);
 			cv::rectangle(img, rects[i], rectColors[i], 1, 8, 0);
 		}
