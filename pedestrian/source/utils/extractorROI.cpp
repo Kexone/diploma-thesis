@@ -29,10 +29,9 @@ void ExtractorROI::extractROI(std::string videoStreamPath)
 		rects.push_back(cv::Rect());
 
 	std::cout << std::endl;
-	std::cout << yellowColor << " 's' save\n";
-	std::cout << yellowColor << "test " << 0 << " bold" << std::endl;
+	std::cout << yellowColor << "'s' save\n";
 	std::cout << yellowColor << "'n' next frame" << std::endl;
-	std::cout << yellowColor << "'r' to reset" << std::endl;
+	std::cout << yellowColor << "'r' to reset current rect position" << std::endl;
 	std::cout << yellowColor << "'x' immediately write to file (not recommend)" << std::endl << std::endl;
 	std::cout << yellowColor << "'j' move actual rect to left" << std::endl;
 	std::cout << yellowColor << "'l' move actual rect to right" << std::endl;
@@ -182,10 +181,12 @@ void ExtractorROI::process(int cFrame)
 			rects2Save[cFrame] = rects;
 			std::cout << "\033[0;49;90m" << "\tSaved" << std::endl;
 			break;
-		case 'r': { rects[indRect].x = 0; rects[indRect].y = 0; rects[indRect].width = 0; rects[indRect].height = 0; }
-				  img = fullFrame.clone();
+		case 'r':  
+			rects[indRect].x = 0; rects[indRect].y = 0; rects[indRect].width = 0; rects[indRect].height = 0;
+			img = fullFrame.clone();
 			break;
-		case 'x':	write2File();
+		case 'x':	
+			write2File();
 			nextOp = false;
 			break;
 		}
@@ -224,7 +225,9 @@ void ExtractorROI::drawRects()
 		if (rects[i].width > 0 && rects[i].height > 0)	{
 			ROIs[i] = fullFrame(rects[i]);
 			cv::imshow(ss.str().c_str(), ROIs[i]);
-			cv::rectangle(img, rects[i], cv::Scalar(0, 255, 0), 1, 8, 0);
+			int font = cv::FONT_HERSHEY_SIMPLEX;
+			cv::putText(img, labels[i], cv::Point(rects[i].tl().x, rects[i].tl().y-5), cv::FONT_HERSHEY_SIMPLEX,0.5, rectColors[i], 1, cv::LINE_8);
+			cv::rectangle(img, rects[i], rectColors[i], 1, 8, 0);
 		}
 	}
 }
