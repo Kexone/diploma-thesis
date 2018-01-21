@@ -127,7 +127,8 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 
 	//cv::imshow("MOG", frame);
 	//cv::imwrite("test.jpg", frame);
-	std::vector< cv::Rect > rect = _ch.wrapObjects(frame);
+	std::vector< cv::Rect > rect;
+	_ch.wrapObjects(frame, rect);
 
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
@@ -156,7 +157,8 @@ void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
 	_mog.processMat(frame);
 	dilateErode(frame);
 
-	std::vector< cv::Rect > rect = _ch.wrapObjects(frame);
+	std::vector< cv::Rect > rect;
+	_ch.wrapObjects(frame, rect);
 
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
@@ -182,11 +184,54 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 	//_mog.processMat(frame);
 	//dilateErode(frame);
 
-		std::vector < cv::Rect > foundRect;
+	std::vector < cv::Rect > foundRect;
 
-		foundRect = _hog.detect(frame);
-		draw2mat(foundRect);
+	foundRect = _hog.detect(frame);
+	draw2mat(foundRect);
+	foundRect.clear();
+	cv::imshow("Result", _localFrame);
+	frame.release();
+}
+
+void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
+{
+	_localFrame = frame.clone();
+	preprocessing(frame);
+	_mog.processMat(frame);
+	dilateErode(frame);
+
+	std::vector< cv::Rect > rect;
+	_ch.wrapObjects(frame, rect);
+
+	if (rect.size() != 0) {
+		std::vector< CroppedImage > croppedImages;
+		for (size_t i = 0; i < rect.size(); i++) {
+			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
+		}
+		std::vector < std::vector < cv::Rect > > foundRect;
+
+		foundRect = _hog.detect(croppedImages);
+		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
+		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
+	}
+	//	cv::imshow("Result", _localFrame);
+	frame.release();
+	rect.clear();
+}
+// @TODO
+void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
+{
+	_localFrame = frame.clone();
+	preprocessing(frame);
+	//_mog.processMat(frame);
+	//dilateErode(frame);
+
+	std::vector < cv::Rect > foundRect;
+
+	foundRect = _hog.detect(frame);
+	draw2mat(foundRect);
+	foundRect.clear();
 	cv::imshow("Result", _localFrame);
 	frame.release();
 }
