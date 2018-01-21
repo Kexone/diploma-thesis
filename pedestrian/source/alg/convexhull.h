@@ -5,6 +5,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui.hpp>
+#include "../settings.h"
 
 class ConvexHull
 {
@@ -16,9 +17,9 @@ public:
 	* Method is threaded by filtering sizes and  same position of contours.
 	*
 	* @param srcGray binary frame after background substraction (default used MoG2)
-	* @return vector of cv::Rects
+	* @param rects location where can be pedestrian
 	*/
-    std::vector< cv::Rect > wrapObjects(cv::Mat srcGray);
+    void wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > rects);
 
 private:
 	cv::Mat convexHullImage;

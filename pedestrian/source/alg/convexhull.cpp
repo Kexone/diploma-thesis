@@ -1,5 +1,4 @@
 #include "convexhull.h"
-#include "../settings.h"
 
 ConvexHull::ConvexHull() {
 	this->thresh = 115; // Settings::mogThreshold;
@@ -7,20 +6,16 @@ ConvexHull::ConvexHull() {
 	this->extensionSize = 10;
 }
 
-// @TODO refactor this class 
-std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
+void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > rects)
 {
 	assert(!srcGray.empty());
 	
-	//cv::RNG rng(12345);
-
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 	
 	convexHullImage = srcGray.clone();
 
     cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
-    /// Find contours
     cv::findContours(convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
 
     /// Find the convex hull object for each contour
@@ -33,26 +28,28 @@ std::vector<cv::Rect> ConvexHull::wrapObjects(cv::Mat srcGray)
 	filterByArea(hulls, filteredHulls);
 	hulls.clear();
 
-    std::vector< cv::Rect > rects (filteredHulls.size());
-	rects.clear();
+    std::vector< cv::Rect > filteredRects (filteredHulls.size());
+	filteredRects.clear();
 
     for (uint i = 0; i < filteredHulls.size(); i++)
     {
 		cv::Rect rectangle = extendContours(filteredHulls[i]);
-        rects.push_back(rectangle);
+		filteredRects.push_back(rectangle);
+		//cv::RNG rng(12345);
       //  cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
     //    cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
       //  cv::drawContours(convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
     }
-
   //  imshow("Hull demo", convexHullImage);
   //  convexHullImage.release();
 
-	if(rects.size() > 1)
+	if(filteredRects.size() > 1)
 	{
-		clearInSameRegion(rects);
+		clearInSameRegion(filteredRects);
 	}
-    return rects;
+
+	rects = filteredRects;
+	filteredRects.clear();
 }
 
 void ConvexHull::filterByArea(std::vector<std::vector<cv::Point>>& hulls, std::vector<std::vector<cv::Point>>& filteredHulls)
