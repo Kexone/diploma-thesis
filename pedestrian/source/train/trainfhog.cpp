@@ -6,12 +6,7 @@
 #include <dlib/image_processing.h>
 #include <dlib/data_io.h>
 
-void pick_best_window_size(
-	const std::vector<std::vector<dlib::rectangle> >& boxes,
-	unsigned long& width,
-	unsigned long& height,
-	const unsigned long target_size
-)
+void TrainFHog::pickBestWindowSize( const std::vector<std::vector<dlib::rectangle> >& boxes, unsigned long& width,	unsigned long& height,	const unsigned long target_size )
 /*!
 ensures
 - Finds the average aspect ratio of the elements of boxes and outputs a width
@@ -45,9 +40,7 @@ area is equal to target_size.  That is, the following will be approximately true
 		height = 1;
 }
 
-bool contains_any_boxes(
-	const std::vector<std::vector<dlib::rectangle> >& boxes
-)
+bool TrainFHog::containsAnyBoxes(const std::vector<std::vector<dlib::rectangle> >& boxes)
 {
 	for (unsigned long i = 0; i < boxes.size(); ++i)
 	{
@@ -57,11 +50,7 @@ bool contains_any_boxes(
 	return false;
 }
 
-void throw_invalid_box_error_message(
-	const std::string& dataset_filename,
-	const std::vector<std::vector<dlib::rectangle> >& removed,
-	const unsigned long target_size
-)
+void TrainFHog::throwInvalidBoxErrorMessage( const std::string& dataset_filename,	const std::vector<std::vector<dlib::rectangle> >& removed,	const unsigned long target_size)
 {
 	dlib::image_dataset_metadata::dataset data;
 	load_image_dataset_metadata(data, dataset_filename);
@@ -136,7 +125,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	const unsigned long targetSize= 96 * 48;
 	image_scanner_type scanner;
 	unsigned long width, height;
-	pick_best_window_size(objectLocations, width, height, targetSize);
+	pickBestWindowSize(objectLocations, width, height, targetSize);
 	scanner.set_detection_window_size(width, height);
 	dlib::structural_object_detection_trainer<image_scanner_type> trainer(scanner);
 
@@ -150,11 +139,11 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 	std::vector<std::vector<dlib::rectangle> > removed;
 	removed = remove_unobtainable_rectangles(trainer, images, objectLocations);
 	// if we weren't able to get all the boxes to match then throw an error 
-	if (contains_any_boxes(removed))
+	if (containsAnyBoxes(removed))
 	{
 		unsigned long scale = upsample_amount + 1;
 		scale = scale*scale;
-		throw_invalid_box_error_message(parser, removed, targetSize / scale);
+		throwInvalidBoxErrorMessage(parser, removed, targetSize / scale);
 	}
 	std::vector<std::vector<dlib::rectangle>> rects;
 	//object_detector<image_scanner_type> detector = trainer.train(images, object_locations, ignore);
@@ -193,10 +182,10 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 
 void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> labels)
 {
-	typedef dlib::matrix < double, 1980, 1 > sample_type;
+	typedef dlib::matrix < float, 1980, 1 > sample_type;
 	typedef dlib::linear_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
-	std::vector < double > flLabels(labels.begin(), labels.end());
+	std::vector < float > flLabels(labels.begin(), labels.end());
 	dlib::svm_nu_trainer < kernel_type > trainer;
 
 	const double max_nu = 1;
@@ -204,7 +193,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 	for(auto &sample :  samplesList)
 	{
 		dlib::cv_image<float> cvTmp(sample);
-		dlib::matrix<double,1980,1> mtxTmp = dlib::mat(cvTmp);
+		dlib::matrix<float,1980,1> mtxTmp = dlib::mat(cvTmp);
 		samples.push_back(mtxTmp);
 	}
 
@@ -213,7 +202,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 	std::cout << "doing cross validation" << std::endl;
 	for (float gamma = 0.0001; gamma <= 1; gamma *= 5)
 	{
-		for (double nu = 0.0001; nu < max_nu; nu *= 5)
+		for (float nu = 0.0001; nu < max_nu; nu *= 5)
 		{
 			// tell the trainer the parameters we want to use
 			trainer.set_kernel(kernel_type());
@@ -225,7 +214,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 			// The first element of the vector is the fraction of +1 training examples
 			// correctly classified and the second number is the fraction of -1 training
 			// examples correctly classified.
-			std::cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
+		///	std::cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
 		}
 	}
 		//typedef dlib::decision_function<kernel_type> dec_funct_type;

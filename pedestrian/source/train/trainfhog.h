@@ -32,8 +32,10 @@ protected:
 	* @param
 	*/
 	void testParams(std::vector< cv::Mat > samplesList, std::vector< int > labels);
-
-
+private:
+	bool containsAnyBoxes(const std::vector<std::vector<dlib::rectangle> >& boxes);
+	void pickBestWindowSize(const std::vector<std::vector<dlib::rectangle> >& boxes, unsigned long& width, unsigned long& height, const unsigned long target_size);
+	void throwInvalidBoxErrorMessage(const std::string& dataset_filename, const std::vector<std::vector<dlib::rectangle> >& removed, const unsigned long target_size);
 };
 
 #endif // TRAINFHOG_H
