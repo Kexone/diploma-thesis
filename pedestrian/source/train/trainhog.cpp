@@ -1,10 +1,5 @@
 #include "trainhog.h"
-#include <iostream>
-#include <fstream>
-#include <iterator>
-#include <string>
-#include <vector>
-#include "../utils/utils.h"
+
 
 TrainHog::TrainHog()
 {

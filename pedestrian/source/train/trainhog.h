@@ -3,6 +3,12 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <string>
+#include <vector>
+#include "../utils/utils.h"
 
 /**
  * class TrainHog
