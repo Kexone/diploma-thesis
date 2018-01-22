@@ -19,7 +19,7 @@ public:
 	* @param srcGray binary frame after background substraction (default used MoG2)
 	* @param rects location where can be pedestrian
 	*/
-    void wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > rects);
+    void wrapObjects(cv::Mat srcGray, std::vector< cv::Rect >& rects);
 
 private:
 	cv::Mat convexHullImage;

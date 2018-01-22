@@ -116,7 +116,7 @@ public:
 				labels.push_back(1);
 			}
 			else {
-				labels.push_back(0);
+				labels.push_back(-1);
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public:
 			labels.push_back(1);
 		}
 		else {
-			labels.push_back(0);
+			labels.push_back(-1);
 		}
 	}
 

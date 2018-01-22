@@ -13,8 +13,8 @@
 //		DATA		 //
 //////////////////////
 
-std::string posSamples = "samples/posSamples.txt";
-std::string negSamples = "samples/negSamples.txt";
+std::string posSamples = "samples/posSamples1.txt";
+std::string negSamples = "samples/negSamples1.txt";
 
 ///////////////////////
 //					//
@@ -82,7 +82,8 @@ int main(int argc, char *argv[])
 		"{ video v            |         |  use video as input                       }"
 		"{ image i            |         |  use list of images as input              }"
 		"{ camera c           |         |  enable camera capturing                  }"
-		"{ class svm          | default |  trained clasifier path                   }"
+		"{ class svm          | 48_96_16_8_8_9_01.yml |  trained clasifier path                   }"
+		//"{ class svm          | default |  trained clasifier path                   }"
 		"{ type  t            |         |  type of alg (train, test)                }"
 		"{ extract e          |         |  extract ROI from videostream             }"
 		"{ vizualize          |    1    |  show result in window                    }"
@@ -201,8 +202,8 @@ void mainFun::video(cv::CommandLineParser parser)
 
 	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
 	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
-	Settings::nameTrainedFile = "data/trained/" + Settings::nameFile;
-	Settings::nameFile = "data/tested/" + Settings::nameFile;
+	Settings::nameTrainedFile = "data//trained//" + Settings::nameFile;
+	Settings::nameFile = "data//tested//" + Settings::nameFile;
 	Settings::nameTrainedFile.append("_trained.txt");
 	Settings::nameFile.append(".txt");
 

@@ -183,7 +183,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> labels)
 {
 	typedef dlib::matrix < float, 1980, 1 > sample_type;
-	typedef dlib::linear_kernel< sample_type > kernel_type;
+	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
 	std::vector < float > flLabels(labels.begin(), labels.end());
 	dlib::svm_nu_trainer < kernel_type > trainer;
@@ -205,7 +205,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 		for (float nu = 0.0001; nu < max_nu; nu *= 5)
 		{
 			// tell the trainer the parameters we want to use
-			trainer.set_kernel(kernel_type());
+			trainer.set_kernel(kernel_type(gamma));
 			trainer.set_nu(nu);
 		//	trainer.set_cache_size(samples.size());
 			std::cout << "gamma: " << gamma << "    nu: " << nu;

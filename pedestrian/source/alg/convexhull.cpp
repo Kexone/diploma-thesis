@@ -6,7 +6,7 @@ ConvexHull::ConvexHull() {
 	this->extensionSize = 10;
 }
 
-void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > rects)
+void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
 {
 	assert(!srcGray.empty());
 	

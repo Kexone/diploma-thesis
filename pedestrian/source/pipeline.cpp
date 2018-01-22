@@ -75,8 +75,8 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	std::cout << "Videostream initialized." << std::endl;
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
 
-//	loadRects("trained.txt", trained); // @DEBUG
-//	loadRects(Settings::nameFile, tested); // @DEBUG
+	loadRects(Settings::nameTrainedFile, trained); // @DEBUG
+	loadRects(Settings::nameFile, tested); // @DEBUG
 
 	for (int i = 0; ; i++)	{
 		test = i; //@DEBUG
@@ -97,11 +97,11 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 			mixturedFHoG(frame, i);
 		//time = clock() - time; // @DEBUG 
 		//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
+		cv::waitKey(5);
 		if (Settings::showVideoFrames)
 			cv::imshow("Result", _localFrame);
 		frame.release();
 
-		cv::waitKey(5);
 
 		// DEBUG >>>>>>
 		std::stringstream ss;
@@ -124,11 +124,11 @@ void Pipeline::process(cv::Mat &frame, int cFrame)
 	dilateErode(frame);
 	///cv::blur(frame, frame, cv::Size(9, 9));
 
-	//cv::imshow("MOG", frame);
 	//cv::imwrite("test.jpg", frame);
 	std::vector< cv::Rect > rect;
 	_ch.wrapObjects(frame, rect);
 
+	cv::imshow("CH", frame);
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
@@ -323,7 +323,7 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 		getline(ifs, fileContents, '\x1A');
 		ifs.close();
 	}
-	//	std::getline(ifs, fileContents, '\n');
+	std::getline(ifs, fileContents, '\n');
 	std::istringstream iss(fileContents);
 	iss >> curLine;
 	rects = std::vector< std::vector<cv::Rect> >(curLine);
@@ -370,8 +370,8 @@ void Pipeline::evaluate()
 				}
 				else
 				{
-					falsePos++; // pedestrian not founded
-					falseNeg++; // detect something else than pedestrian
+					falsePos++; // detect something else than pedestrian
+					falseNeg++; // pedestrian not founded
 				}
 			}
 		}
