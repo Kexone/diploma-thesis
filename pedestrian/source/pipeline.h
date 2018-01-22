@@ -68,14 +68,7 @@ private:
 	int _typeAlgorithm;
 
 	cv::Mat _dilMat, _eroMat;
-	/**
-	* @brief
-	* @TODO prepare to delete
-	* @param frame actual frame
-	* @param cFrame count frame for saving location of detection
-	*/
-    void process(cv::Mat &frame, int cFrame);
-
+	
 	/**
 	* @brief This testing function uses only HoG from OpenCV on full image.
 	*

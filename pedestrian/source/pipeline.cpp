@@ -60,7 +60,7 @@ void Pipeline::execute(int cameraFeed = 99)
         if(frame.empty()) {
             break;
         }
-        process(frame, i);
+		//  process(frame, i);
         frame.release();
 		cv::waitKey(5);
     }
@@ -90,7 +90,7 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 		if (algorithmType == PURE_HOG)
 			pureHoG(frame, i);
 		else if (algorithmType == MIXTURED_HOG)
-			process(frame, i);
+			mixturedHoG(frame, i);
 		else if (algorithmType == PURE_FHOG)
 			pureFHoG(frame, i);
 		else if (algorithmType == MIXTURED_FHOG)
@@ -112,39 +112,6 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 		// <<<<<< DEBUG
 		_localFrame.release();
 	}
-    cv::destroyWindow("Test"); // @TODO WTF?
-}
-
-
-void Pipeline::process(cv::Mat &frame, int cFrame)
-{
-	_localFrame = frame.clone();
-	preprocessing(frame);
-	_mog.processMat(frame);
-	dilateErode(frame);
-	///cv::blur(frame, frame, cv::Size(9, 9));
-
-	//cv::imwrite("test.jpg", frame);
-	std::vector< cv::Rect > rect;
-	_ch.wrapObjects(frame, rect);
-
-	cv::imshow("CH", frame);
-	if (rect.size() != 0) {
-		std::vector< CroppedImage > croppedImages;
-		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, _localFrame.clone(), rect[i]));
-		}
-		std::vector < std::vector < cv::Rect > > foundRect;
-
-		//	foundRect = _fhog.detect(croppedImages);
-		foundRect = _hog.detect(croppedImages);
-		//foundRect = _cc.detect(croppedImages);
-		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
-		draw2mat(croppedImages, foundRect);
-		foundRect.clear();
-	}
-	frame.release();
-	rect.clear();
 }
 
 void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
@@ -172,13 +139,11 @@ void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
 	frame.release();
 	rect.clear();
 }
-// @TODO
+
 void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	preprocessing(frame);
-	//_mog.processMat(frame);
-	//dilateErode(frame);
 
 	std::vector < cv::Rect > foundRect;
 
@@ -214,7 +179,7 @@ void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
 	frame.release();
 	rect.clear();
 }
-// @TODO
+
 void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
@@ -228,7 +193,6 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 	foundRect.clear();
 	frame.release();
 }
-
 
 void Pipeline::processStandaloneImage(cv::Mat &frame)
 {
