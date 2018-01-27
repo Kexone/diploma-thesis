@@ -40,12 +40,13 @@ Hog::Hog(std::string svmPath)
 }
 
 
-std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames) {
+void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < cv::Rect > > &rects) {
 
-	std::vector<std::vector<cv::Rect>> found_filtered(frames.size());
+	rects.clear();
+	rects = std::vector < std::vector < cv::Rect > > (frames.size());
 	// fflush(stdout);
 	for (size_t x = 0; x < frames.size(); x++) {
-		std::vector<cv::Rect> rRect;
+		//std::vector<cv::Rect> rRect;
 		std::vector<cv::Rect> found;
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
@@ -54,16 +55,17 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 		//cv::cvtColor(test, test, CV_BGR2GRAY);
 		//cv::equalizeHist(test, test);
 
-		cv::imshow("test", test);
+	//	cv::imshow("test", test);
 		//cv::waitKey(15);
+
 		hog.detectMultiScale(
 			test,					// testing img
 			found,					// foundLocation <rect>
-			1,						// hitThreshold = 0 // 1
+			0,						// hitThreshold = 0 // 1
 			cv::Size(8, 8),			// winStride size(8, 8)
 			cv::Size(0, 0),			// padding size(0, 0)
 			1.05,					// scale = 1,05
-			1,						// finalThreshold = 2 // 0
+			1,	/* 1*/					// finalThreshold = 2 // 0
 			false					// use meanshift grouping = false
 		);
 		
@@ -94,49 +96,34 @@ std::vector<std::vector<cv::Rect>> Hog::detect(std::vector<CroppedImage>& frames
 			//    if (j != i && (r & found[j]) == r)
 			//          break;
 			//    if (j == found.size())
-			found_filtered[x].push_back(found[i]);
+			rects[x].push_back(found[i]);
 			//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
 			//          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
 		}
 		test.release();
-		//   cv::imshow("test", test);
-		//found.clear();
+		found.clear();
 	}
-	return found_filtered;
 }
 
-std::vector < cv::Rect > Hog::detect(cv::Mat& frame) {
+void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 
 	// fflush(stdout);
-		std::vector<cv::Rect> found;
-		assert(!frame.empty());
+	rects.clear();
+	assert(!frame.empty());
 		//test.convertTo(test, CV_8UC3);
+	
+	hogDetectMultiScale(frame, rects);
 
 		//cv::cvtColor(test, test, CV_BGR2GRAY);
 		//cv::equalizeHist(test, test);
-		cv::imshow("hog", frame);
-		hog.detectMultiScale(
-			frame,					// testing img
-			found,					// foundLocation <rect>
-			0,						// hitThreshold = 0 // 1
-			cv::Size(8, 8),			// winStride size(8, 8)
-			cv::Size(0, 0),			// padding size(0, 0)
-			1.05,					// scale = 1,05
-			0,						// finalThreshold = 2 // 0
-			true					// use meanshift grouping = false
-		);
-
-	return found;
+	cv::imshow("hog", frame);
 }
 
 void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)
 {
-	//std::vector< cv::Point > location;
-//	std::vector< float > descriptors;
 	hog.winSize = cv::Size(48, 96);
 	for(auto &mat : testLst)
 	{
-		//hog.compute(mat, descriptors, cv::Size(8, 8), cv::Size(0, 0), location);
 		int predicted = predict(mat);
 		if(pedestrian)
 		{
@@ -153,7 +140,6 @@ void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool ped
 
 void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector )
 {
-    // get the support vectors
     cv::Mat sv = svm->getSupportVectors();
     const int sv_total = sv.rows;
     // get the decision function
@@ -169,6 +155,20 @@ void Hog::getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float 
     hog_detector.resize(sv.cols + 1);
     memcpy( &hog_detector[0], sv.ptr(), sv.cols*sizeof( hog_detector[0] ) );
     hog_detector[sv.cols] = (float)-rho;
+}
+
+void Hog::hogDetectMultiScale(cv::Mat img, std::vector<cv::Rect>& found)
+{
+	hog.detectMultiScale(
+		img,					// testing img
+		found,					// foundLocation <rect>
+		0,						// hitThreshold = 0 // 1
+		cv::Size(8, 8),			// winStride size(8, 8)
+		cv::Size(0, 0),			// padding size(0, 0)
+		1.05,					// scale = 1,05
+		1,	/* 1*/					// finalThreshold = 2 // 0
+		true					// use meanshift grouping = false
+	);
 }
 
 float Hog::predict(cv::Mat img, int flags)

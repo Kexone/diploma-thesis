@@ -15,6 +15,7 @@ int Pipeline::allDetections = 0;
 Pipeline::Pipeline(std::string svmPath)
 {
 	_hog = Hog(svmPath);
+	//_fhog = FHog("data.dat");
 	allDetections = 0;
 	_dilMat = getStructuringElement(_dilation_type,
 		cv::Size(2 * _dilation_size + 1, 2 * _dilation_size + 1),
@@ -75,8 +76,8 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	std::cout << "Videostream initialized." << std::endl;
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
 
-	loadRects(Settings::nameTrainedFile, trained); // @DEBUG
-	loadRects(Settings::nameFile, tested); // @DEBUG
+	//loadRects(Settings::nameTrainedFile, trained); // @DEBUG
+	//loadRects(Settings::nameFile, tested); // @DEBUG
 
 	for (int i = 0; ; i++)	{
 		test = i; //@DEBUG
@@ -90,16 +91,17 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 		if (algorithmType == PURE_HOG)
 			pureHoG(frame, i);
 		else if (algorithmType == MIXTURED_HOG)
-			mixturedHoG(frame, i);
+			mogAndHog(frame, i);
 		else if (algorithmType == PURE_FHOG)
 			pureFHoG(frame, i);
 		else if (algorithmType == MIXTURED_FHOG)
-			mixturedFHoG(frame, i);
+			mogAndFHog(frame, i);
 		//time = clock() - time; // @DEBUG 
 		//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
 		cv::waitKey(5);
 		if (Settings::showVideoFrames)
 			cv::imshow("Result", _localFrame);
+		cv::waitKey(5);
 		frame.release();
 
 
@@ -114,7 +116,7 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	}
 }
 
-void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
+void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	preprocessing(frame);
@@ -131,7 +133,7 @@ void Pipeline::mixturedHoG(cv::Mat &frame, int cFrame)
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 
-		foundRect = _hog.detect(croppedImages);
+		_hog.detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
@@ -147,14 +149,14 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 
 	std::vector < cv::Rect > foundRect;
 
-	foundRect = _hog.detect(frame);
+	_hog.detect(frame, foundRect);
 	draw2mat(foundRect);
 	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
 }
 
-void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
+void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	preprocessing(frame);
@@ -167,7 +169,7 @@ void Pipeline::mixturedFHoG(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
+			croppedImages.emplace_back(CroppedImage(i, _localFrame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 
@@ -200,7 +202,7 @@ void Pipeline::processStandaloneImage(cv::Mat &frame)
 	preprocessing(frame);
 	std::vector < cv::Rect  > foundRect;
 	//foundRect = fhog.detect(frame);
-		foundRect = _hog.detect(frame);
+	_hog.detect(frame, foundRect);
 	//foundRect = cc.detect(frame);
 	draw2mat(foundRect);
 
@@ -233,13 +235,13 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::Rect r = rect[j][i];
-			if (!trained[test].empty()) {//@DEBUG
+//			if (!trained[test].empty()) {//@DEBUG
 				//if (!tested[test].empty()) //@DEBUG
 					//cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
-				cv::rectangle(_localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
-				cv::rectangle(_localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
+		//		cv::rectangle(_localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
+			//	cv::rectangle(_localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
 			//	std::cout << (r & trained[test][0]).area() << std::endl;
-			}
+			//}
 			cv::rectangle(_localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
 			
 		}
@@ -343,6 +345,8 @@ void Pipeline::evaluate()
 	float acc = static_cast<float>(truePos + trueNeg) /
 		static_cast<float>(truePos + trueNeg + falsePos + falseNeg);
 
+	float f1score = static_cast<float>(2 * truePos) /
+		static_cast<float>(2 * truePos + falsePos + falseNeg);
 
 	std::cout << "True Positive: " << truePos << std::endl;
 	std::cout << "False Positive: " << falsePos << std::endl;
@@ -350,4 +354,7 @@ void Pipeline::evaluate()
 	std::cout << "False Negative: " << falseNeg << std::endl;
 	std::cout << "Accuracy: " << acc << std::endl;
 	std::cout << "Accuracy (%): " << static_cast<int>(acc * 100) << std::endl;
+	std::cout << "F1 score : " << f1score << std::endl;
 }
+
+

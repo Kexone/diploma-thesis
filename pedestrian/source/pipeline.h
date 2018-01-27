@@ -91,7 +91,7 @@ private:
 	* @param frame actual frame
 	* @param cFrame count frame for saving location of detection
 	*/
-	void mixturedHoG(cv::Mat &frame, int cFrame);
+	void mogAndHog(cv::Mat &frame, int cFrame);
 
 	/**
 	* @brief This testing function uses Gaussian mixture to analyzes and substraction of motion segments and thereafter uses HoG from dlib
@@ -99,7 +99,7 @@ private:
 	* @param frame actual frame
 	* @param cFrame count frame for saving location of detection
 	*/
-	void mixturedFHoG(cv::Mat &frame, int cFrame);
+	void mogAndFHog(cv::Mat &frame, int cFrame);
 
 	/**
 	* @brief Method for processing one image where used classic HoG to detection pedestrian

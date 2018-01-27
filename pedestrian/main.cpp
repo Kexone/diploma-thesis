@@ -13,8 +13,8 @@
 //		DATA		 //
 //////////////////////
 
-std::string posSamples = "samples/posSamples1.txt";
-std::string negSamples = "samples/negSamples1.txt";
+std::string posSamples = "samples/posSamples.txt";
+std::string negSamples = "samples/negSamples.txt";
 
 ///////////////////////
 //					//
@@ -45,26 +45,35 @@ namespace mainFun {
 //		 MAIN		 //
 //////////////////////
 
-/* 
- * @TODO docs on trainfHog, hog, videostream, mediafile, utils, fhog, cascadeClass
- * @TODO add choose to set all params
- * @TODO ROC curves
- * 
- * @TODO calc confidence
- * @TODO train Dlib SVM from OpenCV HOG features
- * 
- * @TODO train cascade classificator
- * @TODO HAAR cascade classificator
- * @TODO LBP cascade classificator
- * @TODO ADA BOOST train
- * @TODO LBP train
- * @TODO HAAR train
- * 
- * @TODO refactor Utils class
- * @TODO implement cv::groupRectangles();
- * @TODO own implementation of detectMultiScale()
+/*
+* @TODO IMPORTANT TODO!!!
+*		COMBINED DLIB SVM TRAINING
+* @TODO CALC DISTANCE
+* @TODO CALC F1 SCORE
+* @TODO ROC curves
+* @TODO OWN DETECT MULTISCALE
+* @TODO CASCADE CLASSIFICATOR TRAIN
+* @TODO RESIZE SAMPLES FOR CC TRAIN
+* @TODO LBP TESTING
+* @TODO HAAR TESTING
+* @TODO TRAIN HOG
+* @TODO TEST METHOD FOR MORE CLASSIFICATORS
+* @TODO DOCUMENTATION / trainfHog, utils
+*		RENAME OUTPUT (EG MIXTURED HOG TO HOG+MOG)
+*
+* @TODO add choose to set all params
+*
+* @TODO train cascade classificator
+* @TODO HAAR cascade classificator
+* @TODO LBP cascade classificator
+* @TODO ADA BOOST train
+* @TODO LBP train
+* @TODO HAAR train
+*
+* @TODO refactor Utils class
+* @TODO implement cv::groupRectangles();
 
- */
+*/
 std::string Settings::nameFile = "";
 std::string Settings::nameTrainedFile = "";
 bool Settings::showVideoFrames = false;
@@ -134,8 +143,8 @@ void mainFun::type(cv::CommandLineParser parser)
 	int chosenType;
 	if (!type.compare("train"))	{
 
-		std::cout << "\n1) openCV SVM train \n2) combined train (extract features by opencv HOG and train by dlib SVM) \n \
-		3) dlib SVM train \n4) cascade classificator train \nType of train: ";
+		std::cout << "\n 1) openCV SVM train \n 2) combined train (extract features by opencv HOG and train by dlib SVM) \n";
+		std::cout << " 3) dlib SVM train \n 4) cascade classificator train \nType of train : ";
 		std::cin >> chosenType;
 
 		if (chosenType == 1 )	{  // @TODO train from mat and select own params?
@@ -189,7 +198,10 @@ void mainFun::video(cv::CommandLineParser parser)
 	int typeAlg;
 	clock_t timer;
 	
-	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) Mixtured HoG (openCV) \n 3) only FHoG (dlib) \n 4) mixtured FHoG (dlib)  \n 5) cascade classificator \n 6) TEST MODE \n" << std::endl;
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
+	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
+	std::cout << " 5) cascade classificator \n";
+	std::cout << " x) TEST MODE \n" << std::endl;
 	std::cin >> typeAlg;
 	
 	if(typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6)	{

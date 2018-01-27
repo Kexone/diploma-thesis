@@ -15,44 +15,67 @@ class Hog
 public:
 
 	Hog();
+
 	/**
-	* @brief
+	* @brief Constructor of my HoG class which sets the SVM
 	*
-	* @param
+	* @param svmPath is path to svm, if sent word is 'default' will sets the default openCV  people detector
 	*/
 	Hog(std::string svmPath);
 
 	/**
-	* @brief
+	* @brief Detection pedestrian on cropped images
 	*
-	* @param
+	* @param frame the vector of cropped images
+	* @param rects vector of vectors rectangles
 	*/
-    std::vector< std::vector < cv::Rect > > detect(std::vector< CroppedImage > &frame);
+    void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects);
 
 	/**
-	* @brief
+	* @brief Detection pedestrian on frame
 	*
-	* @param
+	* @param frame
+	* @param rects vector of rectangles
 	*/
-	std::vector < cv::Rect > Hog::detect(cv::Mat& frame);
+	void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects);
 
 	/**
-	* @brief
+	* @brief This detection method is for testing, it gets vector of matrix and sets true or false predicate
 	*
-	* @param
+	* @param testLst list of samples of one type (negative or positive)
+	* @param nTrue sets this variable is true
+	* @param nFalse sets this variable is false
+	* @param pedestrian means on samples is pedestrian
 	*/
 	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);
 
 private:
 
 	/**
-	* @brief
+	* @brief Gets SVM detector which is needed to detection
 	*
-	* @param
+	* @param svm svm pointer
+	* @param vector of floats
 	*/
     void getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector );
 
+	/**
+	* @brief This function calls function detectMultiScale from openCV
+	*
+	* @param img image to processing
+	* @param found vector of found rectangles
+	*/
+	void hogDetectMultiScale(cv::Mat img, std::vector< cv::Rect > &found);
+	
+	/**
+	* @brief Gets value of predict, firstly calculates HoG features and then return predicate.
+	* This method can returns the distance of detection, but have to convert it with sigmoid function
+	*
+	* @param img image to processing
+	* @param found vector of found rectangles
+	*/
 	float predict(cv::Mat img, int flags = 0);
+
     cv::HOGDescriptor hog;
 	cv::Ptr<cv::ml::SVM> svm;
 };

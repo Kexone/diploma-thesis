@@ -28,13 +28,13 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
 	filterByArea(hulls, filteredHulls);
 	hulls.clear();
 
-    std::vector< cv::Rect > filteredRects (filteredHulls.size());
-	filteredRects.clear();
+	rects = std::vector< cv::Rect > (filteredHulls.size());
+	rects.clear();
 
     for (uint i = 0; i < filteredHulls.size(); i++)
     {
 		cv::Rect rectangle = extendContours(filteredHulls[i]);
-		filteredRects.push_back(rectangle);
+		rects.push_back(rectangle);
 		//cv::RNG rng(12345);
       //  cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
     //    cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
@@ -43,13 +43,10 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
   //  imshow("Hull demo", convexHullImage);
   //  convexHullImage.release();
 
-	if(filteredRects.size() > 1)
+	if(rects.size() > 1)
 	{
-		clearInSameRegion(filteredRects);
+		clearInSameRegion(rects);
 	}
-
-	rects = filteredRects;
-	filteredRects.clear();
 }
 
 void ConvexHull::filterByArea(std::vector<std::vector<cv::Point>>& hulls, std::vector<std::vector<cv::Point>>& filteredHulls)

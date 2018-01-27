@@ -214,7 +214,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 			// The first element of the vector is the fraction of +1 training examples
 			// correctly classified and the second number is the fraction of -1 training
 			// examples correctly classified.
-		///	std::cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
+			std::cout << "     cross validation accuracy: " << cross_validate_trainer(trainer, samples, flLabels, 3);
 		}
 	}
 		//typedef dlib::decision_function<kernel_type> dec_funct_type;
@@ -222,14 +222,21 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 		//funct_type learned_function;
 		//learned_function.normalizer = normalizer;
 		//learned_function.function = trainer.train(samples, flLabels);
-
+		
 		typedef dlib::probabilistic_decision_function<kernel_type> probabilistic_funct_type;
 		typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
-
+		trainer.set_kernel(kernel_type(0.001));
+		trainer.set_nu(0.001);
 		pfunct_type learned_pfunct;
 //		learned_pfunct.normalizer = normalizer;
 		learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
-		dlib::serialize("data.dat") << learned_pfunct;
+		typedef dlib::scan_fhog_pyramid<sample_type > image_scanner_type;
+		dlib::serialize("data.svm") <<  trainer.train(samples, flLabels);
+		//dlib::object_detector<image_scanner_type> detector = 
+		//dlib::serialize("data.dat") << learned_pfunct;
+		//learned_pfunct.function = train_probabilistic_decision_function(reduced2(trainer, 10), samples, flLabels, 3);
+		//dlib::serialize("data.svm") << learned_pfunct;
+
 	//}
 }
 

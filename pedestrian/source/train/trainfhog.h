@@ -33,8 +33,26 @@ protected:
 	*/
 	void testParams(std::vector< cv::Mat > samplesList, std::vector< int > labels);
 private:
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	bool containsAnyBoxes(const std::vector<std::vector<dlib::rectangle> >& boxes);
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	void pickBestWindowSize(const std::vector<std::vector<dlib::rectangle> >& boxes, unsigned long& width, unsigned long& height, const unsigned long target_size);
+
+	/**
+	* @brief
+	*
+	* @param
+	*/
 	void throwInvalidBoxErrorMessage(const std::string& dataset_filename, const std::vector<std::vector<dlib::rectangle> >& removed, const unsigned long target_size);
 };
 
