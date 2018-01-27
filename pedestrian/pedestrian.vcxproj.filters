@@ -63,9 +63,6 @@
     <ClCompile Include="source\alg\convexhull.cpp">
       <Filter>Source Files\alg</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\mediafile.cpp">
-      <Filter>Source Files\media</Filter>
-    </ClCompile>
     <ClCompile Include="source\media\videostream.cpp">
       <Filter>Source Files\media</Filter>
     </ClCompile>
@@ -114,9 +111,6 @@
       <Filter>Header Files\alg</Filter>
     </ClInclude>
     <ClInclude Include="source\media\croppedimage.h">
-      <Filter>Header Files\media</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\mediafile.h">
       <Filter>Header Files\media</Filter>
     </ClInclude>
     <ClInclude Include="source\media\videostream.h">
