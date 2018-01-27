@@ -31,7 +31,7 @@ protected:
 	*
 	* @param
 	*/
-	void testParams(std::vector< cv::Mat > samplesList, std::vector< int > labels);
+	void testParams(std::vector< cv::Mat > gradientSamplesList, std::vector< int > labels);
 private:
 
 	/**

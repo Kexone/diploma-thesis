@@ -180,7 +180,7 @@ void TrainFHog::train(std::string posSamples, std::string negSamples)
 
 }
 
-void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> labels)
+void TrainFHog::testParams(std::vector<cv::Mat> gradientSamplesList, std::vector<int> labels)
 {
 	typedef dlib::matrix < float, 1980, 1 > sample_type;
 	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
@@ -190,7 +190,7 @@ void TrainFHog::testParams(std::vector<cv::Mat> samplesList, std::vector<int> la
 
 	const double max_nu = 1;
 
-	for(auto &sample :  samplesList)
+	for(auto &sample : gradientSamplesList)
 	{
 		dlib::cv_image<float> cvTmp(sample);
 		dlib::matrix<float,1980,1> mtxTmp = dlib::mat(cvTmp);
