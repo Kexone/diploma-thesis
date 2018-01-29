@@ -40,8 +40,9 @@ Hog::Hog(std::string svmPath)
 }
 
 
-void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < cv::Rect > > &rects) {
+void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > distances) {
 
+	distances.clear();
 	rects.clear();
 	rects = std::vector < std::vector < cv::Rect > > (frames.size());
 	// fflush(stdout);
@@ -74,7 +75,8 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		if (found.empty()) {
 			continue;
 		}
-		
+
+
 		//std::cout << (predicted) << std::endl;
 		//float confidence = 1.0 / (1.0 + exp(-predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT)));
 		//std::cout << confidence << std::endl;
@@ -96,7 +98,8 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			//    if (j != i && (r & found[j]) == r)
 			//          break;
 			//    if (j == found.size())
-			rects[x].push_back(found[i]);
+			rects[x].push_back( found[i] );
+			distances[x].push_back( getDistance( test( found[i] ) ) );
 			//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
 			//          cv::rectangle(test, found[i].tl(), found[i].br(),cv::Scalar(0,0,255),4,8,0);
 		}
@@ -171,9 +174,17 @@ void Hog::hogDetectMultiScale(cv::Mat img, std::vector<cv::Rect>& found)
 	);
 }
 
+float Hog::getDistance(cv::Mat img)
+{
+	float dist = predict(img, cv::ml::StatModel::RAW_OUTPUT);
+	return 1.0f / (1.0f + std::exp(dist));
+}
+
 float Hog::predict(cv::Mat img, int flags)
 {
 	std::vector< float > descriptors;
 	hog.compute(img, descriptors, cv::Size(48, 96), cv::Size(0, 0));
 	return svm->predict(descriptors, cv::noArray(), flags);
 }
+
+

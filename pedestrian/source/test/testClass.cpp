@@ -193,8 +193,8 @@ void TestClass::iterationCycle()
 		{
 			for (double c = 0.0001; c < 1; c *= 5)
 			{
-				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << std::endl;
 				svm.setParams(iter, c, gamma);
+				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << "\t";
 				svm.process();
 			}
 		}

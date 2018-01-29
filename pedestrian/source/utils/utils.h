@@ -63,12 +63,13 @@ class Utils
 public:
 
 	/**
-	* @brief This function create new directory if not exists. Using the bad practise (call system() func), use carefully
+	* @brief This function creates new directory if not exists. Using the bad practise (call system() func), use carefully
 	* 
 	* @param path path with name making directory
 	*/
 	static void makeDir(std::string path)
 	{
+#pragma GCC diagnostic ignored "-Wwrite-strings"
 		char * mkDirStr = static_cast<char *>("mkdir ");
 		int lenComm = 6;
 		char *temp = new char[path.length()];
@@ -82,9 +83,9 @@ public:
 	}
 
 	/**
-	* @brief
+	* @brief Converts dlib list of rectangles to openCV rectangles
 	*
-	* @param
+	* @param r list of dlib rectangles
 	*/
 	static std::vector < cv::Rect > vecDlibRectangle2VecOpenCV(std::vector< dlib::rectangle > r)
 	{
@@ -96,9 +97,14 @@ public:
 	}
 
 	/**
-	* @brief
+	* @brief Fills vector of cv::Mat from string path and sets the labels. 
+	* @sNeg is switcher for negative and positive samples which determines what will be filled to list of labels
 	*
-	* @param
+	* @param path path to samples
+	* @param dstList list of cv::Mat
+	* @param labels list of labels
+	* @param  pedSize size of pedestrian (image)
+	* @param isNeg switcher between samples
 	*/
 	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false)
 	{
@@ -122,9 +128,14 @@ public:
 	}
 
 	/**
-	* @brief
+	* @brief Fills vector ofdlib::matrix < TrainFHog::pixel_type> from string path and sets the labels.
+	* @sNeg is switcher for negative and positive samples which determines what will be filled to list of labels
 	*
-	* @param
+	* @param path path to samples
+	* @param dstList list of dlib::matrix < TrainFHog::pixel_type>
+	* @param labels list of labels
+	* @param  pedSize size of pedestrian (image)
+	* @param isNeg switcher between samples
 	*/
 	static void fillSamples2List(std::string &path, std::vector< dlib::matrix < TrainFHog::pixel_type> > &dstList, std::vector<float> &labels, cv::Size pedSize, bool isNeg = false)
 	{
@@ -156,6 +167,9 @@ public:
 
 	/**
 	 * @brief This method parsing image by sliding window to samples to train
+	 * 
+	 * @param path path to samples
+	 * @param folder folder where save parsed images
 	 */
 	static void createSamplesFromImage( std::string path, std::string folder )
 	{

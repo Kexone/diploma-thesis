@@ -29,7 +29,7 @@ public:
 	* @param frame the vector of cropped images
 	* @param rects vector of vectors rectangles
 	*/
-    void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects);
+    void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > distances);
 
 	/**
 	* @brief Detection pedestrian on frame
@@ -69,12 +69,19 @@ private:
 	
 	/**
 	* @brief Gets value of predict, firstly calculates HoG features and then return predicate.
-	* This method can returns the distance of detection, but have to convert it with sigmoid function
+	* 
 	*
 	* @param img image to processing
-	* @param found vector of found rectangles
+	* @param flags flags for svm predict function
 	*/
 	float predict(cv::Mat img, int flags = 0);
+
+	/**
+	* @brief This method calc the distance of detection
+	* 
+	* @param img image to processing 
+	*/
+	float getDistance(cv::Mat img);
 
     cv::HOGDescriptor hog;
 	cv::Ptr<cv::ml::SVM> svm;

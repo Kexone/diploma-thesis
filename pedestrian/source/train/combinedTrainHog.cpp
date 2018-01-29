@@ -18,6 +18,6 @@ void CombinedTrainHog::train(std::string posSamplesPath, std::string negSamplesP
 
 	extractFeatures(posSamplesLst, gradientLst);
 	extractFeatures(negSamplesLst, gradientLst);
-
-	testParams(gradientLst, labels);
+	
+	TrainFHog::train(gradientLst, labels);
 }

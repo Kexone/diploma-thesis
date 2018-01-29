@@ -60,6 +60,7 @@ private:
 
 	cv::Mat _localFrame;
 	std::vector < std::vector < std::vector < cv::Rect > > > _rects2Eval;
+	std::vector  < std::vector < std::vector < float > > > _distances;
 
 	int _dilation_type = cv::MORPH_CROSS;
 	int _erosion_type = cv::MORPH_CROSS;

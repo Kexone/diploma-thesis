@@ -75,7 +75,7 @@ void Pipeline::execute(std::string cameraFeed, int algorithmType)
 	_vs->openCamera();
 	std::cout << "Videostream initialized." << std::endl;
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
-
+	_distances = std::vector < std::vector < std::vector < float > > >(_vs->totalFrames);
 	//loadRects(Settings::nameTrainedFile, trained); // @DEBUG
 	//loadRects(Settings::nameFile, tested); // @DEBUG
 
@@ -132,8 +132,10 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
+		std::vector < std::vector < float > > distances;
 
-		_hog.detect(croppedImages, foundRect);
+		_hog.detect(croppedImages, foundRect, distances);
+		_distances[cFrame] = distances;
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		draw2mat(croppedImages, foundRect);
 		foundRect.clear();
@@ -269,6 +271,17 @@ void Pipeline::saveResults()
 			for (uint k = 0; k < _rects2Eval[i][j].size(); k++)	{
 				if (_rects2Eval[i][j][k].area() == 0) continue;
 				fs << i << " " << _rects2Eval[i][j][k].tl().x << " " << _rects2Eval[i][j][k].tl().y << " " << _rects2Eval[i][j][k].br().x << " " << _rects2Eval[i][j][k].br().y << std::endl;
+			}
+		}
+	}
+	fs.close();
+
+	fs.open(Settings::nameFile + "_distances.txt");
+	fs << _distances.size();
+	for (uint i = 0; i < _distances.size(); i++) {
+		for (uint j = 0; j < _distances[i].size(); j++) {
+			for (uint k = 0; k < _distances[i][j].size(); k++) {
+				fs << i << " " << _distances[i][j][k] << std::endl;
 			}
 		}
 	}

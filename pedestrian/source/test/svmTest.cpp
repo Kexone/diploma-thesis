@@ -94,8 +94,8 @@ float SvmTest::process()
 	h.detect(posTestLst, valuation[0], valuation[1]);
 	h.detect(negTestLst, valuation[2], valuation[3], false);
 	classTime = clock() - classTime;
-	std::cout << "POS DETECTION [T/F] " << valuation[0]  << "/" << valuation[1] << std::endl;
-	std::cout << "NEG DETECTION [T/F] " << valuation[2] << "/" << valuation[3] << std::endl;
+	//std::cout << "POS DETECTION [T/F] " << valuation[0]  << "/" << valuation[1] << std::endl;
+	//std::cout << "NEG DETECTION [T/F] " << valuation[2] << "/" << valuation[3] << std::endl;
 
 	accuracy = static_cast<float>(valuation[0]  + valuation[2] ) / static_cast<float>(valuation[0]+ valuation[1]+ valuation[2]+ valuation[3]);
 	print2File(counterTest, valuation);
