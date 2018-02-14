@@ -131,7 +131,7 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
 
 void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 {
-    std::cout << "START training ..." << std::endl;
+  //  std::cout << "START training ..." << std::endl;
 	clock_t timer = clock();
 	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 	//cv::Ptr<cv::ml::Boost> svm = cv::ml::Boost::create();
@@ -148,7 +148,7 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 	svm->train(trainMat, cv::ml::ROW_SAMPLE, cv::Mat(labels));
 	svm->save(classifierName);
 	timer = clock() - timer;
-    std::cout << "training DONE ..."<< static_cast<float>(timer) / (CLOCKS_PER_SEC*60) << " min" <<  std::endl;
+ //   std::cout << "training DONE ..."<< static_cast<float>(timer) / (CLOCKS_PER_SEC*60) << " min" <<  std::endl;
 
 }
 

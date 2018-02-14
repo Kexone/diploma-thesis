@@ -188,14 +188,13 @@ void TestClass::iterationCycle()
 	SvmTest svm;
 	svm.preprocessing();
 	svm.initResultFile(ss);
-	for (int iter = 200; iter < 500; iter += 50) {
+	for (int iter = 0; iter < 3000; iter += 50) {
 		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
 		{
 			for (double c = 0.0001; c < 1; c *= 5)
 			{
 				svm.setParams(iter, c, gamma);
-				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << "\t";
-				svm.process();
+				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << "\t" << svm.process() << std::endl;
 			}
 		}
 	}

@@ -23,9 +23,6 @@ public:
 	TrainFHog(double nu, double gamma) : _nu_par(nu), _gamma_par(gamma) { };
 	TrainFHog(double nu, double gamma, std::string namefile) : _nu_par(nu), _gamma_par(gamma), _namefile(namefile)  { };
 
-	
-protected:
-
 	/**
 	* @brief train for dlib SVM
 	*
@@ -34,6 +31,7 @@ protected:
 	*/
 	void train(std::string posSamples, std::string negSamples);
 
+protected:
 	/**
 	* @brief Combined train, features are calculated via openCV HoG and after used for train dlib SVM
 	*

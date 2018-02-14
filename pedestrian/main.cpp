@@ -16,6 +16,8 @@
 std::string posSamples = "samples/posSamples.txt";
 std::string negSamples = "samples/negSamples.txt";
 
+#define MY_DEBUG true
+
 ///////////////////////
 //					//
 ///////////////////////////////////////////////////////
@@ -54,11 +56,11 @@ namespace mainFun {
 * @TODO OWN DETECT MULTISCALE
 * @TODO CASCADE CLASSIFICATOR TRAIN
 *		RESIZE SAMPLES FOR CC TRAIN
-* @TODO LBP TESTING
-* @TODO HAAR TESTING
-* @TODO TRAIN HOG
+*		LBP TESTING
+*		HAAR TESTING
+*		TRAIN HOG
 * @TODO TEST METHOD FOR MORE CLASSIFICATORS
-* @TODO DOCUMENTATION /  utils
+*		DOCUMENTATION
 *		RENAME OUTPUT (EG MIXTURED HOG TO HOG+MOG)
 *
 * @TODO add choose to set all params
@@ -80,8 +82,7 @@ bool Settings::showVideoFrames = false;
 
 int main(int argc, char *argv[])
 {
-	if(argc < 2)
-	{
+	if(argc < 2)	{
 		std::cout << "\tType -help for help" << std::endl;
 		return 0;
 	}
@@ -91,8 +92,8 @@ int main(int argc, char *argv[])
 		"{ video v            |         |  use video as input                       }"
 		"{ image i            |         |  use list of images as input              }"
 		"{ camera c           |         |  enable camera capturing                  }"
-		"{ class svm          | 48_96_16_8_8_9_01.yml |  trained clasifier path                   }"
-		//"{ class svm          | default |  trained clasifier path                   }"
+		//"{ class svm          | 2111_79_98.4_0_961711.yml |  trained clasifier path                   }"
+		"{ class svm          | default |  trained clasifier path                   }"
 		"{ type  t            |         |  type of alg (train, test)                }"
 		"{ extract e          |         |  extract ROI from videostream             }"
 		"{ vizualize          |    1    |  show result in window                    }"
@@ -149,7 +150,7 @@ void mainFun::type(cv::CommandLineParser parser)
 
 		if (chosenType == 1 )	{  // @TODO train from mat and select own params?
 			//TrainHog th;
-			TrainHog th = TrainHog(450, 3, 0, 100, 1.e-06, 0, 3, 0.0005, 0, 0, 0.0001, "2111_79_98.4.yml");
+			TrainHog th = TrainHog(2700, 3, 0, 100, 1.e-06, 0, 3, 0.0001, 0, 0, 0.0001, "2111_79_98.4_0_961711.yml");
 			//TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
 			//th.trainFromMat("test.yml", "labels.txt");
 			th.train(posSamples, negSamples, false);
@@ -163,8 +164,8 @@ void mainFun::type(cv::CommandLineParser parser)
 			tfh.train(posSamples, negSamples);
 		}
 		else if (chosenType == 4) {
-			TrainCascade tc = TrainCascade("","","");
-			tc.train();
+			TrainCascade tc;
+			tc.execute();
 		}
 		else
 			std::cout << "Bad selection.\n";
@@ -175,7 +176,7 @@ void mainFun::type(cv::CommandLineParser parser)
 void mainFun::camera(cv::CommandLineParser parser)
 {
 	Pipeline *pl;
-	pl = new Pipeline(parser.get<std::string>("class"));
+	pl = new Pipeline(parser.get<std::string>("class"),0);
 	std::cout << "camera" << std::endl;
 	pl->execute(0);
 
@@ -184,7 +185,7 @@ void mainFun::camera(cv::CommandLineParser parser)
 
 void mainFun::image(cv::CommandLineParser parser)
 {
-	Pipeline *pl = new Pipeline(parser.get<std::string>("class"));
+	Pipeline *pl = new Pipeline(parser.get<std::string>("class"),0);
 	pl->executeImages(parser.get<std::string>("image"));
 	std::cout << parser.get<std::string>("image") << std::endl;
 	cv::waitKey(0);
@@ -194,7 +195,6 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	Pipeline *pl = new Pipeline(parser.get<std::string>("class"));
 	int typeAlg;
 	clock_t timer;
 	
@@ -208,21 +208,22 @@ void mainFun::video(cv::CommandLineParser parser)
 		std::cout << "Bad selection.\n";
 		return;
 	}
-
-	timer = clock();
+	Pipeline *pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
 	Settings::nameFile = parser.get<std::string>("video");
 
-	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
-	std::replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
+	replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
+	replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
 	Settings::nameTrainedFile = "data//trained//" + Settings::nameFile;
 	Settings::nameFile = "data//tested//" + Settings::nameFile;
 	Settings::nameTrainedFile.append("_trained.txt");
 	Settings::nameFile.append(".txt");
 
-	pl->execute(parser.get<std::string>("video"),typeAlg);
+	timer = clock();
+	pl->execute(parser.get<std::string>("video"));
 	timer = clock() - timer;
 	printResults(timer);
 	pl->evaluate();
+	
 	cv::waitKey(0);
 
 	delete pl;

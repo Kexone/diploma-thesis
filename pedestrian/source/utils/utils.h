@@ -105,8 +105,9 @@ public:
 	* @param labels list of labels
 	* @param  pedSize size of pedestrian (image)
 	* @param isNeg switcher between samples
+	* @param forDlib switcher between OpenCV and DLib causes switch types of labels 
 	*/
-	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false)
+	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false, bool forDlib = false)
 	{
 		assert(!path.empty());
 		cv::Mat frame;
@@ -118,11 +119,19 @@ public:
 			if (frame.empty())		std::cout << "fail" << std::endl;
 			cv::resize(frame, frame, pedSize);
 			dstList.push_back(frame.clone());
-			if (!isNeg) {
-				labels.push_back(1);
-			}
-			else {
-				labels.push_back(-1);
+			if (!forDlib) {
+				if (!isNeg) {
+					labels.push_back(1);
+				} else {
+					labels.push_back(0);
+				}
+			} else
+			{
+				if (!isNeg) {
+					labels.push_back(+1);
+				} else {
+					labels.push_back(-1);
+				}
 			}
 		}
 	}

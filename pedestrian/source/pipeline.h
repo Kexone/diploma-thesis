@@ -18,8 +18,8 @@
 class Pipeline
 {
 public:
-	Pipeline() : Pipeline("default") {};
-	Pipeline(std::string svmPath);
+	Pipeline() : Pipeline("default", 2) {};
+	Pipeline(std::string svmPath, int typeAlg);
 
 	/**
 	* @brief Executed for images. Function for ran detection on images. 
@@ -41,7 +41,7 @@ public:
 	* @param cameraFeed path to video file
 	* @param algorithmType type of executed algorithm to test it (e.g. with or without mixture Gaussian)
 	*/
-    void execute(std::string cameraFeed, int algorithmType);
+    void execute(std::string cameraFeed);
 
 	/**
 	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
@@ -53,7 +53,7 @@ public:
 private:
     Mog _mog;
 	Hog _hog;
-	FHog _fhog;
+	FHog *_fhog;
 	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;
@@ -101,6 +101,23 @@ private:
 	* @param cFrame count frame for saving location of detection
 	*/
 	void mogAndFHog(cv::Mat &frame, int cFrame);
+
+	/**
+	* @brief This testing function uses only cascade classifier from openCV
+	Histograms of Oriented Gradients for Human Detection.
+	*
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
+	*/
+	void pureCascade(cv::Mat &frame, int cFrame);
+
+	/**
+	* @brief This testing function uses Gaussian mixture to analyzes and substraction of motion segments and thereafter uses cascade classifier from openCV
+	*
+	* @param frame actual frame
+	* @param cFrame count frame for saving location of detection
+	*/
+	void mogAndCascade(cv::Mat &frame, int cFrame);
 
 	/**
 	* @brief Method for processing one image where used classic HoG to detection pedestrian

@@ -30,10 +30,10 @@ cv::Vec4f DlibSvmTest::process()
 			trainer.set_cache_size(samples.size());
 			
 			std::cout << "gamma: " << gamma << "    nu: " << nu;
-			dlib::matrix<float, 1980, 1> test = cross_validate_trainer(trainer, samples, fLabels, 3);
+		//	dlib::array2d<float, 1980, 1> test = cross_validate_trainer(trainer, samples, fLabels, 3);
 			
-			testVec[0] = test(0);
-			testVec[1] = test(1);
+		//	testVec[0] = test(0);
+			//testVec[1] = test(1);
 
 			if(testVec[0] > vec[0] && testVec[1] > vec[1])
 			{

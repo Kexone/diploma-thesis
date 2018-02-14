@@ -29,7 +29,7 @@ public:
 	* @param frame the vector of cropped images
 	* @param rects vector of vectors rectangles
 	*/
-    void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > distances);
+    void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > &distances);
 
 	/**
 	* @brief Detection pedestrian on frame
@@ -37,7 +37,7 @@ public:
 	* @param frame
 	* @param rects vector of rectangles
 	*/
-	void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects);
+	void detect(cv::Mat& frame, std::vector < cv::Rect > &rects);
 
 	/**
 	* @brief This detection method is for testing, it gets vector of matrix and sets true or false predicate

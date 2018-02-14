@@ -7,8 +7,17 @@ CascadeClass::CascadeClass()
 
 CascadeClass::CascadeClass(std::string filename)
 {
-//	clasifier = cv::CascadeClassifier(filename);
-	clasifier = cv::CascadeClassifier("C:/Users/Jakub/Source/diploma-thesis/pedestrian/source/cascades/lbpcascades/case.xml");
+	if (filename.compare("default")) {
+		clasifier = cv::CascadeClassifier();
+		clasifier.load(filename);
+	}
+	else
+	{
+		clasifier = cv::CascadeClassifier();
+	//	clasifier.load();
+		std::cout << clasifier.load("D://Codes//school//backupDT//repo//pedestrian//source//cascades//lbpcascades//case.xml");
+		std::cout << "Initialized LBP cascades case" << std::endl;
+	}	
 
 }
 
@@ -35,6 +44,7 @@ void CascadeClass::detect(std::vector<CroppedImage>& frames, std::vector< std::v
 			2,								// min neighbors
 			0 | cv::CASCADE_SCALE_IMAGE,	// flags
 			cv::Size(30, 30)				// min size Size(30, 30)
+		//	cv::Size(14,36)				// min size Size(30, 30)
 		);
 		if (found.empty()) {
 			continue;
