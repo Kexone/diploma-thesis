@@ -1,4 +1,5 @@
 ﻿#include "testClass.h"
+#include "dlibSvmTest.h"
 
 #define PARAMETER_NU  1
 #define PARAMETER_C  2
@@ -15,7 +16,14 @@ TestClass::TestClass()
 
 void TestClass::initTesting()
 {
-	testingSvm();
+	int type;
+	std::cout << " 1) TESTING OpenCV SVM  \n 2) TESTING Dlib SVM " << std::endl;
+	std::cout << "Selection: ";
+	std::cin >> type;
+	if(type == 1)
+		testingSvm();
+	if (type == 2)
+		testingDlibSvm();
 }
 
 void TestClass::testingSvm()
@@ -38,6 +46,45 @@ void TestClass::testingSvm()
 		randomTest();
 	else if (typeTest == 3)
 		iterationCycle();
+}
+
+void TestClass::testingDlibSvm()
+{
+	std::vector< cv::Mat > posSamplesLst;
+	std::vector< cv::Mat > negSamplesLst;
+	std::vector< cv::Mat > gradientLst;
+	std::vector< int > labels;
+	TrainHog hog;
+	cv::Size pedestrianSize = hog.getPedSize();
+	cv::Mat trainMat;
+
+	std::string posSamples = "samples/posSamples.txt";
+	std::string negSamples = "samples/negSamples.txt";
+
+	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
+	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize, true);
+
+	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
+	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
+
+
+	hog.extractFeatures(posSamplesLst, gradientLst);
+	hog.extractFeatures(negSamplesLst, gradientLst);
+	std::vector < float > fLabels(labels.begin(), labels.end());
+	DlibSvmTest test = DlibSvmTest(gradientLst, fLabels);
+
+	std::cout << "\n\n**********************" << std::endl;
+	std::cout << "***  DLIB SVM TEST    ***" << std::endl;
+	std::cout << "*************************" << std::endl;
+	std::cout << "DEFAULT ITERATION CYCLES" << std::endl;
+	cv::Vec4f results = test.process();
+	std::cout << "RESULT OF DLIB SVM TEST\n";
+	std::cout << "THE BEST PARAMETERS:\n";
+	std::cout << "GAMMA " << results[2];
+	std::cout << "\nNU " << results[3];
+	std::cout << "\nPositive results: " << results[1];
+	std::cout << ",\t negative results: " << results[2];
+
 }
 
 void TestClass::randomTest()
@@ -141,14 +188,13 @@ void TestClass::iterationCycle()
 	SvmTest svm;
 	svm.preprocessing();
 	svm.initResultFile(ss);
-	for (int iter = 200; iter < 500; iter += 50) {
+	for (int iter = 0; iter < 3000; iter += 50) {
 		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
 		{
 			for (double c = 0.0001; c < 1; c *= 5)
 			{
-				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << std::endl;
 				svm.setParams(iter, c, gamma);
-				svm.process();
+				std::cout << "TESTING PARAMS C: " << c << " GAMMA: " << gamma << " iter: " << iter << "\t" << svm.process() << std::endl;
 			}
 		}
 	}

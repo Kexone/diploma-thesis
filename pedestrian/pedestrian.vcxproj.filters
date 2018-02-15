@@ -63,9 +63,6 @@
     <ClCompile Include="source\alg\convexhull.cpp">
       <Filter>Source Files\alg</Filter>
     </ClCompile>
-    <ClCompile Include="source\media\mediafile.cpp">
-      <Filter>Source Files\media</Filter>
-    </ClCompile>
     <ClCompile Include="source\media\videostream.cpp">
       <Filter>Source Files\media</Filter>
     </ClCompile>
@@ -102,6 +99,12 @@
     <ClCompile Include="source\train\trainCascade.cpp">
       <Filter>Source Files\train</Filter>
     </ClCompile>
+    <ClCompile Include="source\test\dlibSvmTest.cpp">
+      <Filter>Source Files\test</Filter>
+    </ClCompile>
+    <ClCompile Include="source\alg\ownHog.cpp">
+      <Filter>Source Files\alg</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -114,9 +117,6 @@
       <Filter>Header Files\alg</Filter>
     </ClInclude>
     <ClInclude Include="source\media\croppedimage.h">
-      <Filter>Header Files\media</Filter>
-    </ClInclude>
-    <ClInclude Include="source\media\mediafile.h">
       <Filter>Header Files\media</Filter>
     </ClInclude>
     <ClInclude Include="source\media\videostream.h">
@@ -163,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="source\train\trainCascade.h">
       <Filter>Header Files\train</Filter>
+    </ClInclude>
+    <ClInclude Include="source\test\dlibSvmTest.h">
+      <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="source\alg\ownHog.h">
+      <Filter>Header Files\alg</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,12 +15,14 @@ FHog::FHog(std::string classPath)
 
 void FHog::detect(std::vector<CroppedImage>& frame, std::vector< std::vector < cv::Rect  > > &rects)
 {
-dlib::image_window win;
+//dlib::image_window win;
 	std::vector< std::vector < cv::Rect  > > dets (frame.size()) ;
 	//scanner.set_detection_window_size(80, 80);
+	dlib::deserialize("dlib_pedestrian_detector.svm") >> detector;
+
 
 	for (int i = 0; i < frame.size(); i++) {
-		cv::Mat trz = frame[0].croppedImg;
+		cv::Mat trz = frame[i].croppedImg;
 		dlib::array2d < dlib::bgr_pixel > img;
 		dlib::cv_image<dlib::bgr_pixel> temp(trz);
 		dlib::assign_image(img, temp);
@@ -29,10 +31,10 @@ dlib::image_window win;
 			continue;
 
 		 dets[i] = (Utils::vecDlibRectangle2VecOpenCV(detector(img)));
-		 dlib::image_window win;
-		 win.clear_overlay();
-		 win.set_image(img);
-		 win.add_overlay(detector(img), dlib::rgb_pixel(0, 255, 0));
+		 //dlib::image_window win;
+		// win.clear_overlay();
+		// win.set_image(img);
+	//	 win.add_overlay(detector(img), dlib::rgb_pixel(0, 255, 0));
 	}
 
 	rects = dets;

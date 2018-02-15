@@ -15,16 +15,6 @@
  */
 class TrainHog
 {
-protected:
-
-	/**
-	* @brief Extractiong gradients from samples by one by one and stored in vector gradientLst
-	*
-	* @param samplesLst list of samples
-	* @param gradientLst list of gradient (output)
-	*/
-    void extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst);
-
 private:
 
 	/**
@@ -108,6 +98,14 @@ public:
 	* @saveData condition for save trained matrix and her labels
 	*/
     void train(std::string posSamples, std::string negSamples, bool saveData);
+
+	/**
+	* @brief Extractiong gradients from samples by one by one and stored in vector gradientLst
+	*
+	* @param samplesLst list of samples
+	* @param gradientLst list of gradient (output)
+	*/
+	void extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst);
 
 	/**
 	* @brief This method is appropriate for testing SVM classification, do only train the matrix and prepare the labels

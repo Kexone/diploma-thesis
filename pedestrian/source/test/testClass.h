@@ -30,6 +30,7 @@ private:
 	std::stringstream ss;
 
 	void testingSvm();
+	void testingDlibSvm();
 	
 	/**
 	 * @brief Runs the random tests

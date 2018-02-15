@@ -26,31 +26,32 @@ class FHog
 {
 public:
 	FHog();
-//	FHog(int def);
+
+	/**
+	* @brief Constructor of my FHoG class which sets the SVM
+	*
+	* @param svmPath is path to svm, if sent word is 'default' will sets the attached svm
+	*/
 	FHog(std::string classPath);
 
 	/**
-	* @brief
+	* @brief Detection pedestrian on cropped images
 	*
-	* @param
+	* @param frame the vector of cropped images
+	* @param rects vector of vectors rectangles
 	*/
 	void detect(std::vector<CroppedImage>& frame, std::vector< std::vector < cv::Rect  > > &rects);
-	//void detect(std::vector< CroppedImage > &frame);
 
 	/**
-	* @brief
+	* @brief Detection pedestrian on frame
 	*
-	* @param
-	*/
-	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);
-
-	/**
-	* @brief
-	*
-	* @param
+	* @param frame
+	* @param rects vector of rectangles
 	*/
 	void detect(cv::Mat& frame, std::vector< cv::Rect > &rects);
+
 private:
+	
 	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
 	dlib::object_detector<image_scanner_type> detector;
 	image_scanner_type scanner;
