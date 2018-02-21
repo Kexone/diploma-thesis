@@ -10,10 +10,15 @@
 #define MIXTURED_CASCADE 6
 
 int Pipeline::allDetections = 0;
+#define public MY_DEBUG true
 
 
 Pipeline::Pipeline(std::string svmPath, int algType)
 {
+	int dilation_type = cv::MORPH_CROSS;
+	int erosion_type = cv::MORPH_CROSS;
+	int dilation_size = Settings::dilationSize;
+	int erosion_size = Settings::erosionSize;
 	_typeAlgorithm = algType;
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
@@ -22,18 +27,19 @@ Pipeline::Pipeline(std::string svmPath, int algType)
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE) {
-		_dilMat = getStructuringElement(_dilation_type,
-			cv::Size(2 * _dilation_size + 1, 2 * _dilation_size + 1),
-			cv::Point(_dilation_size, _dilation_size));
-		_eroMat = getStructuringElement(_erosion_type,
-			cv::Size(2 * _erosion_size + 1, 2 * _erosion_size + 1),
-			cv::Point(_erosion_size, _erosion_size));
+		_dilMat = getStructuringElement(dilation_type,
+			cv::Size(2 * dilation_size + 1, 2 * dilation_size + 1),
+			cv::Point(dilation_size, dilation_size));
+		_eroMat = getStructuringElement(erosion_type,
+			cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
+			cv::Point(erosion_size, erosion_size));
 	}
 	allDetections = 0;
 
 }
 
 #if MY_DEBUG
+
 std::vector< std::vector<cv::Rect> > trained;//@DEBUG
 std::vector< std::vector<cv::Rect> > tested;//@DEBUG
 int test;//@DEBUG
@@ -148,7 +154,7 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, frame.clone(), rect[i]));
+			croppedImages.emplace_back(CroppedImage(i, _localFrame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		std::vector < std::vector < float > > distances(croppedImages.size());
@@ -166,7 +172,7 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
-	preprocessing(frame);
+	//preprocessing(frame);
 
 	std::vector < cv::Rect > foundRect;
 
@@ -300,7 +306,7 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 #if MY_DEBUG
 			if (!trained[test].empty()) {//@DEBUG
 				if (!tested[test].empty()) //@DEBUG
-					cv::rectangle(localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
+					cv::rectangle(_localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
 				cv::rectangle(_localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
 				cv::rectangle(_localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
 				std::cout << (r & trained[test][0]).area() << std::endl;
@@ -386,6 +392,8 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 		for (uint i = 0; i < rects[j].size(); i++) {
 			rects[j][i].x += cvRound(croppedImages[j].offsetX);
 			rects[j][i].y += cvRound(croppedImages[j].offsetY);
+		//	rects[j][i].y = rects[j][i].y + (croppedImages[j].croppedImg.cols * .5);
+	//		rects[j][i].x = rects[j][i].x + (croppedImages[j].croppedImg.rows * .5);
 		}
 		rects2Save.push_back(rects[j]);
 	}
@@ -404,23 +412,27 @@ void Pipeline::evaluate()
 	//	if (test[i].empty() && trained[i].empty())	{ trueNeg++;  continue; } // There is no pedestrian - OK
 		if (test[i].empty() && !trained[i].empty()) { falsePos += trained[i].size(); continue; } // There is no pedestrian but something detect
 		if (!test[i].empty() && trained[i].empty()) { falseNeg += test[i].size(); continue; } // There is pedestrian but no detected
-		if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); }
+	//	if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); } // Detect more than one 
+		int currTruePos = test[i].size();
+		int lastTruePos = truePos;
 		for (int j = 0; j < test[i].size(); j++) {
 			for(int k = 0; k < trained[i].size(); k++)	{
 				float inter = static_cast<float>((trained[i][k] & test[i][j]).area());
 				float uni = static_cast<float>((trained[i][k] | test[i][j]).area());
-				//if ((trained[i][k] & test[i][j]).area()  > (trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
-				if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
+				if ((trained[i][k] & test[i][j]).area()  > (trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
+				//if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
 				{
 					truePos++; // pedestrian founded
 				}
 				else
 				{
-					falsePos++; // detect something else than pedestrian
+				//	falsePos++; // detect something else than pedestrian
 					falseNeg++; // pedestrian not founded
 				}
 			}
 		}
+		if (truePos != (currTruePos + lastTruePos))
+			falsePos += currTruePos;
 	}
 //	float acc = static_cast<float>(truePos + trueNeg) /
 	//	static_cast<float>(truePos + trueNeg + falsePos + falseNeg);

@@ -1,9 +1,10 @@
 #include "convexhull.h"
 
 ConvexHull::ConvexHull() {
-	this->thresh = 115; // Settings::mogThreshold;
-	this->extensionTimes = 4;
-	this->extensionSize = 10;
+	this->_extensionTimes = Settings::cvxHullExtTimes;
+	this->_extensionSize = Settings::cvxHullExtSize;
+	this->_threshold = Settings::cvxHullThresh;
+	this->_maxValue = Settings::cvxHullMaxValue;
 }
 
 void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
@@ -13,10 +14,11 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 	
-	convexHullImage = srcGray.clone();
+	_convexHullImage = srcGray.clone();
 
-    cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
-    cv::findContours(convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
+	cv::threshold(srcGray, _convexHullImage, _threshold, _maxValue, cv::THRESH_BINARY);
+	//cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
+    cv::findContours(_convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
 
     /// Find the convex hull object for each contour
     std::vector<std::vector<cv::Point> > hulls( contours.size());
@@ -54,7 +56,7 @@ void ConvexHull::filterByArea(std::vector<std::vector<cv::Point>>& hulls, std::v
 	int minThresholdArea = 10 * 50, maxThresholdArea = 200 * 300; //max 400 * 400
 
 	for (uint i = 0; i < hulls.size(); i++) {
-		int minX = convexHullImage.cols, minY = convexHullImage.rows;
+		int minX = _convexHullImage.cols, minY = _convexHullImage.rows;
 		int maxY = 0, maxX = 0;
 
 		for (auto &p : hulls[i]) {
@@ -81,20 +83,20 @@ cv::Rect ConvexHull::extendContours(std::vector<cv::Point>& hull)
 		if (p.x >= maxX) maxX = p.x;
 		if (p.y >= maxY) maxY = p.y;
 	}
-	int extS = extensionSize;
-	for (int s = 0; s < extensionTimes; s++) {
+	int extS = _extensionSize;
+	for (int s = 0; s < _extensionTimes; s++) {
 		if (minX >= 0 + extS) minX -= extS;
 		if (minY >= 0 + extS) minY -= extS;
-		if (maxX <= convexHullImage.cols - extS) maxX += extS;
-		if (maxY <= convexHullImage.rows - extS) maxY += extS;
-		extS += extensionSize;
+		if (maxX <= _convexHullImage.cols - extS) maxX += extS;
+		if (maxY <= _convexHullImage.rows - extS) maxY += extS;
+		extS += _extensionSize;
 	}
 	return cv::Rect (cv::Point(minX, minY), cv::Point(maxX, maxY));
 }
 
 void ConvexHull::clearInSameRegion(std::vector<cv::Rect> &rects)
 {
-	int deviation = extensionSize * extensionTimes;
+	int deviation = _extensionSize * _extensionTimes;
 	for(uint i = 0; i < rects.size(); i++)
 	{
 		cv::Rect testRect = rects[i];

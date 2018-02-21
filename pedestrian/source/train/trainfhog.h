@@ -10,6 +10,7 @@
 #include <dlib/image_processing.h>
 #include <dlib/pixel.h>
 #include <dlib/opencv/cv_image.h>
+#include "../settings.h"
 
 class TrainFHog
 {
@@ -25,11 +26,8 @@ public:
 
 	/**
 	* @brief train for dlib SVM
-	*
-	* @param posSamples path to positive samples
-	* @param negSamples path to negative samples
 	*/
-	void train(std::string posSamples, std::string negSamples);
+	void train();
 
 protected:
 	/**
@@ -43,7 +41,7 @@ private:
 
 	double _nu_par;
 	double _gamma_par;
-	std::string _namefile = "pedestrian.svm";
+	std::string _namefile = Settings::classifierName2Train + ".svm";
 
 	/**
 	* @brief Checks whether the current dataset has any boxes

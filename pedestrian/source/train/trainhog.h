@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "../utils/utils.h"
+#include "../settings.h"
 
 /**
  * class TrainHog
@@ -44,9 +45,9 @@ private:
 
     std::string classifierName;
 	cv::Size pedestrianSize;
-    int blockSize = 16;
-    int cellSize = 8;
-    int strideSize = 8;
+    int blockSize;
+    int cellSize;
+    int strideSize;
 
 	int maxIterations;
 	int termCriteria;
@@ -93,11 +94,9 @@ public:
 	/**
 	* @brief  This method load samples and prepare them for alone train classificator
 	*
-	* @param posSamples path to positive samples
-	* @param negSamples path to negative samples
 	* @saveData condition for save trained matrix and her labels
 	*/
-    void train(std::string posSamples, std::string negSamples, bool saveData);
+    void train(bool saveData);
 
 	/**
 	* @brief Extractiong gradients from samples by one by one and stored in vector gradientLst
@@ -105,7 +104,7 @@ public:
 	* @param samplesLst list of samples
 	* @param gradientLst list of gradient (output)
 	*/
-	void extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst);
+	void extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst) const;
 
 	/**
 	* @brief This method is appropriate for testing SVM classification, do only train the matrix and prepare the labels
@@ -117,11 +116,6 @@ public:
 	*/
 	void calcMatForTraining(std::string posSamples, std::string negSamples, cv::Mat &trainMat, std::vector < int > &labels);
 
-	/**
-	*
-	* @return size of the pedestrian
-	*/
-	cv::Size getPedSize();
 };
 
 #endif // TRAINHOG_H

@@ -1,21 +1,25 @@
 #include "trainhog.h"
 
 
+
 TrainHog::TrainHog()
 {
-	this->maxIterations = 400; // 3300;
-	this->termCriteria = CV_TERMCRIT_ITER + CV_TERMCRIT_EPS;
-	this->kernel = cv::ml::SVM::LINEAR;
-	this->type = cv::ml::SVM::C_SVC;
-	this->epsilon = 1.e-6;
-	this->coef0 = 0.0;
-	this->degree = 3;
-	this->gamma = 0.1;
-	this->nu = 0.1; //0.1;
-	this->p = 0.0369121;
-	this->c = 0.01;
-	this->classifierName = "48_96_16_8_8_9_01.yml";
-	pedestrianSize = cv::Size(48, 96);
+	this->maxIterations = Settings::maxIterations;
+	this->termCriteria = Settings::termCriteria;
+	this->kernel = Settings::kernel;
+	this->type = Settings::type;
+	this->epsilon = Settings::epsilon;
+	this->coef0 = Settings::coef0;
+	this->degree = Settings::degree;
+	this->gamma = Settings::gamma;
+	this->nu = Settings::paramNu;
+	this->p = Settings::paramP;
+	this->c = Settings::paramC;
+	this->classifierName = Settings::classifierName2Train + ".yml";
+	this->pedestrianSize = Settings::pedSize;
+	this->blockSize = Settings::blockSize;
+	this->cellSize = Settings::cellSize;
+	this->strideSize = Settings::strideSize;
 }
 
 TrainHog::TrainHog(int maxIterations, int termCriteria, int kernel, int type, double epsilon, double coef0,
@@ -33,7 +37,10 @@ TrainHog::TrainHog(int maxIterations, int termCriteria, int kernel, int type, do
 	this->p = p;
 	this->c = c;
 	this->classifierName = classifierName;
-	pedestrianSize = cv::Size(48, 96);
+	this->pedestrianSize = Settings::pedSize;
+	this->blockSize = Settings::blockSize;
+	this->cellSize = Settings::cellSize;
+	this->strideSize = Settings::strideSize;
 }
 
 void TrainHog::trainFromMat(std::string matPath, std::string labelsPath)
@@ -54,7 +61,7 @@ void TrainHog::trainFromMat(cv::Mat trainMat, std::vector<int> labels)
 	trainSvm(trainMat, labels);
 }
 
-void TrainHog::train(std::string posSamples, std::string negSamples, bool saveData)
+void TrainHog::train(bool saveData)
 {
 	std::vector< cv::Mat > posSamplesLst;
 	std::vector< cv::Mat > negSamplesLst;
@@ -62,8 +69,8 @@ void TrainHog::train(std::string posSamples, std::string negSamples, bool saveDa
 	std::vector< int > labels;
     cv::Mat trainMat;
 
-	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize,true);
+	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize);
+	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true);
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
@@ -82,8 +89,8 @@ void TrainHog::calcMatForTraining(std::string posSamples, std::string negSamples
 	std::vector< cv::Mat > negSamplesLst;
 	std::vector< cv::Mat > gradientLst;
 
-	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize, true);
+	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize);
+	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true);
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
@@ -92,12 +99,7 @@ void TrainHog::calcMatForTraining(std::string posSamples, std::string negSamples
 	convertSamples2Mat(gradientLst, trainMat);
 }
 
-cv::Size TrainHog::getPedSize()
-{
-	return pedestrianSize;
-}
-
-void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst)
+void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst) const
 {
     cv::HOGDescriptor hog(
 					pedestrianSize, //winSize
@@ -116,16 +118,12 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
     std::vector< cv::Point > location;
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
-        //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
+      //  cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
 
-		gr.convertTo(gr, CV_8U);
+	//	gr.convertTo(gr, CV_8U);
 
 		hog.compute(mat, descriptors,cv::Size(8, 8),cv::Size(0, 0));
 		gradientLst.push_back(cv::Mat(descriptors).clone());
-
-		//gradientLst.push_back(cv::Mat(featureSobel(mat, 80)).clone());
-
-		//gradientLst.push_back( featureColorGradient(gr,hog).clone() );
     }
 }
 
@@ -136,17 +134,17 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 	//cv::Ptr<cv::ml::Boost> svm = cv::ml::Boost::create();
 
-	svm->setCoef0(coef0);
-	svm->setDegree(degree);
-	svm->setTermCriteria(cv::TermCriteria(termCriteria, maxIterations, epsilon));
-	svm->setGamma(gamma);
-	svm->setKernel(kernel);//linear
-	svm->setNu(nu);
-	svm->setP(p);
-	svm->setC(c);
-	svm->setType(type);
+	svm->setCoef0(this->coef0);
+	svm->setDegree(this->degree);
+	svm->setTermCriteria(cv::TermCriteria(this->termCriteria, this->maxIterations, this->epsilon));
+	svm->setGamma(this->gamma);
+	svm->setKernel(this->kernel);//linear
+	svm->setNu(this->nu);
+	svm->setP(this->p);
+	svm->setC(this->c);
+	svm->setType(this->type);
 	svm->train(trainMat, cv::ml::ROW_SAMPLE, cv::Mat(labels));
-	svm->save(classifierName);
+	svm->save(this->classifierName);
 	timer = clock() - timer;
  //   std::cout << "training DONE ..."<< static_cast<float>(timer) / (CLOCKS_PER_SEC*60) << " min" <<  std::endl;
 

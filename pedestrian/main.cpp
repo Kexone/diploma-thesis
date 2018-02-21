@@ -9,18 +9,11 @@
 #include "source/test/testClass.h"
 #include <csignal>
 #include "source/train/trainCascade.h"
-////////////////////////////////////////////////////////
-//		DATA		 //
-//////////////////////
 
-std::string posSamples = "samples/posSamples.txt";
-std::string negSamples = "samples/negSamples.txt";
-
-#define MY_DEBUG true
 
 ///////////////////////
 //					//
-///////////////////////////////////////////////////////
+//////////////////////////////////////////	/////////////
 //	 DECLARATION	 //
 //////////////////////
 namespace mainFun {
@@ -92,14 +85,17 @@ int main(int argc, char *argv[])
 		"{ video v            |         |  use video as input                       }"
 		"{ image i            |         |  use list of images as input              }"
 		"{ camera c           |         |  enable camera capturing                  }"
-		//"{ class svm          | 2111_79_98.4_0_961711.yml |  trained clasifier path                   }"
-		"{ class svm          | default |  trained clasifier path                   }"
+		//"{ class svm          | 2700_3_98.4_0_481711.yml |  trained clasifier path                   }" //FOR SMALL
+		"{ class svm          | classifier.yml |  trained clasifier path                   }"
+		//"{ class svm          | default |  trained clasifier path                   }"
 		"{ type  t            |         |  type of alg (train, test)                }"
 		"{ extract e          |         |  extract ROI from videostream             }"
 		"{ vizualize          |    1    |  show result in window                    }"
 		"{ createSample cs    |    0    |  creating samples from image              }"
 		;
 	
+	Settings::getSettings();
+
 	cv::CommandLineParser parser(argc, argv, keys);
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v1.0.0");
 	if (parser.get<std::string>("vizualize") == "1" || parser.get<std::string>("vizualize") == "true") {
@@ -128,7 +124,7 @@ int main(int argc, char *argv[])
 		mainFun::createSample(parser);
 	}
 	
-	return 0;
+ 	return 0;
 }
 
 
@@ -149,19 +145,21 @@ void mainFun::type(cv::CommandLineParser parser)
 		std::cin >> chosenType;
 
 		if (chosenType == 1 )	{  // @TODO train from mat and select own params?
-			//TrainHog th;
-			TrainHog th = TrainHog(2700, 3, 0, 100, 1.e-06, 0, 3, 0.0001, 0, 0, 0.0001, "2111_79_98.4_0_961711.yml");
+			TrainHog th;
+			//TrainHog th = TrainHog(1000, 3, 0, 100, 1.e-06, 0, 3, 0.0025, 0, 0, 0.0625, "sil2700_3_98.4_0_481711.yml"); //for 24x48 size
+			//TrainHog th = TrainHog(2700, 3, 0, 100, 1.e-06, 0, 3, 0.0001, 0, 0, 0.0001, "2700_3_98.4_0_481711.yml"); //for 48x96 size
 			//TrainHog th = TrainHog(114, 3, 0, 100, 1.e-06, 0, 3, 0.1, 0.313903, 0.212467, 0.130589, "2111_79_98.4.yml");
 			//th.trainFromMat("test.yml", "labels.txt");
-			th.train(posSamples, negSamples, false);
+			//th.printSettings();
+			th.train(false);
 		}
 		else if (chosenType == 2 ) {
 			CombinedTrainHog cth;
-			cth.train(posSamples, negSamples);
+			cth.train();
 		}
 		else if(chosenType == 3)  {
 			TrainFHog tfh;
-			tfh.train(posSamples, negSamples);
+			tfh.train();
 		}
 		else if (chosenType == 4) {
 			TrainCascade tc;
@@ -223,7 +221,6 @@ void mainFun::video(cv::CommandLineParser parser)
 	timer = clock() - timer;
 	printResults(timer);
 	pl->evaluate();
-	
 	cv::waitKey(0);
 
 	delete pl;
@@ -255,6 +252,7 @@ void mainFun::createSample(cv::CommandLineParser parser)
 void mainFun::printResults(clock_t timer)
 {
 	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
+	std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(timer) / CLOCKS_PER_SEC) << "." << std::endl;
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
 	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
@@ -264,4 +262,37 @@ void mainFun::printResults(clock_t timer)
 
 ///////////////////////
 //		END			//
-///////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////
+//		DATA		 //
+//////////////////////
+
+int Settings::mogHistory = 115;
+double Settings::mogThresh = 8;
+bool Settings::mogDetectShadows = true;
+int Settings::cvxHullExtSize = 10;
+int Settings::cvxHullExtTimes = 4;
+double Settings::cvxHullThresh = 180;
+double Settings::cvxHullMaxValue = 255;
+cv::Size Settings::pedSize = cv::Size(48, 96);
+int Settings::blockSize = 16;
+int Settings::cellSize = 8;
+int Settings::strideSize = 8;
+int Settings::maxIterations = 1000;
+int Settings::termCriteria = 3;
+int Settings::kernel = 0;
+int Settings::type = 100;
+double Settings::epsilon = 1.e-06;
+double Settings::coef0 = 0;
+int Settings::degree = 3;
+double Settings::gamma = 0.0025;
+double Settings::paramNu = 0;
+double Settings::paramP = 0;
+double Settings::paramC = 0.06250;
+
+std::string Settings::samplesPos = "samples/posSamples.txt";
+std::string Settings::samplesNeg = "samples/negSamples.txt";
+std::string Settings::classifierName2Train = "classifier";
+int Settings::dilationSize = 3;
+int Settings::erosionSize = 2;

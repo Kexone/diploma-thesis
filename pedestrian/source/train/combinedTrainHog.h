@@ -3,7 +3,8 @@
 #include <string>
 #include "trainhog.h"
 #include "trainfhog.h"
-
+#include "../utils/utils.h"
+#include "../settings.h"
 /**
  * class CombinedTrainHog
  * 
@@ -18,10 +19,8 @@ public:
 	* @brief This method combine OpenCV computing HOG features and dlib training
 	* Output from this method is Dlib trained classifier
 	*
-	* @param posSamplesPath path of positive samples
-	* @param negSamplesPath path of negative samples
 	*/
-	void train(std::string posSamplesPath, std::string negSamplesPath);
+	void train();
 	
 };
 

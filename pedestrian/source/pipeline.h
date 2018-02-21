@@ -62,10 +62,6 @@ private:
 	std::vector < std::vector < std::vector < cv::Rect > > > _rects2Eval;
 	std::vector  < std::vector < std::vector < float > > > _distances;
 
-	int _dilation_type = cv::MORPH_CROSS;
-	int _erosion_type = cv::MORPH_CROSS;
-	int _dilation_size = 3;
-	int _erosion_size = 2;
 	int _typeAlgorithm;
 
 	cv::Mat _dilMat, _eroMat;

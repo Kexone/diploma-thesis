@@ -64,7 +64,7 @@ void TrainFHog::throwInvalidBoxErrorMessage( const std::string& dataset_filename
 	throw dlib::error("\n" + dlib::wrap_string(sout.str()) + "\n" + sout2.str());
 }
 
-void TrainFHog::train(std::string posSamples, std::string negSamples)
+void TrainFHog::train()
 {
 
 	const std::string parser = "dataset/training.xml";

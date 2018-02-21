@@ -1,5 +1,6 @@
 #include "hog.h"
 #include <random>
+#include "../settings.h"
 
 
 Hog::Hog()
@@ -11,10 +12,10 @@ Hog::Hog(std::string svmPath)
 {
 	if (svmPath.compare("default")) {
 		hog = cv::HOGDescriptor(
-			cv::Size(48, 96), //winSize
-			cv::Size(16, 16), //,blocksize
-			cv::Size(8, 8), //blockStride
-			cv::Size(8, 8), //cellSize,
+			Settings::pedSize, //winSize  //def
+			cv::Size(Settings::blockSize, Settings::blockSize), //,blocksize //def
+			cv::Size(Settings::strideSize, Settings::strideSize), //blockStride // def
+			cv::Size(Settings::cellSize, Settings::cellSize), //cellSize, //def
 			9, //nbins,
 			0, //derivAper,
 			-1, //winSigma,
@@ -29,7 +30,7 @@ Hog::Hog(std::string svmPath)
 		getSvmDetector(svm, hogDetector);
 		hog.setSVMDetector(hogDetector);
 	//	std::cout << "Initialized custom SVM " << svmPath << " size " << hogDetector.size() << std::endl;
-		hogDetector.clear();
+	//	hogDetector.clear();
 	}
 	else
 	{
@@ -51,12 +52,14 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		std::vector<cv::Rect> found;
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
-		//test.convertTo(test, CV_8UC3);
+		test.convertTo(test, CV_8UC3);
 
-		//cv::cvtColor(test, test, CV_BGR2GRAY);
-		//cv::equalizeHist(test, test);
-
-	//	cv::imshow("test", test);
+	//	cv::cvtColor(test, test, CV_BGR2GRAY);
+	//	cv::equalizeHist(test, test);
+		//cv::resize(test, test, cv::Size(test.cols*1.5, test.rows*1.5));
+#if MY_DEBUG
+		cv::imshow("test", test);
+#endif
 		//cv::waitKey(15);
 
 		hog.detectMultiScale(
@@ -70,7 +73,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			false					// use meanshift grouping = false
 		);
 		
-		//	std::cout << found.size() << std::endl;
+	//		std::cout << found.size() << std::endl;
 
 		if (found.empty()) {
 			continue;
@@ -85,19 +88,21 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 	
 		for (i = 0; i< found.size(); i++)
 		{
-			std::random_device rd;
-			std::mt19937 gen(rd());
-			std::uniform_int_distribution<> dis(0, 1000);
-			char imgName[30];
-			std::sprintf(imgName, "bad/%d_negSample_%d.jpg", frames[x].id, dis(gen));
-			cv::Mat cropped(test(found[i]));
-			cv::imwrite(imgName, cropped);
+//			std::random_device rd;
+//			std::mt19937 gen(rd());
+//			std::uniform_int_distribution<> dis(0, 1000);
+//			char imgName[30];
+//			std::sprintf(imgName, "bad/%d_negSample_%d.jpg", frames[x].id, dis(gen));
+//			cv::Mat cropped(test(found[i]));
+//			cv::imwrite(imgName, cropped);
 			//cv::Rect r = found[i];
 
 			//for (j = 0; j<found.size(); j++)
 			//    if (j != i && (r & found[j]) == r)
 			//          break;
 			//    if (j == found.size())
+		//	found[i].x /= 1.5;
+			//found[i].y /= 1.5;
 			rects[x].push_back( found[i] );
 			//distances[x].push_back( getDistance(cropped) );
 			//  std::cout << "TL" << found[i].tl().x << found[i].tl().y << " BR" << found[i].br().x << found[i].br().y;
@@ -115,11 +120,20 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	assert(!frame.empty());
 		//test.convertTo(test, CV_8UC3);
 	
-	hogDetectMultiScale(frame, rects);
-
+	//hogDetectMultiScale(frame, rects);
+	hog.detectMultiScale(
+		frame,					// testing img
+		rects,					// foundLocation <rect>
+		0,						// hitThreshold = 0 // 1
+		cv::Size(8, 8),			// winStride size(8, 8)
+		cv::Size(0, 0),			// padding size(0, 0)
+		1.05,					// scale = 1,05
+		1,	/* 1*/					// finalThreshold = 2 // 0
+		false					// use meanshift grouping = false
+	);
 		//cv::cvtColor(test, test, CV_BGR2GRAY);
 		//cv::equalizeHist(test, test);
-	cv::imshow("hog", frame);
+//	cv::imshow("hog", frame);
 }
 
 void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)
@@ -170,7 +184,7 @@ void Hog::hogDetectMultiScale(cv::Mat img, std::vector<cv::Rect>& found)
 		cv::Size(0, 0),			// padding size(0, 0)
 		1.05,					// scale = 1,05
 		1,	/* 1*/					// finalThreshold = 2 // 0
-		true					// use meanshift grouping = false
+		false					// use meanshift grouping = false
 	);
 }
 

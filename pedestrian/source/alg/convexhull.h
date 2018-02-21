@@ -22,10 +22,11 @@ public:
     void wrapObjects(cv::Mat srcGray, std::vector< cv::Rect >& rects);
 
 private:
-	cv::Mat convexHullImage;
-    double thresh;
-	int extensionSize;
-	int extensionTimes;
+	cv::Mat _convexHullImage;
+	int _extensionSize;
+	int _extensionTimes;
+	double _threshold;
+	double _maxValue;
 
 	/**
 	 * @brief Filters contours by size of itself.

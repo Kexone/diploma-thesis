@@ -54,8 +54,7 @@ void TestClass::testingDlibSvm()
 	std::vector< cv::Mat > negSamplesLst;
 	std::vector< cv::Mat > gradientLst;
 	std::vector< int > labels;
-	TrainHog hog;
-	cv::Size pedestrianSize = hog.getPedSize();
+	cv::Size pedestrianSize = Settings::pedSize;
 	cv::Mat trainMat;
 
 	std::string posSamples = "samples/posSamples.txt";
@@ -67,7 +66,7 @@ void TestClass::testingDlibSvm()
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
-
+	TrainHog hog;
 	hog.extractFeatures(posSamplesLst, gradientLst);
 	hog.extractFeatures(negSamplesLst, gradientLst);
 	std::vector < float > fLabels(labels.begin(), labels.end());
@@ -188,7 +187,7 @@ void TestClass::iterationCycle()
 	SvmTest svm;
 	svm.preprocessing();
 	svm.initResultFile(ss);
-	for (int iter = 0; iter < 3000; iter += 50) {
+	for (int iter = 0; iter < 1500; iter += 50) {
 		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
 		{
 			for (double c = 0.0001; c < 1; c *= 5)
