@@ -39,7 +39,6 @@ public:
 	* @brief Executed for videostream. Function for ran detection in videostream
 	*
 	* @param cameraFeed path to video file
-	* @param algorithmType type of executed algorithm to test it (e.g. with or without mixture Gaussian)
 	*/
     void execute(std::string cameraFeed);
 
