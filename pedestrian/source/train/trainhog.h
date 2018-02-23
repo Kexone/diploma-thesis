@@ -109,12 +109,11 @@ public:
 	/**
 	* @brief This method is appropriate for testing SVM classification, do only train the matrix and prepare the labels
 	*
-	* @param posSamples path to positive samples
-	* @param negSamples path to negative samples
 	* @param trainMat training matrix
 	* @param labels vector of labels
+	* @param isDlib switcher between libraries cause to change filling numbers in labels
 	*/
-	void calcMatForTraining(std::string posSamples, std::string negSamples, cv::Mat &trainMat, std::vector < int > &labels);
+	void calcMatForTraining(cv::Mat &trainMat, std::vector < int > &labels, bool isDlib = false);
 
 };
 

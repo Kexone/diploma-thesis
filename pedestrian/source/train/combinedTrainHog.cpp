@@ -16,8 +16,9 @@ void CombinedTrainHog::train()
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
-	extractFeatures(posSamplesLst, gradientLst);
-	extractFeatures(negSamplesLst, gradientLst);
+	//extractFeatures(posSamplesLst, gradientLst);
+	//extractFeatures(negSamplesLst, gradientLst);
+	calcMatForTraining(trainMat, labels);
 	
-	TrainFHog::train(gradientLst, labels);
+	TrainFHog::train(trainMat, labels);
 }

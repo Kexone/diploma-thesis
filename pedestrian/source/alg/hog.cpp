@@ -118,19 +118,22 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	// fflush(stdout);
 	rects.clear();
 	assert(!frame.empty());
-		//test.convertTo(test, CV_8UC3);
-	
-	//hogDetectMultiScale(frame, rects);
-	hog.detectMultiScale(
-		frame,					// testing img
-		rects,					// foundLocation <rect>
-		0,						// hitThreshold = 0 // 1
-		cv::Size(8, 8),			// winStride size(8, 8)
-		cv::Size(0, 0),			// padding size(0, 0)
-		1.05,					// scale = 1,05
-		1,	/* 1*/					// finalThreshold = 2 // 0
-		false					// use meanshift grouping = false
-	);
+		
+	//frame.convertTo(frame, CV_8UC3);
+	//cv::cvtColor(frame, frame, CV_BGR2GRAY);
+	//cv::equalizeHist(frame, frame);
+	hogDetectMultiScale(frame, rects);
+	cv::imshow("hog", frame);
+	//hog.detectMultiScale(
+	//	frame,					// testing img
+	//	rects,					// foundLocation <rect>
+	//	1.5,						// hitThreshold = 0 // 1
+	//	cv::Size(8, 8),			// winStride size(8, 8)
+	//	cv::Size(0, 0),			// padding size(0, 0)
+	//	1.05,					// scale = 1,05
+	//	2,	/* 1*/					// finalThreshold = 2 // 0
+	//	false					// use meanshift grouping = false
+	//);
 		//cv::cvtColor(test, test, CV_BGR2GRAY);
 		//cv::equalizeHist(test, test);
 //	cv::imshow("hog", frame);
@@ -182,10 +185,11 @@ void Hog::hogDetectMultiScale(cv::Mat img, std::vector<cv::Rect>& found)
 		0,						// hitThreshold = 0 // 1
 		cv::Size(8, 8),			// winStride size(8, 8)
 		cv::Size(0, 0),			// padding size(0, 0)
-		1.05,					// scale = 1,05
+		1.01,					// scale = 1,05
 		1,	/* 1*/					// finalThreshold = 2 // 0
 		false					// use meanshift grouping = false
 	);
+	std::cout << found.size() << std::endl;
 }
 
 float Hog::getDistance(cv::Mat img)

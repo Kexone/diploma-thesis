@@ -48,6 +48,8 @@ struct Settings
 
 	static std::string samplesPos;
 	static std::string samplesNeg;
+	static std::string samplesPosTest;
+	static std::string samplesNegTest;
 
 	static int dilationSize;
 	static int erosionSize;
@@ -116,10 +118,16 @@ struct Settings
 							paramP = std::stod(value.c_str());
 						else if (key.compare("paramC") == 0)
 							paramC = std::stod(value.c_str());
+						else if (key.compare("samplesPosTest") == 0)
+							samplesPosTest = value.c_str();
+						else if (key.compare("samplesNegTest") == 0)
+							samplesNegTest = value.c_str();
 						else if (key.compare("samplesPos") == 0)
 							samplesPos = value.c_str();
 						else if (key.compare("samplesNeg") == 0)
 							samplesNeg = value.c_str();
+						else if (key.compare("classifierName2Train") == 0)
+							classifierName2Train = value.c_str();
 						else if (key.compare("dilationSize") == 0)
 							dilationSize = std::stoi(value.c_str());
 						else if (key.compare("erosionSize") == 0)

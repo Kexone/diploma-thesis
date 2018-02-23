@@ -108,6 +108,7 @@ void Pipeline::execute(std::string cameraFeed)
 			saveResults();
 			break;
 		}
+		if (i < 250) continue;
 		//time_t time = clock(); // @DEBUG
 		if (_typeAlgorithm == PURE_HOG)
 			pureHoG(frame, i);

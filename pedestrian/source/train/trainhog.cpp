@@ -83,14 +83,14 @@ void TrainHog::train(bool saveData)
     trainSvm(trainMat, labels);
 }
 
-void TrainHog::calcMatForTraining(std::string posSamples, std::string negSamples, cv::Mat& trainMat, std::vector<int> &labels)
+void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, bool isDlib)
 {
 	std::vector< cv::Mat > posSamplesLst;
 	std::vector< cv::Mat > negSamplesLst;
 	std::vector< cv::Mat > gradientLst;
 
-	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true);
+	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize, false, isDlib);
+	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true, isDlib);
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 

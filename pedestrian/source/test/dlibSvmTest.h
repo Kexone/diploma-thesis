@@ -9,16 +9,20 @@
 #include <dlib/image_processing.h>
 #include <dlib/pixel.h>
 #include <dlib/opencv/cv_image.h>
+#include <dlib/global_optimization.h>
 
 class DlibSvmTest
 {
 public:
-	DlibSvmTest(std::vector<cv::Mat> samplesList, std::vector<float> labels) : samplesList(samplesList), fLabels(labels) {}
-	cv::Vec4f process();
+	DlibSvmTest(cv::Mat trainMat, std::vector<double> labels);
+	cv::Vec4f process(int type);
 private:
-	std::vector<cv::Mat> samplesList;
-	std::vector<float> fLabels;
-	using pixel_type = dlib::bgr_pixel;
+	typedef dlib::matrix < double, 1980, 1 > sample_type;
+	typedef dlib::radial_basis_kernel<sample_type> kernel_type;
+	std::vector < double > _labels;
+	std::vector < sample_type > _samples;
 
 	void writeResult2File(cv::Vec4f resultVec);
+	void testCsvm();
+	void testNusvm(cv::Vec4f & vec);
 };

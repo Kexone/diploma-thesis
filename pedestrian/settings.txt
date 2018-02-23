@@ -14,21 +14,26 @@ strideSize=8
 
 
 //TRAIN PARAMS
-maxIterations=1000
+maxIterations=200
 termCriteria=3  // CV_TERMCRIT_ITER + CV_TERMCRIT_EPS
 kernel=0 // cv::ml::SVM::LINEAR = 0
 type=100 // cv::ml::SVM::C_SVC = 100
 epsilon=1.e-6
 coef0=0
 degree=3
-gamma=0.0025
+gamma=0.0001
 paramNu=0
 paramP=0
-paramC=0.0625
+paramC=0.0025
 // 
-samplesPos=samples/posSamples.txt
-samplesNeg=samples/negSamples.txt
-//classifierName2Train=48_96_16_8_8_9_01
+//samplesPos=samples/posSamples.txt
+//samplesNeg=samples/negSamples.txt
+
+samplesPos=samples/positive/pos3000.txt
+samplesNeg=samples/negative/neg3000.txt
+samplesPosTest=samples/listPosTestMin.txt
+samplesNegTest=samples/listNegTestMin.txt
+classifierName2Train=C_LIN_3_3
 
 dilationSize=3
 erosionSize=2

@@ -85,9 +85,10 @@ int main(int argc, char *argv[])
 		"{ video v            |         |  use video as input                       }"
 		"{ image i            |         |  use list of images as input              }"
 		"{ camera c           |         |  enable camera capturing                  }"
-		//"{ class svm          | 2700_3_98.4_0_481711.yml |  trained clasifier path                   }" //FOR SMALL
-		"{ class svm          | classifier.yml |  trained clasifier path                   }"
+	//	"{ class svm          | 2700_3_98.4_0_481711.yml |  trained clasifier path                   }" //FOR SMALL
+		"{ class svm          | C_LIN_3_3.yml |  trained clasifier path                   }"
 		//"{ class svm          | default |  trained clasifier path                   }"
+	//	"{ class svm          | 48_96_16_8_8_9_01.yml |  trained clasifier path                   }"
 		"{ type  t            |         |  type of alg (train, test)                }"
 		"{ extract e          |         |  extract ROI from videostream             }"
 		"{ vizualize          |    1    |  show result in window                    }"
@@ -293,6 +294,9 @@ double Settings::paramC = 0.06250;
 
 std::string Settings::samplesPos = "samples/posSamples.txt";
 std::string Settings::samplesNeg = "samples/negSamples.txt";
+std::string Settings::samplesPosTest = "samples/listPosTestMin.txt";
+std::string Settings::samplesNegTest = "samples/listNegTestMin.txt";
+
 std::string Settings::classifierName2Train = "classifier";
 int Settings::dilationSize = 3;
 int Settings::erosionSize = 2;

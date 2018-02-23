@@ -121,19 +121,27 @@ void TrainFHog::train()
 		<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
 }
 
-void TrainFHog::train(std::vector<cv::Mat> gradientSamplesList, std::vector<int> labels)
+void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels)
 {
-	typedef dlib::matrix < float, 1980, 1 > sample_type;
+	typedef dlib::matrix < double, 1980, 1 > sample_type;
 	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
-	std::vector < float > flLabels(labels.begin(), labels.end());
+	std::vector < double > flLabels;
 	dlib::svm_nu_trainer < kernel_type > trainer;
 
-	for(auto &sample : gradientSamplesList)
+	for (int y = 0; y < trainMat.rows; y++)
 	{
-		dlib::cv_image<float> cvTmp(sample);
-		dlib::matrix<float,1980,1> mtxTmp = dlib::mat(cvTmp);
-		samples.push_back(mtxTmp);
+		sample_type samp;
+
+		for (int x = 0; x < trainMat.cols; x++)
+		{
+			double val = 0.0;
+			val = trainMat.at<float>(y, x);
+			samp(x) = val;
+
+		}
+		samples.push_back(samp);
+		flLabels.push_back(labels[y]);
 	}
 
 	std::cout << "All samples : " <<  samples.size() << std::endl;

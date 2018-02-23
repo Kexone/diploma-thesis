@@ -45,16 +45,12 @@ void SvmTest::setParams(int maxIter, double c, double gamma)
 
 void SvmTest::preprocessing()
 {
-	std::string posTest = "samples/posSamples.txt";
-	std::string negTest = "samples/negSamples.txt";
+	std::string posTest = Settings::samplesPos;
+	std::string negTest = Settings::samplesNeg;
 	TrainHog th;
-	posSamplesMin = "samples/listPos.txt";
-	//posTest = "samples/listPosGridIlid.txt";
-	//posSamplesMin = "samples/listPosTownCenterSarc3d.txt";
-	//posTest = "samples/listPosTownCenterSarc3d.txt";
-	//posSamplesMin = "samples/listPos3DPES_CAVIAR4REID.txt";
-	negSamplesMin = "samples/negSamplesCustom.txt";
-	th.calcMatForTraining(posSamplesMin, negSamplesMin,trainMat,labels);
+	posSamplesMin = Settings::samplesPosTest;
+	negSamplesMin = Settings::samplesNegTest;
+	th.calcMatForTraining(trainMat,labels);
 	if (posTestLst.empty() || negTestLst.empty()) {
 		loadMats(posTest, posTestLst);
 		loadMats(negTest, negTestLst);

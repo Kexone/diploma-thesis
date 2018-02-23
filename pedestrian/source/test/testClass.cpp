@@ -24,6 +24,7 @@ void TestClass::initTesting()
 		testingSvm();
 	if (type == 2)
 		testingDlibSvm();
+	std::cout << "DONE" << std::endl;
 }
 
 void TestClass::testingSvm()
@@ -50,33 +51,23 @@ void TestClass::testingSvm()
 
 void TestClass::testingDlibSvm()
 {
-	std::vector< cv::Mat > posSamplesLst;
-	std::vector< cv::Mat > negSamplesLst;
-	std::vector< cv::Mat > gradientLst;
+	int type;
+	std::cout << " 1) NU SVM \n 2) C SVM" << std::endl;
+	std::cin >> type;
+
 	std::vector< int > labels;
-	cv::Size pedestrianSize = Settings::pedSize;
 	cv::Mat trainMat;
 
-	std::string posSamples = "samples/posSamples.txt";
-	std::string negSamples = "samples/negSamples.txt";
-
-	Utils::fillSamples2List(posSamples, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(negSamples, negSamplesLst, labels, pedestrianSize, true);
-
-	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
-	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
-
 	TrainHog hog;
-	hog.extractFeatures(posSamplesLst, gradientLst);
-	hog.extractFeatures(negSamplesLst, gradientLst);
-	std::vector < float > fLabels(labels.begin(), labels.end());
-	DlibSvmTest test = DlibSvmTest(gradientLst, fLabels);
+	hog.calcMatForTraining(trainMat, labels, true);
+	std::vector < double > fLabels(labels.begin(), labels.end());
+	DlibSvmTest test = DlibSvmTest(trainMat, fLabels);
 
 	std::cout << "\n\n**********************" << std::endl;
 	std::cout << "***  DLIB SVM TEST    ***" << std::endl;
 	std::cout << "*************************" << std::endl;
-	std::cout << "DEFAULT ITERATION CYCLES" << std::endl;
-	cv::Vec4f results = test.process();
+	std::cout << "DEFAULT CROSS VALIDATION" << std::endl;
+	cv::Vec4f results = test.process(type);
 	std::cout << "RESULT OF DLIB SVM TEST\n";
 	std::cout << "THE BEST PARAMETERS:\n";
 	std::cout << "GAMMA " << results[2];

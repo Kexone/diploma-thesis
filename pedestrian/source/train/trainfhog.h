@@ -36,7 +36,7 @@ protected:
 	* @param gradientSamplesList list of all gradient samples
 	* @param labels labels for all samples
 	*/
-	void train(std::vector< cv::Mat > gradientSamplesList, std::vector< int > labels);
+	void train(cv::Mat trainMat, std::vector< int > labels);
 private:
 
 	double _nu_par;
