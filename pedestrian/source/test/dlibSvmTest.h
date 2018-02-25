@@ -15,14 +15,14 @@ class DlibSvmTest
 {
 public:
 	DlibSvmTest(cv::Mat trainMat, std::vector<double> labels);
-	cv::Vec4f process(int type);
+	void process(int type);
 private:
 	typedef dlib::matrix < double, 1980, 1 > sample_type;
 	typedef dlib::radial_basis_kernel<sample_type> kernel_type;
 	std::vector < double > _labels;
 	std::vector < sample_type > _samples;
 
-	void writeResult2File(cv::Vec4f resultVec);
-	void testCsvm();
-	void testNusvm(cv::Vec4f & vec);
+	void writeResult2File(double *vec, int type);
+	void testCsvm(double *vec);
+	void testNusvm(double * vec);
 };

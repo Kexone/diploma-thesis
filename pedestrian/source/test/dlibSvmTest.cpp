@@ -18,44 +18,48 @@ DlibSvmTest::DlibSvmTest(cv::Mat trainMat, std::vector<double> labels)
 	}
 }
 
-cv::Vec4f DlibSvmTest::process(int type)
+void DlibSvmTest::process(int type)
 {
-	cv::Vec4f vec(0.f,0.f,0.f,0.f);
+	double vec[] = { 0,0,0,0 };
 	try {
 		if (type == 1)
 			testNusvm(vec);
 		else
-			testCsvm();
-		writeResult2File(vec);
+			testCsvm(vec);
+		writeResult2File(vec, type);
 	}
 	catch(std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
 	}
-	return vec;
 }
 
-void DlibSvmTest::writeResult2File(cv::Vec4f resultVec)
+void DlibSvmTest::writeResult2File(double *vec, int type)
 {
 	std::ofstream file;
 	file.open("data/testing_dlib_result.txt", std::ios::app);
 
 	file << "RESULT OF DLIB SVM TEST\n";
 	file << "THE BEST PARAMETERS:\n";
-	file << "GAMMA " << resultVec[2];
-	file << "\nNU " << resultVec[3];
-	file << "\nPositive results: " << resultVec[1];
-	file << ",\t negative results: " << resultVec[2];
+	file << "GAMMA " << vec[0];
+	if (type == 1) {
+		file << "\nNU " << vec[1];
+		file << "\nPositive results: " << vec[2];
+		file << ",\t negative results: " << vec[3];
+	}	else	{
+		file << "\nC1 " << vec[1];
+		file << "\nC2 " << vec[2];
+	}
 	file.close();
 }
 
-void DlibSvmTest::testCsvm()
+void DlibSvmTest::testCsvm(double *vec)
 {
 	auto cross_validation_score = [&](const double gamma, const double c1, const double c2)
 	{
 		// Make a RBF SVM trainer and tell it what the parameters are supposed to be.
 		dlib::svm_c_trainer<kernel_type> trainer;
-
+		
 		trainer.set_kernel(kernel_type(gamma));
 		trainer.set_c_class1(c1);
 		trainer.set_c_class2(c2);
@@ -87,18 +91,18 @@ void DlibSvmTest::testCsvm()
 	{ 100,  1e6,  1e6 },   // upper bound constraints on gamma, c1, and c2, respectively
 	                              dlib::max_function_calls(50));
 
-	double best_gamma = result.x(0);
-	double best_c1 = result.x(1);
-	double best_c2 = result.x(2);
+	vec[0] = result.x(0); // best gamma
+	vec[1] = result.x(1); // best c1
+	vec[2] = result.x(2); // bect c2
+	vec[3] = result.x; // @TODO
 
 	std::cout << " best cross-validation score: " << result.y << std::endl;
-	std::cout << " best gamma: " << best_gamma << "   best c1: " << best_c1 << "    best c2: " << best_c2 << std::endl;
+	std::cout << " best gamma: " << vec[0] << "   best c1: " << vec[1] << "    best c2: " << vec[2] << std::endl;
 }
 
 
-void DlibSvmTest::testNusvm(cv::Vec4f &vec)
+void DlibSvmTest::testNusvm(double*vec)
 {
-
 	dlib::svm_nu_trainer < kernel_type > trainer;
 
 	const double max_nu = 1;
@@ -112,7 +116,7 @@ void DlibSvmTest::testNusvm(cv::Vec4f &vec)
 			trainer.set_cache_size(_samples.size());
 
 			std::cout << "gamma: " << gamma << "    nu: " << nu << " " << cross_validate_trainer(trainer, _samples, _labels, 3);
-			sample_type test = cross_validate_trainer(trainer, _samples, _labels, 3);
+			auto test = cross_validate_trainer(trainer, _samples, _labels, 3);
 			cv::Vec2f testVec(0.f, 0.f);
 
 			testVec[0] = test(0);
@@ -120,12 +124,11 @@ void DlibSvmTest::testNusvm(cv::Vec4f &vec)
 
 			if (testVec[0] > vec[0] && testVec[1] > vec[1])
 			{
-				vec[0] = std::move(testVec[0]);
-				vec[1] = std::move(testVec[1]);
-				vec[2] = gamma;
-				vec[3] = nu;
-			}
-			std::cout << "     cross validation accuracy: " << vec[0] << "\t" << vec[1] << std::endl;
+				vec[2] = std::move(testVec[0]); //accuracy on pos samples
+				vec[3] = std::move(testVec[1]); // accuracy on neg samples
+				vec[0] = gamma; //gamma
+				vec[1] = nu; //nu
+			} 
 		}
 	}
 }

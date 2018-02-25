@@ -33,7 +33,7 @@ protected:
 	/**
 	* @brief Combined train, features are calculated via openCV HoG and after used for train dlib SVM
 	*
-	* @param gradientSamplesList list of all gradient samples
+	* @param trainMat trained matrix with features
 	* @param labels labels for all samples
 	*/
 	void train(cv::Mat trainMat, std::vector< int > labels);

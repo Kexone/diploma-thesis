@@ -63,18 +63,11 @@ void TestClass::testingDlibSvm()
 	std::vector < double > fLabels(labels.begin(), labels.end());
 	DlibSvmTest test = DlibSvmTest(trainMat, fLabels);
 
-	std::cout << "\n\n**********************" << std::endl;
+	std::cout << "\n\n*************************" << std::endl;
 	std::cout << "***  DLIB SVM TEST    ***" << std::endl;
 	std::cout << "*************************" << std::endl;
 	std::cout << "DEFAULT CROSS VALIDATION" << std::endl;
-	cv::Vec4f results = test.process(type);
-	std::cout << "RESULT OF DLIB SVM TEST\n";
-	std::cout << "THE BEST PARAMETERS:\n";
-	std::cout << "GAMMA " << results[2];
-	std::cout << "\nNU " << results[3];
-	std::cout << "\nPositive results: " << results[1];
-	std::cout << ",\t negative results: " << results[2];
-
+	test.process(type);
 }
 
 void TestClass::randomTest()
@@ -178,7 +171,7 @@ void TestClass::iterationCycle()
 	SvmTest svm;
 	svm.preprocessing();
 	svm.initResultFile(ss);
-	for (int iter = 0; iter < 1500; iter += 50) {
+	for (int iter = 50; iter < 1500; iter += 50) {
 		for (double gamma = 0.0001; gamma < 1; gamma *= 5)
 		{
 			for (double c = 0.0001; c < 1; c *= 5)

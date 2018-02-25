@@ -38,12 +38,12 @@ Pipeline::Pipeline(std::string svmPath, int algType)
 
 }
 
-#if MY_DEBUG
+//#if MY_DEBUG
 
 std::vector< std::vector<cv::Rect> > trained;//@DEBUG
 std::vector< std::vector<cv::Rect> > tested;//@DEBUG
 int test;//@DEBUG
-#endif
+//#endif
 
 //	Execute for images
 void Pipeline::executeImages(std::string testSamplesPath)
@@ -52,7 +52,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	cv::Mat frame;
 	std::fstream sampleFile(testSamplesPath);
 	std::string oSample;
-
+	cv::namedWindow("Result", CV_WINDOW_AUTOSIZE);
 	while (sampleFile >> oSample) {
 		frame = cv::imread(oSample, CV_32FC3);
         if(frame.empty()) {
@@ -93,10 +93,10 @@ void Pipeline::execute(std::string cameraFeed)
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
 	_distances = std::vector < std::vector < std::vector < float > > >(_vs->totalFrames);
 
-#if MY_DEBUG
+//#if MY_DEBUG
 	loadRects(Settings::nameTrainedFile, trained); // @DEBUG
 	loadRects(Settings::nameFile, tested); // @DEBUG
-#endif
+//#endif
 
 	for (int i = 0; ; i++)	{
 #if MY_DEBUG
@@ -108,7 +108,7 @@ void Pipeline::execute(std::string cameraFeed)
 			saveResults();
 			break;
 		}
-		if (i < 250) continue;
+//		if (i < 250) continue;
 		//time_t time = clock(); // @DEBUG
 		if (_typeAlgorithm == PURE_HOG)
 			pureHoG(frame, i);
@@ -227,10 +227,10 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 void Pipeline::processStandaloneImage(cv::Mat &frame)
 {
 	_localFrame = frame.clone();
-	preprocessing(frame);
+	//preprocessing(frame);
 	std::vector < cv::Rect  > foundRect;
-	//foundRect = fhog.detect(frame);
-	_hog.detect(frame, foundRect);
+	//foundRect = _hog.detect(frame);
+	_hog.detect(frame, foundRect); 
 	//foundRect = cc.detect(frame);
 	draw2mat(foundRect);
 

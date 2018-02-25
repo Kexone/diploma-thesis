@@ -1,10 +1,8 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 #include <fstream>
-
 
 /**
  * @brief Setting struct for program
@@ -56,10 +54,10 @@ struct Settings
 
 
 
-	static void getSettings()
+	static void getSettings(std::string pathFile)
 	{
 		std::fstream file;
-		file.open("settings.txt");
+		file.open(pathFile);
 
 		std::string line;
 		while (file >> line) {
@@ -86,8 +84,8 @@ struct Settings
 						else if (key.compare("pedSize") == 0) {
 							int value1, value2;
 							auto commaPos = value.find(',');
-							value1 = std::stoi(value.substr(1, commaPos - 1));
-							value2 = std::stoi(value.substr(commaPos + 1, value.length() - 1));
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
 							pedSize = cv::Size(value1, value2);
 						}
 						else if (key.compare("blockSize") == 0)
@@ -137,7 +135,7 @@ struct Settings
 			}
 			catch(const std::exception e)
 			{
-				std::cout << " Error with parsing file! " << e.what() << std::endl;
+				std::cout << " Error parsing file!\n\n " << e.what() << std::endl;
 			}
 		}
 		file.close();
