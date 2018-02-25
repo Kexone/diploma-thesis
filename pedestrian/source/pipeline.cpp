@@ -438,11 +438,11 @@ void Pipeline::evaluate()
 //	float acc = static_cast<float>(truePos + trueNeg) /
 	//	static_cast<float>(truePos + trueNeg + falsePos + falseNeg);
 
-	float f1score = static_cast<float>(2 * truePos) /
-		static_cast<float>(2 * truePos + falsePos + falseNeg);
-
+//	float f1score = static_cast<float>(2 * truePos) /
+//		static_cast<float>(2 * truePos + falsePos + falseNeg);
 	float precision = static_cast<float>(truePos) / (truePos + falsePos); // Precision is the percentage true positives in the retrieved results.
 	float recall = static_cast<float>(truePos) / (truePos + falseNeg); // Recall is the percentage of the pedestrians that the system retrieves.
+	float f1score = 2 * (precision * recall) / (precision + recall);
 	// ??% of the retrieved results were airplanes, and ??% of the airplanes were retrieved.
 
 	std::cout << "True Positive: " << truePos << std::endl;
