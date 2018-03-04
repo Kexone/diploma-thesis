@@ -17,17 +17,20 @@ TestClass::TestClass()
 void TestClass::initTesting()
 {
 	int type;
-	std::cout << " 1) TESTING OpenCV SVM  \n 2) TESTING Dlib SVM " << std::endl;
-	std::cout << "Selection: ";
-	std::cin >> type;
+	std::cout << " 1) CROSS VALIDATION OpenCV SVM  \n 2) CROSS VALIDATION Dlib SVM \n 3) TESTING OpenCV SVM" << std::endl;
+//	std::cout << "Selection: ";
+	//std::cin >> type;
+	type = 3; //@todo
 	if(type == 1)
-		testingSvm();
+		crossTestingSvm();
 	if (type == 2)
-		testingDlibSvm();
+		crossTestingDlibSvm();
+	if (type == 3)
+		testingSvm();
 	std::cout << "DONE" << std::endl;
 }
 
-void TestClass::testingSvm()
+void TestClass::crossTestingSvm()
 {
 	int typeTest;
 	std::cout << "\n\n******************" << std::endl;
@@ -49,7 +52,7 @@ void TestClass::testingSvm()
 		iterationCycle();
 }
 
-void TestClass::testingDlibSvm()
+void TestClass::crossTestingDlibSvm()
 {
 	int type;
 	std::cout << " 1) NU SVM \n 2) C SVM" << std::endl;
@@ -68,6 +71,66 @@ void TestClass::testingDlibSvm()
 	std::cout << "*************************" << std::endl;
 	std::cout << "DEFAULT CROSS VALIDATION" << std::endl;
 	test.process(type);
+}
+
+void TestClass::testingSvm()
+{
+	int iterations[] = { 0,100,400,600,1000 };
+	for (int i : iterations)
+	{
+		Settings::maxIterations = i;
+		//std::cout << "____ "<< i << " max iter" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+		std::string posSamplesFiles[] = { "CUHK.txt", "daimlerM3.txt", "daimlerM6.txt", "daimlerM9.txt", "daimlerM12.txt" };
+		std::string negSamplesFiles[] = { "neg3000.txt", "neg3000b.txt", "neg9000.txt" };
+
+		for (auto posSample : posSamplesFiles) {
+			for (auto negSample : negSamplesFiles) {
+				Settings::classifierName2Train = "KONFIGURACE_" +  posSample + "_" + negSample + "_" + std::to_string(i);
+				Settings::samplesPos = "samples/new/" + posSample;
+				Settings::samplesNeg = "samples/negative/" + negSample;
+				std::cout << "\nsamples from : " << posSample;
+				std::cout << " / " << Settings::samplesNeg << std::endl;
+				TrainHog trainHog;
+				trainHog.train(false);
+				std::string svmPath = Settings::classifierName2Train + ".yml";
+				std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
+				Hog hog = Hog(svmPath);
+				std::vector < float > predict;
+				std::vector < float > distances;
+
+				for (auto typeSample : samples)	{
+					cv::Mat frame;
+					std::fstream sampleFile(typeSample);
+					std::string oSample;
+					while (sampleFile >> oSample) {
+						frame = cv::imread(oSample);
+						if (frame.empty()) {
+							std::cout << "eerr " << oSample << std::endl;
+							sampleFile.close();
+							break;
+						}
+						float value = 0.0f, distance = 0.0;
+						value = hog.predict(frame);
+						distance = hog.getDistance(frame);
+						predict.push_back(value);
+						distances.push_back(distance);
+					//	std::cout << static_cast<float>(value) << std::endl;
+						frame.release();
+					}
+				}
+				std::string output = "./mySamples/output/predicted_" +posSample+ "_"+ negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) +  ".txt";
+				std::string output2 = "./mySamples/output/distances_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations)  + ".txt";
+				std::ofstream output_file(output);
+				std::ofstream output_file2(output2);
+				std::ostream_iterator<float> output_iterator(output_file, "\n");
+				std::ostream_iterator<float> output_iterator2(output_file2, "\n");
+				std::copy(predict.begin(), predict.end(), output_iterator);
+				std::copy(distances.begin(), distances.end(), output_iterator2);
+				std::cout << "RESULT FOR: " << output << std::endl;
+				evaluate("mySamples/gt.txt", output);
+			}
+		}
+	}
 }
 
 void TestClass::randomTest()
@@ -221,4 +284,58 @@ void TestClass::initLog(int typeTest, int typeIncr, int maxRepeatTest)
 		ss << "TYPE: " << incrType << std::endl;
 	}
 	ss << "__________________________________" << std::endl;
+}
+
+void TestClass::evaluate(std::string groundTruthFile, std::string resultsFilePath) {
+	// Load files
+	std::ifstream groundTruthStream, resultsStream;
+	groundTruthStream.open(groundTruthFile);
+	resultsStream.open(resultsFilePath);
+	assert(groundTruthStream.is_open());
+	assert(resultsStream.is_open());
+
+	int detectorLine, groundTruthLine;
+	int falsePositives = 0;
+	int falseNegatives = 0;
+	int truePositives = 0;
+	int trueNegatives = 0;
+
+	while (true) {
+		if (!(resultsStream >> detectorLine)) break;
+		groundTruthStream >> groundTruthLine;
+
+		int detect = detectorLine;
+		int ground = groundTruthLine;
+
+		//false positives
+		if ((detect == 1) && (ground == 0)) {
+			falsePositives++;
+		}
+
+		//false negatives
+		if ((detect == 0) && (ground == 1)) {
+			falseNegatives++;
+		}
+
+		//true positives
+		if ((detect == 1) && (ground == 1)) {
+			truePositives++;
+		}
+
+		//true negatives
+		if ((detect == 0) && (ground == 0)) {
+			trueNegatives++;
+		}
+	}
+
+	groundTruthStream.close();
+	resultsStream.close();
+
+	std::cout << "falsePositives " << falsePositives << std::endl;
+	std::cout << "falseNegatives " << falseNegatives << std::endl;
+	std::cout << "truePositives " << truePositives << std::endl;
+	std::cout << "trueNegatives " << trueNegatives << std::endl;
+	float acc = (float)(truePositives + trueNegatives) /
+		(float)(truePositives + trueNegatives + falsePositives + falseNegatives);
+	std::cout << "Accuracy " << acc << std::endl;
 }

@@ -49,6 +49,23 @@ public:
 	*/
 	void detect(const std::vector< cv::Mat > testLst, int &nTrue, int &nFalse, bool pedestrian = true);
 
+	/**
+	* @brief Gets value of predict, firstly calculates HoG features and then return predicate.
+	*
+	*
+	* @param img image to processing
+	* @param flags flags for svm predict function
+	*/
+	float predict(cv::Mat img, int flags = 0);
+
+	/**
+	* @brief This method calc the distance of detection
+	*
+	* @param img image to processing
+	*/
+	float getDistance(cv::Mat img);
+
+
 private:
 
 	/**
@@ -67,22 +84,6 @@ private:
 	*/
 	void hogDetectMultiScale(cv::Mat img, std::vector< cv::Rect > &found);
 	
-	/**
-	* @brief Gets value of predict, firstly calculates HoG features and then return predicate.
-	* 
-	*
-	* @param img image to processing
-	* @param flags flags for svm predict function
-	*/
-	float predict(cv::Mat img, int flags = 0);
-
-	/**
-	* @brief This method calc the distance of detection
-	* 
-	* @param img image to processing 
-	*/
-	float getDistance(cv::Mat img);
-
     cv::HOGDescriptor hog;
 	cv::Ptr<cv::ml::SVM> svm;
 };

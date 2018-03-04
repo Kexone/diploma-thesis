@@ -54,7 +54,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	std::string oSample;
 	cv::namedWindow("Result", CV_WINDOW_AUTOSIZE);
 	while (sampleFile >> oSample) {
-		frame = cv::imread(oSample, CV_32FC3);
+		frame = cv::imread(oSample, CV_LOAD_IMAGE_UNCHANGED);
         if(frame.empty()) {
 			sampleFile.close();
             break;
@@ -108,6 +108,16 @@ void Pipeline::execute(std::string cameraFeed)
 			saveResults();
 			break;
 		}
+
+		//if (!trained[i].empty()) { //CROPPING PEDESTRIAN FROM GROUND TRUTH
+		//	cv::Rect cropPed = cv::Rect(trained[i][0].tl().x - 0, trained[i][0].tl().y - 10, 48, 96);
+		//	char imgName[30];
+		//	std::sprintf(imgName, "bad/posSample_%d.jpg", i);
+		//	cv::Mat cropped(frame(cropPed));
+		//	cv::imwrite(imgName, cropped);
+		//}
+
+
 //		if (i < 250) continue;
 		//time_t time = clock(); // @DEBUG
 		if (_typeAlgorithm == PURE_HOG)
@@ -131,13 +141,13 @@ void Pipeline::execute(std::string cameraFeed)
 		cv::waitKey(5);
 		frame.release();
 
-#if MY_DEBUG
+//#if MY_DEBUG
 		std::stringstream ss;
 		ss << "img/mat_" << i << ".jpg";
 		cv::imwrite(ss.str(), _localFrame);
 		ss.str("");
 		ss.clear();
-#endif
+//#endif
 		_localFrame.release();
 	}
 }
@@ -155,7 +165,7 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.emplace_back(CroppedImage(i, _localFrame.clone(), rect[i]));
+			croppedImages.push_back(CroppedImage(i, _localFrame.clone(), rect[i]));
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		std::vector < std::vector < float > > distances(croppedImages.size());
@@ -383,7 +393,7 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 		cv::Point p1(x1, y1);
 		cv::Point p2(x2, y2);
 		if(cFrame >= 0)
-			rects[cFrame].emplace_back(cv::Rect(p1, p2));
+			rects[cFrame].push_back(cv::Rect(p1, p2));
 	}
 }
 

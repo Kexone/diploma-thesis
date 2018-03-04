@@ -29,8 +29,10 @@ private:
 
 	std::stringstream ss;
 
+	void crossTestingSvm();
+	void crossTestingDlibSvm();
 	void testingSvm();
-	void testingDlibSvm();
+	void evaluate(std::string groundTruthFile, std::string resultsFilePath);
 	
 	/**
 	 * @brief Runs the random tests
