@@ -75,59 +75,66 @@ void TestClass::crossTestingDlibSvm()
 
 void TestClass::testingSvm()
 {
-	int iterations[] = { 0,100,400,600,1000 };
-	for (int i : iterations)
-	{
-		Settings::maxIterations = i;
-		//std::cout << "____ "<< i << " max iter" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
-		std::string posSamplesFiles[] = { "CUHK.txt", "daimlerM3.txt", "daimlerM6.txt", "daimlerM9.txt", "daimlerM12.txt" };
-		std::string negSamplesFiles[] = { "neg3000.txt", "neg3000b.txt", "neg9000.txt" };
+	int typeTrain[] = { 100, 101, 103 };
+	for (auto type : typeTrain) {
+		Settings::type = type;
+		int iterations[] = { 0,50, 100, 200, 300,500, 600, 900, 1000, 1100 };
+		for (int i : iterations)
+		{
+			Settings::maxIterations = i;
+			//std::cout << "____ "<< i << " max iter" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+			std::string posSamplesFiles[] = { "sudipDas.txt"};
+			std::string negSamplesFiles[] = { "negDam3000.txt",  "negDam9000.txt" , "negDam12000.txt" };
 
-		for (auto posSample : posSamplesFiles) {
-			for (auto negSample : negSamplesFiles) {
-				Settings::classifierName2Train = "KONFIGURACE_" +  posSample + "_" + negSample + "_" + std::to_string(i);
-				Settings::samplesPos = "samples/new/" + posSample;
-				Settings::samplesNeg = "samples/negative/" + negSample;
-				std::cout << "\nsamples from : " << posSample;
-				std::cout << " / " << Settings::samplesNeg << std::endl;
-				TrainHog trainHog;
-				trainHog.train(false);
-				std::string svmPath = Settings::classifierName2Train + ".yml";
-				std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
-				Hog hog = Hog(svmPath);
-				std::vector < float > predict;
-				std::vector < float > distances;
+			for (auto posSample : posSamplesFiles) {
+				for (auto negSample : negSamplesFiles) {
+					Settings::classifierName2Train = "C_BW_" + posSample + "_" + negSample + "_" + "_C" + std::to_string(Settings::paramC) + "_G" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_double" + std::to_string(type) + "_" + std::to_string(i);
+					//Settings::classifierName2Train = "C_"  + std::to_string(i);
+					Settings::samplesPos = "samples/new/" + posSample;
+					Settings::samplesNeg = "samples/negative/" + negSample;
+					std::cout << Settings::classifierName2Train << std::endl;
+					std::cout << "\nsamples from : " << posSample;
+					std::cout << " / " << Settings::samplesNeg << std::endl;
+					TrainHog trainHog;
+					trainHog.train(false);
+					std::string svmPath = Settings::classifierName2Train + ".yml";
+					std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
+					Hog hog = Hog(svmPath);
+					std::vector < float > predict;
+					std::vector < float > distances;
 
-				for (auto typeSample : samples)	{
-					cv::Mat frame;
-					std::fstream sampleFile(typeSample);
-					std::string oSample;
-					while (sampleFile >> oSample) {
-						frame = cv::imread(oSample);
-						if (frame.empty()) {
-							std::cout << "eerr " << oSample << std::endl;
-							sampleFile.close();
-							break;
+					for (auto typeSample : samples) {
+						cv::Mat frame;
+						std::fstream sampleFile(typeSample);
+						std::string oSample;
+						while (sampleFile >> oSample) {
+							frame = cv::imread(oSample);
+							if (frame.empty()) {
+								std::cout << "eerr " << oSample << std::endl;
+								sampleFile.close();
+								break;
+							}
+							int value = 0;
+							float distance = 0.0;
+							value = hog.predict(frame);
+							distance = hog.getDistance(frame);
+							predict.push_back(value);
+							distances.push_back(distance);
+							//	std::cout << static_cast<float>(value) << std::endl;
+							frame.release();
 						}
-						float value = 0.0f, distance = 0.0;
-						value = hog.predict(frame);
-						distance = hog.getDistance(frame);
-						predict.push_back(value);
-						distances.push_back(distance);
-					//	std::cout << static_cast<float>(value) << std::endl;
-						frame.release();
 					}
+					std::string output = "./mySamples/output/predicted_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" +std::to_string(type) + ".txt";
+					std::string output2 = "./mySamples/output/distances_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + std::to_string(type) + ".txt";
+					std::ofstream output_file(output);
+					std::ofstream output_file2(output2);
+					std::ostream_iterator<float> output_iterator(output_file, "\n");
+					std::ostream_iterator<float> output_iterator2(output_file2, "\n");
+					std::copy(predict.begin(), predict.end(), output_iterator);
+					std::copy(distances.begin(), distances.end(), output_iterator2);
+					std::cout << "RESULT FOR: " << output << std::endl;
+					evaluate("mySamples/gt.txt", output);
 				}
-				std::string output = "./mySamples/output/predicted_" +posSample+ "_"+ negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) +  ".txt";
-				std::string output2 = "./mySamples/output/distances_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations)  + ".txt";
-				std::ofstream output_file(output);
-				std::ofstream output_file2(output2);
-				std::ostream_iterator<float> output_iterator(output_file, "\n");
-				std::ostream_iterator<float> output_iterator2(output_file2, "\n");
-				std::copy(predict.begin(), predict.end(), output_iterator);
-				std::copy(distances.begin(), distances.end(), output_iterator2);
-				std::cout << "RESULT FOR: " << output << std::endl;
-				evaluate("mySamples/gt.txt", output);
 			}
 		}
 	}

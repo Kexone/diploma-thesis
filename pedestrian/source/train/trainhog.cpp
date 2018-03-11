@@ -87,11 +87,11 @@ void TrainHog::train(bool saveData)
     extractFeatures(negSamplesLst, gradientLst);
     convertSamples2Mat(gradientLst, trainMat);
 
-	if (saveData) saveLabeledMat(trainMat, labels);
+	//if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
 
-	if (trainTwice)
+	if (saveData) //@TODO
 	{
 		cv::Size pos_image_size = posSamplesLst[0].size();
 		std::cout << "Testing trained detector on negative images.this may take a few minutes...";
@@ -356,12 +356,12 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
 		
 		cv::cvtColor(mat(r), gr, cv::COLOR_BGR2GRAY);
         //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
-		cv::equalizeHist(gr, gr);
+		//cv::equalizeHist(gr, gr);
 	//	gr.convertTo(gr, CV_8U);
 
-		my_hog.compute(gr, descriptors,cv::Size(4,4),cv::Size(0, 0), location);
-	    cv::imshow("gradient", get_hogdescriptor_visu(mat, descriptors, gr.size()));
-	    cv::waitKey(10);
+		my_hog.compute(gr, descriptors,cv::Size(8,8),cv::Size(0, 0), location);
+	   // cv::imshow("gradient", get_hogdescriptor_visu(mat, descriptors, gr.size()));
+	  //  cv::waitKey(10);
 		gradientLst.push_back( cv::Mat(descriptors).clone() );
     }
 }
@@ -411,6 +411,10 @@ void TrainHog::convertSamples2Mat(const std::vector<cv::Mat> &trainSamples, cv::
 			trainSamples[i].copyTo(trainData.row((int)i));
 		}
 	}
+	//cv::FileStorage fs("neg.yml", cv::FileStorage::WRITE);
+	//fs << "negSamples" << trainData;
+	//fs.release();
+
     //const int rows = trainSamples.size();
     //const int cols = std::max( trainSamples[0].cols, trainSamples[0].rows);
     //cv::Mat tmp(1,cols,CV_32FC1);

@@ -125,13 +125,13 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 //	cv::equalizeHist(gray, gray);
 //	hogDetectMultiScale(frame, rects);
 	hog.detectMultiScale(
-		gray,					// testing img
+		frame,					// testing img
 		rects,					// foundLocation <rect>
-		0.6,						// hitThreshold = 0 // 1
+		2.2,						// hitThreshold = 0 // 1
 		cv::Size(8, 8),			// winStride size(8, 8)
 		cv::Size(0, 0),			// padding size(0, 0)
-		1.02,					// scale = 1,05
-		1,//4.0,	/* 1*/				// finalThreshold = 2 // 0
+		1.07,					// scale = 1,05
+		2.0,//4.0,	/* 1*/				// finalThreshold = 2 // 0
 		false					// use meanshift grouping = false
 	);
 	std::cout << rects.size();
