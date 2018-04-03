@@ -1,0 +1,34 @@
+\section{Použitá zařízení}
+K otestování mého programu jsem využil počítače architektury ARM. Jedná se o počítače SolidRun HummingBoard Pro, Raspberry PI 3 Model B a Sinovoip Banana PI BPI-M1. Na těchto zařízeních bude otestován algoritmus a všechny výsledky zapsány do tabulky v následující kapitole. Všechny tyto počítače mají nainstalovaný operační systém Linux Debian.
+
+\subsection{HummingBoard Pro}
+ Disponuje čtyřjádrovým procesorem i.MX6 Dual-core Lite na achitektuře Cortex A9 o~frekvenci 1 GHz a~na desce má osazenou paměť typu DDR3 o~velikosti 2~GB a nabízí grafický obvod Vivante GC880. Dále deska nabízí mSata konektor pro připojení SSD disku nebo například IR přijímač. Podporuje známé operační systém Linux, například Android 4.4, Debian a OpenSuse. Spotřeba zařízení je 2 W (0,41 A) v klidovém stavu a 5 W (1 A) v zátěži.
+
+\subsection{Banana PI}
+Tento počítač je osazen dvoujádrovým procesorem AllWinner A20 s frekvencí 1,2 Ghz. Jedná se o low-end verzi procesoru AllWinner A31. Dále na desce najdeme grafický čip Mali-400 MP2 a operační paměť 1 GB. Jedná se o první klon RPI a jeho deska je osazena navíc například sata konektorem, mikro-USB OTG nebo mikrofonem. Tento mikropočítač díky GLAN můžeme použít jako vzdálené NAS úložiště, databázi, mail server nebo například web server. Jeho spotřeba v nečinném stavu je 1,75 W (350 mA), maximálně 5.5 W (1,1 A).
+
+\subsection{Raspberry PI 3}
+Jedná se o třetí generaci velmi úspěšné řady Raspberry PI. Model je osazen výkonným 64 bitovým čtyřjádrovým procesorem Cortex-A53 o frekvenci 1,2 Ghz, grafickým čipem Broadcom VideoCore IV o frekvenci 400 MHz, operační paměť typu SDRAM o velikosti 1GB, která je sdílená s grafickým čipem. Od svých předchůdců se líší integrovaným Wifi čipem podporující protokoly 802.11 b/g/n a Bluetooth 4.1 LE. Díky architektuře ARMv8 má šiřší podporu Linuxů, včetně mobilního systému Android a Windows 10 IoT. Jeho výkon bez zátěže je 1,5 W (300 mA) a při zátěži se zapojenými periferiemi maximálně 6,7 W (1,34 A).
+
+\newpage
+\subsection{Srovnání}
+V~následující tabulce se nachází srovnání parametrů těchto počítačů.
+\begin{table}[H]
+\centering
+\caption{Srovnání testovaných zařízení}
+\begin{tabular} { |c|c|c|c| }
+\hline
+{}                  & {HummingBoard Pro}   & {Raspberry PI}        & {Banana PI}          \\ \hline
+Procesor            & NXP i.MX6 ARM         & ARM                   & A20 ARM              \\ \hline
+Počet jader         & 4                     & 4                     & 2                    \\ \hline
+Kmitočet            & 1 GHz                 & 1,2 GHz               & 1,2 GHz              \\ \hline
+Druh architektury   & Cortex A9             & Cortex A53            & Cortex A7            \\ \hline
+Grafický čip      & Vivante GC880           & BroadCom VideoCore IV & Mali-400 MP2         \\ \hline
+Kapacita paměti RAM & 1 GB                  & 1 GB                  & 1 GB                 \\ \hline
+Druh paměti         & DDR3                  & LPDDR2                & DDR3                 \\ \hline
+Ethernet            & 10/100/1000           & 10/100                & 10/100/1000          \\ \hline
+Počet USB portů     & 2                     & 4                     & 1                    \\ \hline
+Úložný prostor      & MicroSD               & MicroSDHC             & SD/MMC               \\ \hline
+\end{tabular}
+\label{srovnaniPC}
+\end{table}

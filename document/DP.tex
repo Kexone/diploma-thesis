@@ -1,0 +1,46 @@
+% Nejprve uvedeme tridu dokumentu s volbami
+\documentclass[czech,master,public,dept460,male,cpdeclaration,oneside,hidelinks]{diploma}
+% Dalsi doplnujici baliky maker
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{calc}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{siunitx}
+\usepackage{subfig}     % makra pro "podobrazky" a "podtabulky"
+\usepackage{tikz}       % makra pro kresleni
+\usepackage{etoolbox}
+
+\makeatletter   
+\let\oldcite\cite
+\pretocmd{\listoffigures}{\def\cite{\ignorespaces\@gobble}}{}{}
+\apptocmd{\listoffigures}{\let\cite\oldcite}{}{}
+\makeatother
+\usetikzlibrary{arrows,positioning,plotmarks,decorations.markings,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains}
+\input{includes/_meta}
+
+% Zacatek dokumentu
+\begin{document}
+
+
+% Nechame vysazet titulni strany.
+\MakeTitlePages
+
+% Pokud mame v zaverecne praci vypisy kodu, jinak odstranit.    
+\lstlistoflistings
+\input{includes/1_intro}
+\input{includes/2_main_problems.tex}
+\input{includes/3_approaches.tex}
+\input{includes/4_1_used_libs.tex}
+\input{includes/4_2_opencv.tex}
+\input{includes/4_3_dlib.tex} 
+\input{includes/5_o_aplikaci.tex}
+\input{includes/6_testing_devices.tex}
+\input{includes/7_experiments.tex}
+\input{includes/8_zaver.tex}
+%
+\input{includes/references.tex}
+\end{document}

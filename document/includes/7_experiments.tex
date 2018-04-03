@@ -1,0 +1,22 @@
+\section{Experimenty}
+
+Díky metodám pro testování klasifikátorů SVM mohl jsem otestovat automaticky různé parametry pro trénování a tak získat ty ``nejlepší'' parametry blížící se k uspokojivé detekci chodců. Testování pro Dlib SVM probíhá ve vnořených cyklech, ve kterých se nastavuje trenér a volá dostupná funkce pro testování parametrů. Vstupem této funkce je samotný trenér, který má již nastavené parametry, vektor všech vzorků a štítky k daným vzorkům. Tato metoda rozdělí daný vektor na 3 části a dvě z nich použije na trénování klasifikátoru a jednu na jeho testování. Tento proces se následně otočí a trénování a tetování probíhá znovu. Výsledkem jedné iterace je spolehlivost detekci jak na pozitivních tak i na negativních vzorcích dat. 
+
+ Pro OpenCV knihovnu jsem žádnou takovou metodiku testování nenašal. Použil jsem již vytvořenou třídu pro testování SVM klasifikátoru a vložil ji do třech vnořených cyklů. Upravil jsem výpis této třídy, aby byl obdobný a přehledný jako u předchozí metodiky testování.  %% << TOTO vlozit do o aplikaci?
+
+ První trénování --->špatný dataset
+ druhé trénování --->špatné parametry
+ třetí trénování --->téměř dobré
+ čtvrté trénování -->ideální sada, ideální parametry, 85%
+ 
+ dodatečné trénování na siluetách --> works
+
+
+ testování --> dlib trvalo strašně dlouho 127h
+ testování --> opencv trvalo strašně dlouho - rozšířené parametry
+
+
+ kombinované trénování  extract features Hog  ->train dlib fhog
+ trénování fhog -> čistě pos samples
+ trénování hog ->neg/pos samples
+

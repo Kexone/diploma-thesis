@@ -1,0 +1,38 @@
+\section{Výzvy a problémy detekce}
+Detekce chodců je nezbytným a významným úkolem v jakémkoliv inteligentním kamerovém systému, protože poskytuje základní informace pro sémantické porozumění videosekvence. Tohle rozšíření má zásadní prospěch v automobilovém průmyslu z důvodu možného zlepšení bezpečnostních systémů. Mnoho výrobců aut již tuto funkcionalitu nabízejí ve svých vozech jako ``Pokročilé systémy asistence řidiče'' (ADAS) od roku 2017.
+
+Bohužel ne vždy detektor může rozpoznat chodce v obraze, a to může být ovlivněno několika faktory. Takovými faktory můžou být:
+
+\subsection{Tvar těla (póza, držení těla)}
+Chodec v obraze může mít neobvyklý postoj těla, chůzi nebo různé proporce a stavbu těla. Lidské tělo může být z části zakryto nějakým objektem ze scény nebo se nemusí vyskytovat celé v záběru snímku. Takový člověk může být snadno identifikovatelný pro lidské oko, ale pro stroje může představovat velkou výzvu. 
+
+\subsection{Barva kůže}
+Barva kůže může také představovat problém pro rozpoznání chodce. Na světě existují různé druhy pigmentace kůže a jejich odstíny se pohybují v rozmezí od nejtmavší hnědé až po nejsvětlejší odstíny. Příklady barev kůže ilustruje obrázek \ref{colorskin}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{figures/colorskin}
+\caption{Příklady druhů pigmentace kůže\cite{skincolor:obr}}
+\label{colorskin}
+\end{figure}
+
+\subsection{Vnější podněty}
+Problém pro identifikování chodce v obraze může také představovat druh osvětlení scény, případně střídání dne a noci pro venkovní kamerové systémy. Také zde hraje důležitou roli nastavení a vlastnosti dané kamery. 
+
+\subsection{Oblečení a různé doplňky}
+Do této kategorie mohou spadat například zimní oblečení, které můžou zvětšit objem, či tvar těla, nebo různě rozměrné pokrývky hlavy. Chodec také může nést nějaké předměty, které mohou zakrývat nebo splývat s jeho části těla. Tyto aspekty mohou také ovlivnit detekci.
+
+\subsection{Pozice v obraze}
+Osoby se mohou nacházet libovolně kdekoliv v obraze, mohou jít čelem k ohnisku kamery nebo mohou být zachyceni pouze z boku. Například kamera umístěná ve výšce pouličního osvětlení v nějakém předem určeném úhlu, snímá obraz z určité perspektivy. Tato kamera pak zajištuje velikou škálu chodců v různém měřítku. Pro stroj tohle může být ovšem problematické. Osoby ve větším měřítku můžou být snadno detekovatelné, ovšem chodci, kteří jsou hodně vzdálení v obraze nikoliv. V tomto případě také závisí na nastavení daného detektoru za cenu pomalejší a méně přesnější detekce. 
+
+\subsection{Pozadí (prostřední scény)}
+Chodci se mohou vyskytovat v komplexním prostředí. Opět pro lidské oko může být člověk snadno identifikovatelný a pro doménu strojů se může tato situace jevit jako neproveditelná. Osoba v obraze může totiž dokonale splynout s prostředním, které se za ním nachází.  
+
+Příklad výše zmíněných výzev a problémů detekce najdeme v obrázku \ref{pedestrians}, který je umístěn níže. V tomto ilustrativním obrázku najdeme osoby s různě barevným oblečením různého tvaru. Chodci se zde nacházejí v různém úhlu k ohnisku kamery. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=15cm]{figures/pedestrians}
+\caption{Ukázka chodců v obraze}
+\label{pedestrians}
+\end{figure}
