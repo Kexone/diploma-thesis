@@ -1,39 +1,53 @@
-mogHistory=115
-mogThresh=8
+mogHistory=90 //115
+mogThresh=9
 mogDetectShadows=1
 cvxHullExtSize=10
 cvxHullExtTimes=4
 cvxHullThresh=180 //180
-//170 = 0.890455 ,
 cvxHullMaxValue=1 //255
 //pedSize=(24,48)
 pedSize=(48,96)
+//pedSize=(64,128)
 blockSize=16
 cellSize=8
 strideSize=8
 
 
 //TRAIN PARAMS
-maxIterations=200
+maxIterations=1000
 termCriteria=3  // CV_TERMCRIT_ITER + CV_TERMCRIT_EPS
-kernel=0 // cv::ml::SVM::LINEAR = 0
-type=100 // cv::ml::SVM::C_SVC = 100
-epsilon=1.e-6
-coef0=0
+kernel=0 // cv::ml::SVM::LINEAR = 0. RBF = 2, INTER = 5
+type=103 // cv::ml::SVM::C_SVC = 100 NU_SVC = 101, ONE_CLASS=102, EPS_SVR=103, NU_SVR=104
+epsilon=1e-3 //1.e-6 //
+coef0=0.0
 degree=3
 gamma=0.0001
-paramNu=0
-paramP=0
-paramC=0.0025
+paramNu=0.6
+paramP=0.1
+paramC=0.05
 // 
 //samplesPos=samples/posSamples.txt
 //samplesNeg=samples/negSamples.txt
 
-samplesPos=samples/positive/pos3000.txt
+/samplesPos=samples/new/bmp.txt
+/samplesPos=samples/new/jpg.txt
+/samplesPos=samples/new/daimler.txt
+samplesPos=samples/new/daimlerM3.txt
+/samplesPos=samples/new/png.txt
+/samplesPos=samples/new/pngPrid.txt
+//samplesNeg=samples/negative/neg30000.txt
 samplesNeg=samples/negative/neg3000.txt
-samplesPosTest=samples/listPosTestMin.txt
-samplesNegTest=samples/listNegTestMin.txt
-classifierName2Train=C_LIN_3_3
+
+samplesPosTest=mySamples/pos3k.txt
+samplesNegTest=mySamples/negB5k.txt
+classifierName2Train=KONFIGURACE_
+//classifierName2Train=EPS_LIN_BMP_30
+//classifierName2Train=EPS_LIN_JPG_30
+//classifierName2Train=EPS_LIN_PGMM_30
+//classifierName2Train=EPS_LIN_PGMS_30
+//classifierName2Train=EPS_LIN_PNG_30
+//classifierName2Train=EPS_LIN_PNGP_30
+
 
 dilationSize=3
 erosionSize=2

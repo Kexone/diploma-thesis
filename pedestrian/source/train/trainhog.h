@@ -42,9 +42,12 @@ private:
 	*/
 	void saveLabeledMat(cv::Mat data, std::vector< int > labels);
 
+	void getSvmDetector(const cv::Ptr<cv::ml::SVM>& svm, std::vector< float > & hog_detector);
 
     std::string classifierName;
 	cv::Size pedestrianSize;
+	cv::Ptr<cv::ml::SVM> svm;
+
     int blockSize;
     int cellSize;
     int strideSize;

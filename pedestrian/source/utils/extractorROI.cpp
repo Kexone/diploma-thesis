@@ -195,6 +195,7 @@ void ExtractorROI::process(int cFrame)
 		{
 			indRect = numb;
 			std::cout << "\033[0;49;97m" << "\tActive " << indRect << " rect" << std::endl;
+		//	std::cout << rects[indRect].tl().x << " " << rects[indRect].tl().y << " " << rects[indRect].br().x << " " << rects[indRect].br().y << std::endl;
 		}
 		/*else {
 			std::cout << "Too much large number or pressed bad key. " << std::endl;

@@ -60,12 +60,9 @@ public:
 	*
 	* @param path path to samples
 	* @param dstList list of cv::Mat
-	* @param labels list of labels
 	* @param  pedSize size of pedestrian (image)
-	* @param isNeg switcher between samples
-	* @param forDlib switcher between OpenCV and DLib causes switch types of labels
 	*/
-	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, std::vector< int > &labels, cv::Size pedSize, bool isNeg = false, bool forDlib = false)
+	static void fillSamples2List(std::string &path, std::vector<cv::Mat> &dstList, cv::Size pedSize)
 	{
 		assert(!path.empty());
 		cv::Mat frame;
@@ -80,23 +77,6 @@ public:
 			}
 			cv::resize(frame, frame, pedSize);
 			dstList.push_back(frame.clone());
-			if (!forDlib) {
-				if (!isNeg) {
-					labels.push_back(1);
-				}
-				else {
-					labels.push_back(0);
-				}
-			}
-			else
-			{
-				if (!isNeg) {
-					labels.push_back(+1);
-				}
-				else {
-					labels.push_back(-1);
-				}
-			}
 		}
 	}
 
@@ -157,7 +137,7 @@ public:
 		while (sampleFile >> oSample) {
 			img = imread(oSample, cv::IMREAD_COLOR);
 			cv::Mat bcp = img.clone();
-			int xStep = 48, yStep = 96, nCount = 0;
+			int xStep = 64, yStep = 128, nCount = 0;
 			for (int y = 0; y < img.rows - yStep; y += yStep)
 			{
 				for (int x = 0; x < img.cols - xStep; x += xStep)

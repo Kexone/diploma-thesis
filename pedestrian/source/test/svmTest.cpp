@@ -51,6 +51,7 @@ void SvmTest::preprocessing()
 	posSamplesMin = Settings::samplesPosTest;
 	negSamplesMin = Settings::samplesNegTest;
 	th.calcMatForTraining(trainMat,labels);
+
 	if (posTestLst.empty() || negTestLst.empty()) {
 		loadMats(posTest, posTestLst);
 		loadMats(negTest, negTestLst);
@@ -77,7 +78,7 @@ float SvmTest::process()
 //	std::cout << std::endl << counterTest << ". ITERATION OF TESTING" << std::endl;
 
 	TrainHog th = TrainHog(maxIterations, termCriteria, kernel, type, epsilon, coef0, degree, gamma, nu, p, c, classifierName);
-
+	//th.printSettings();
 	trainTime = clock();
 	th.trainFromMat(trainMat, labels);
 	trainTime = clock() - trainTime;

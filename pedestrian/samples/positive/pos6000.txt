@@ -4439,7 +4439,6 @@
 ../../train/posSamples/CUHK/2322.png
 ../../train/posSamples/CUHK/2323.png
 ../../train/posSamples/CUHK/2324.png
-../../train/posSamples/CUHK/2325.png
 ../../train/posSamples/CUHK/2326.png
 ../../train/posSamples/CUHK/2327.png
 ../../train/posSamples/CUHK/2328.png

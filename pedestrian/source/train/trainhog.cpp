@@ -63,14 +63,23 @@ void TrainHog::trainFromMat(cv::Mat trainMat, std::vector<int> labels)
 
 void TrainHog::train(bool saveData)
 {
+	bool trainTwice = false;
 	std::vector< cv::Mat > posSamplesLst;
 	std::vector< cv::Mat > negSamplesLst;
     std::vector< cv::Mat > gradientLst;
 	std::vector< int > labels;
     cv::Mat trainMat;
 
-	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize);
-	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true);
+	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, pedestrianSize);
+
+	labels.assign(posSamplesLst.size(), +1);
+	const unsigned int old = static_cast<unsigned int>(labels.size());
+
+	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, pedestrianSize);
+
+	labels.insert(labels.end(), negSamplesLst.size(), 0);
+	CV_Assert(old < labels.size());
+
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
@@ -78,9 +87,63 @@ void TrainHog::train(bool saveData)
     extractFeatures(negSamplesLst, gradientLst);
     convertSamples2Mat(gradientLst, trainMat);
 
-	if (saveData) saveLabeledMat(trainMat, labels);
+	//if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
+
+	if (saveData) //@TODO
+	{
+		cv::Size pos_image_size = posSamplesLst[0].size();
+		std::cout << "Testing trained detector on negative images.this may take a few minutes...";
+		cv::HOGDescriptor my_hog;
+		my_hog.winSize = pos_image_size;
+		std::vector<cv::Rect > locations;
+
+		// Set the trained svm to my_hog
+		std::vector< float > hog_detector;
+		
+		getSvmDetector(svm, hog_detector);
+		my_hog.setSVMDetector(hog_detector);
+
+		std::vector<cv::Rect> detections;
+		std::vector<double> foundWeights;
+
+		for (size_t i = 0; i < negSamplesLst.size(); i++)
+		{
+			my_hog.detectMultiScale(negSamplesLst[i], detections, foundWeights);
+			for (size_t j = 0; j < detections.size(); j++)
+			{
+				cv::Mat detection = negSamplesLst[i](detections[j]).clone();
+				resize(detection, detection, pos_image_size);
+				negSamplesLst.push_back(detection);
+			}
+		}
+		std::cout << "...[done]" << std::endl;
+
+		labels.clear();
+		labels.assign(posSamplesLst.size(), +1);
+		labels.insert(labels.end(), negSamplesLst.size(), 0);
+
+		gradientLst.clear();
+		std::cout << "Histogram of Gradients are being calculated for positive images...";
+		extractFeatures(posSamplesLst, gradientLst);
+		std::cout << "...[done]" << std::endl;
+
+		std::cout << "Histogram of Gradients are being calculated for negative images...";
+		extractFeatures(negSamplesLst, gradientLst);
+		std::cout << "...[done]" << std::endl;
+
+		std::cout << "Training SVM again...";
+		convertSamples2Mat(gradientLst, trainMat);
+		trainSvm(trainMat, labels);
+		std::cout << "...[done]" << std::endl;
+	}
+	std::vector< float > hog_detector;
+	cv::HOGDescriptor hog;
+	hog.winSize = pedestrianSize;
+	getSvmDetector(svm, hog_detector);
+	hog.setSVMDetector(hog_detector);
+	hog.save("my_detector.yml");
 }
 
 void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, bool isDlib)
@@ -89,8 +152,19 @@ void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, b
 	std::vector< cv::Mat > negSamplesLst;
 	std::vector< cv::Mat > gradientLst;
 
-	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, labels, pedestrianSize, false, isDlib);
-	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, labels, pedestrianSize, true, isDlib);
+	Utils::fillSamples2List(Settings::samplesPos, posSamplesLst, pedestrianSize);
+
+	labels.assign(posSamplesLst.size(), +1);
+	const unsigned int old = static_cast<unsigned int>(labels.size());
+
+	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, pedestrianSize);
+
+	if(isDlib)
+		labels.insert(labels.end(), negSamplesLst.size(), -1);
+	else
+		labels.insert(labels.end(), negSamplesLst.size(), 0);
+	CV_Assert(old < labels.size());
+
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;
 	std::cout << "Negative samples: " << negSamplesLst.size() << std::endl;
 
@@ -259,6 +333,9 @@ cv::Mat get_hogdescriptor_visu(const cv::Mat& color_origImg, std::vector<float>&
 
 void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::vector< cv::Mat > &gradientLst) const
 {
+	cv::HOGDescriptor my_hog;
+	my_hog.winSize = pedestrianSize;
+	my_hog.gammaCorrection = true;
     cv::HOGDescriptor hog(
 					pedestrianSize, //winSize
                     cv::Size(blockSize,blockSize), //blocksize
@@ -272,17 +349,22 @@ void TrainHog::extractFeatures(const std::vector< cv::Mat > &samplesLst, std::ve
                     true //gammal corRection,
                                     //nlevels=64
                     );
+	cv::Rect r = cv::Rect(0, 0, pedestrianSize.width, pedestrianSize.height);
+	r.x += (samplesLst[0].cols - r.width) / 2;
+	r.y += (samplesLst[0].rows - r.height) / 2;
     cv::Mat gr;
     std::vector< cv::Point > location;
     std::vector< float > descriptors;
     for(auto &mat : samplesLst) {
-        cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
-		cv::equalizeHist(gr, gr);
-		//gr.convertTo(gr, CV_8U);
+		
+		cv::cvtColor(mat(r), gr, cv::COLOR_BGR2GRAY);
+        //cv::cvtColor(mat, gr,cv::COLOR_BGR2GRAY);
+		//cv::equalizeHist(gr, gr);
+	//	gr.convertTo(gr, CV_8U);
 
-		hog.compute(gr, descriptors,cv::Size(8, 8),cv::Size(0, 0), location);
-	    cv::imshow("gradient", get_hogdescriptor_visu(gr, descriptors, gr.size()));
-	    cv::waitKey(10);
+		my_hog.compute(gr, descriptors,cv::Size(8,8),cv::Size(0, 0), location);
+	   // cv::imshow("gradient", get_hogdescriptor_visu(mat, descriptors, gr.size()));
+	  //  cv::waitKey(10);
 		gradientLst.push_back( cv::Mat(descriptors).clone() );
     }
 }
@@ -291,7 +373,7 @@ void TrainHog::trainSvm(cv::Mat &trainMat, const std::vector<int> &labels)
 {
   //  std::cout << "START training ..." << std::endl;
 	clock_t timer = clock();
-	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
+	svm = cv::ml::SVM::create();
 	//cv::Ptr<cv::ml::Boost> svm = cv::ml::Boost::create();
 
 	svm->setCoef0(this->coef0);
@@ -332,6 +414,10 @@ void TrainHog::convertSamples2Mat(const std::vector<cv::Mat> &trainSamples, cv::
 			trainSamples[i].copyTo(trainData.row((int)i));
 		}
 	}
+	//cv::FileStorage fs("neg.yml", cv::FileStorage::WRITE);
+	//fs << "negSamples" << trainData;
+	//fs.release();
+
     //const int rows = trainSamples.size();
     //const int cols = std::max( trainSamples[0].cols, trainSamples[0].rows);
     //cv::Mat tmp(1,cols,CV_32FC1);
@@ -359,6 +445,25 @@ void TrainHog::saveLabeledMat(cv::Mat data, std::vector< int > labels)
 	std::ofstream output_file("./labels.txt");
 	std::ostream_iterator<int> output_iterator(output_file, "\n");
 	std::copy(labels.begin(), labels.end(), output_iterator);
+}
+
+void TrainHog::getSvmDetector(const cv::Ptr<cv::ml::SVM>& svm, std::vector<float>& hog_detector)
+{
+	cv::Mat sv = svm->getSupportVectors();
+	const int sv_total = sv.rows;
+	// get the decision function
+	cv::Mat alpha, svidx;
+	double rho = svm->getDecisionFunction(0, alpha, svidx);
+
+	CV_Assert(alpha.total() == 1 && svidx.total() == 1 && sv_total == 1);
+	CV_Assert((alpha.type() == CV_64F && alpha.at<double>(0) == 1.) ||
+		(alpha.type() == CV_32F && alpha.at<float>(0) == 1.f));
+	CV_Assert(sv.type() == CV_32F);
+	hog_detector.clear();
+
+	hog_detector.resize(sv.cols + 1);
+	memcpy(&hog_detector[0], sv.ptr(), sv.cols * sizeof(hog_detector[0]));
+	hog_detector[sv.cols] = (float)-rho;
 }
 
 void TrainHog::printSettings()
