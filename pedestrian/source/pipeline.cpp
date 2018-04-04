@@ -23,7 +23,7 @@ Pipeline::Pipeline(std::string svmPath, int algType)
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
 	else if (_typeAlgorithm == PURE_FHOG || _typeAlgorithm == MIXTURED_FHOG)
-		_fhog = new FHog("data.dat");
+		_fhog = new FHog("data.svm");
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE) {
@@ -99,9 +99,9 @@ void Pipeline::execute(std::string cameraFeed)
 //#endif
 
 	for (int i = 0; ; i++)	{
-#if MY_DEBUG
+//#if MY_DEBUG
 		test = i; //@DEBUG
-#endif
+//#endif
 		cv::Mat frame = _vs->getFrame();
 		if (frame.empty())	{
 			delete _vs;
@@ -110,10 +110,10 @@ void Pipeline::execute(std::string cameraFeed)
 		}
 
 		//if (!trained[i].empty()) { //CROPPING PEDESTRIAN FROM GROUND TRUTH
-		//	cv::Rect cropPed = cv::Rect(trained[i][0].tl().x - 0, trained[i][0].tl().y - 10, 48, 96);
+		//	cv::Rect cropPed = cv::Rect(trained[i][0].tl().x - 0, trained[i][0].tl().y - 10, 64, 128);
 		//	char imgName[30];
 		//	std::sprintf(imgName, "bad/posSample_%d.jpg", i);
-		//	cv::Mat cropped(frame(cropPed));
+		//	cv::Mat cropped(frame(trained[i][0]));
 		//	cv::imwrite(imgName, cropped);
 		//}
 
@@ -135,10 +135,10 @@ void Pipeline::execute(std::string cameraFeed)
 
 		//time = clock() - time; // @DEBUG 
 		//	std::cout << static_cast<float>(time) / CLOCKS_PER_SEC << std::endl; // @DEBUG
-		cv::waitKey(5);
+	//	cv::waitKey(5);
 		if (Settings::showVideoFrames)
 			cv::imshow("Result", _localFrame);
-		cv::waitKey(5);
+		cv::waitKey(2);
 		frame.release();
 
 //#if MY_DEBUG
@@ -156,12 +156,20 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	preprocessing(frame);
+	auto startTime = std::chrono::high_resolution_clock::now();
 	_mog.processMat(frame);
+	auto endTime = std::chrono::high_resolution_clock::now();
+	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+	std::cout << "MOG took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
 	dilateErode(frame);
 
 	std::vector< cv::Rect > rect;
+	startTime = std::chrono::high_resolution_clock::now();
 	_ch.wrapObjects(frame, rect);
-
+	endTime = std::chrono::high_resolution_clock::now();
+	time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+	std::cout << "CH  took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
+	cv::imshow("mog", frame);
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
@@ -170,7 +178,11 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 		std::vector < std::vector < cv::Rect > > foundRect;
 		std::vector < std::vector < float > > distances(croppedImages.size());
 
+		startTime = std::chrono::high_resolution_clock::now();
 		_hog.detect(croppedImages, foundRect, distances);
+		endTime = std::chrono::high_resolution_clock::now();
+		time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+		std::cout << "HOG took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
 		_distances[cFrame] = distances;
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		draw2mat(croppedImages, foundRect);
@@ -223,7 +235,7 @@ void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
-	preprocessing(frame);
+	//preprocessing(frame);
 
 	std::vector < cv::Rect > foundRect;
 
@@ -314,15 +326,15 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::Rect r = rect[j][i];
 
-#if MY_DEBUG
+//#if MY_DEBUG
 			if (!trained[test].empty()) {//@DEBUG
-				if (!tested[test].empty()) //@DEBUG
-					cv::rectangle(_localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
-				cv::rectangle(_localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
+			//	if (!tested[test].empty()) //@DEBUG
+		//			cv::rectangle(_localFrame, tested[test][0], cv::Scalar(0, 0, 255), 3);
+				//cv::rectangle(_localFrame, trained[test][0], cv::Scalar(0, 255, 255), 3);
 				cv::rectangle(_localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
-				std::cout << (r & trained[test][0]).area() << std::endl;
+			//	std::cout << (r & trained[test][0]).area() << std::endl;
 			}
-#endif
+//#endif
 
 			cv::rectangle(_localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
 			
@@ -388,12 +400,11 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 	iss >> curLine;
 	rects = std::vector< std::vector<cv::Rect> >(curLine);
 	while (!iss.eof()) {
-		
+		cFrame = -1;
 		iss >> cFrame >> x1 >> y1 >> x2 >> y2;
 		cv::Point p1(x1, y1);
 		cv::Point p2(x2, y2);
-		if(cFrame >= 0)
-			rects[cFrame].push_back(cv::Rect(p1, p2));
+		if(cFrame >= 0)		rects[cFrame].push_back(cv::Rect(p1, p2));
 	}
 }
 
@@ -420,36 +431,42 @@ void Pipeline::evaluate()
 	int trueNeg = 0, falseNeg = 0;
 	for (int i = 0; i < trained.size(); i++) {
 		//std::cout << i << " TESTING!" << std::endl;
-	//	if (test[i].empty() && trained[i].empty())	{ trueNeg++;  continue; } // There is no pedestrian - OK
-		if (test[i].empty() && !trained[i].empty()) { falsePos += trained[i].size(); continue; } // There is no pedestrian but something detect
-		if (!test[i].empty() && trained[i].empty()) { falseNeg += test[i].size(); continue; } // There is pedestrian but no detected
-	//	if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); } // Detect more than one 
+		//	if (test[i].empty() && trained[i].empty())	{ trueNeg++;  continue; } // There is no pedestrian - OK
+		if (test[i].empty() && !trained[i].empty())
+		{
+			falseNeg += trained[i].size(); continue;
+		} // There is pedestrian but no detect
+		if (!test[i].empty() && trained[i].empty())
+		{
+			falsePos += test[i].size(); continue;
+		} // There is no pedestrian but something detected
+		  //	if (test[i].size() > trained[i].size())			{ falseNeg += test[i].size() - trained[i].size(); } // Detect more than one 
 		int currTruePos = test[i].size();
 		int lastTruePos = truePos;
 		for (int j = 0; j < test[i].size(); j++) {
-			for(int k = 0; k < trained[i].size(); k++)	{
+			for (int k = j; k < trained[i].size(); k++) {
 				float inter = static_cast<float>((trained[i][k] & test[i][j]).area());
 				float uni = static_cast<float>((trained[i][k] | test[i][j]).area());
-				if ((trained[i][k] & test[i][j]).area()  > (trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
-				//if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
+				if ((trained[i][k] & test[i][j]).area()  >(trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
+																					  //if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
 				{
-					truePos++; // pedestrian founded
+					truePos++; // pedestrian found
 				}
 				else
 				{
-				//	falsePos++; // detect something else than pedestrian
-					falseNeg++; // pedestrian not founded
+					//	falsePos++; // detect something else than pedestrian
+					falseNeg++; // pedestrian not found
 				}
 			}
 		}
 		if (truePos != (currTruePos + lastTruePos))
-			falsePos += currTruePos;
+			falsePos += currTruePos - (truePos - lastTruePos);
 	}
-//	float acc = static_cast<float>(truePos + trueNeg) /
+	//	float acc = static_cast<float>(truePos + trueNeg) /
 	//	static_cast<float>(truePos + trueNeg + falsePos + falseNeg);
 
-//	float f1score = static_cast<float>(2 * truePos) /
-//		static_cast<float>(2 * truePos + falsePos + falseNeg);
+	//	float f1score = static_cast<float>(2 * truePos) /
+	//		static_cast<float>(2 * truePos + falsePos + falseNeg);
 	float precision = static_cast<float>(truePos) / (truePos + falsePos); // Precision is the percentage true positives in the retrieved results.
 	float recall = static_cast<float>(truePos) / (truePos + falseNeg); // Recall is the percentage of the pedestrians that the system retrieves.
 	float f1score = 2 * (precision * recall) / (precision + recall);
@@ -459,11 +476,12 @@ void Pipeline::evaluate()
 	std::cout << "False Positive: " << falsePos << std::endl;
 	std::cout << "True Negative: " << trueNeg << std::endl;
 	std::cout << "False Negative: " << falseNeg << std::endl;
-//	std::cout << "Accuracy: " << acc << std::endl;
-//	std::cout << "Accuracy (%): " << static_cast<int>(acc * 100) << std::endl;
+	//	std::cout << "Accuracy: " << acc << std::endl;
+	//	std::cout << "Accuracy (%): " << static_cast<int>(acc * 100) << std::endl;
 	std::cout << "F1 score : " << f1score << std::endl;
-	std::cout << "Precision : " << precision << std::endl;
-	std::cout << "Recall: " << recall << std::endl;
+	//std::cout << "Precision : " << precision << std::endl;
+	//std::cout << "Recall: " << recall << std::endl;
+	std::cout << "END" << std::endl;
 }
 
 

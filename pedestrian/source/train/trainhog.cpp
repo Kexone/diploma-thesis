@@ -159,7 +159,10 @@ void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, b
 
 	Utils::fillSamples2List(Settings::samplesNeg, negSamplesLst, pedestrianSize);
 
-	labels.insert(labels.end(), negSamplesLst.size(), 0);
+	if(isDlib)
+		labels.insert(labels.end(), negSamplesLst.size(), -1);
+	else
+		labels.insert(labels.end(), negSamplesLst.size(), 0);
 	CV_Assert(old < labels.size());
 
 	std::cout << "Positive samples: " << posSamplesLst.size() << std::endl;

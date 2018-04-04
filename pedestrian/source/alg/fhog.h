@@ -52,7 +52,7 @@ public:
 
 private:
 	
-	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
+	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down < 3 > > image_scanner_type;
 	dlib::object_detector<image_scanner_type> detector;
 	image_scanner_type scanner;
 

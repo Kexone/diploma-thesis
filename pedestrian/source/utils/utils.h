@@ -137,7 +137,7 @@ public:
 		while (sampleFile >> oSample) {
 			img = imread(oSample, cv::IMREAD_COLOR);
 			cv::Mat bcp = img.clone();
-			int xStep = 48, yStep = 96, nCount = 0;
+			int xStep = 64, yStep = 128, nCount = 0;
 			for (int y = 0; y < img.rows - yStep; y += yStep)
 			{
 				for (int x = 0; x < img.cols - xStep; x += xStep)

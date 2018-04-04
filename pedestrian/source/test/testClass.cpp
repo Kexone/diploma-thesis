@@ -75,20 +75,136 @@ void TestClass::crossTestingDlibSvm()
 
 void TestClass::testingSvm()
 {
-	int typeTrain[] = { 100, 101, 103 };
-	for (auto type : typeTrain) {
-		Settings::type = type;
-		int iterations[] = { 0,50, 100, 200, 300,500, 600, 900, 1000, 1100 };
+	std::string confs[] = {
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_3000_SVM103_double_3000.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
+		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
+		"CON_B_daimler.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimler.txt_negDam9000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
+		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimlerM3.txt_negDam6000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimlerM3.txt_negDam6000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM3.txt_negDam9000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
+		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM6.txt_negDam9000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
+		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
+		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
+		"CON_B_daimlerM9.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
+		"CON_B_daimlerM9.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
+		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
+		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
+		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
+	};
+	for(auto conf: confs)
+	{
+		std::string svmPath = "E:/USE_SVM/bigUse/" + conf ;
+		std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
+		Hog hog = Hog(svmPath);
+		std::vector < int > predict;
+		std::vector < float > distances;
+
+		for (auto typeSample : samples) {
+			cv::Mat frame;
+			std::fstream sampleFile(typeSample);
+			std::string oSample;
+			while (sampleFile >> oSample) {
+				frame = cv::imread(oSample);
+				if (frame.empty()) {
+					std::cout << "eerr " << oSample << std::endl;
+					sampleFile.close();
+					break;
+				}
+				//frame.convertTo(frame, CV_32FC3);
+				int value = 0;
+				float distance = 0.0;
+				cv::resize(frame, frame, Settings::pedSize);
+				cv::Rect r = cv::Rect(0, 0, Settings::pedSize.width, Settings::pedSize.height);
+				//r.x += (frame.cols - r.width) / 2;
+			//	r.y += (frame.rows - r.height) / 2;
+			//	cv::imshow("Test", frame(r));
+		//		cv::waitKey(0);
+				value = cvRound(hog.predict(frame));
+				distance = hog.getDistance(frame);
+				predict.push_back(value);
+				distances.push_back(distance);
+				//	std::cout << static_cast<float>(value) << std::endl;
+				frame.release();
+			}
+		}
+		std::string output = "./mySamples/ot/predicted_"  + conf + ".txt";
+		std::string output2 = "./mySamples/ot/distances_" + conf + ".txt";
+		std::ofstream output_file(output);
+		std::ofstream output_file2(output2);
+		for (int a = 0; a < predict.size(); a++)
+		{
+			output_file << predict[a] << std::endl;
+			output_file2 << distances[a] << std::endl;
+		}
+		output_file.close();
+		output_file2.close();
+		std::cout << "RESULT FOR: " << output << std::endl;
+		evaluate("mySamples/gtBn.txt", output);
+	}
+		int iterations[] = { 1000, /*1100, 1200, 1300, 1400, 1500,*/ 2000,  2500, 3000, 3500, 4000, 4500 };
 		for (int i : iterations)
 		{
 			Settings::maxIterations = i;
 			//std::cout << "____ "<< i << " max iter" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
-			std::string posSamplesFiles[] = { "sudipDas.txt"};
-			std::string negSamplesFiles[] = { "negDam3000.txt",  "negDam9000.txt" , "negDam12000.txt" };
+			std::string posSamplesFiles[] = { "sudipDas.txt","daimler.txt", "daimlerM3.txt", "daimlerM6.txt", "daimlerM9.txt", "daimlerM12.txt" };
+			std::string negSamplesFiles[] = { "negDam3000.txt",  "negDam6000.txt" , "negDam9000.txt" , "negDam12000.txt", "daimlerMonoNeg.txt" };
 
 			for (auto posSample : posSamplesFiles) {
 				for (auto negSample : negSamplesFiles) {
-					Settings::classifierName2Train = "C_BW_" + posSample + "_" + negSample + "_" + "_C" + std::to_string(Settings::paramC) + "_G" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_double" + std::to_string(type) + "_" + std::to_string(i);
+					Settings::classifierName2Train = "CON_B_" + posSample + "_" + negSample + "_" + "_C" + std::to_string(Settings::paramC) + "_NU" + std::to_string(Settings::paramNu) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_double" + "_" + std::to_string(i);
 					//Settings::classifierName2Train = "C_"  + std::to_string(i);
 					Settings::samplesPos = "samples/new/" + posSample;
 					Settings::samplesNeg = "samples/negative/" + negSample;
@@ -100,7 +216,7 @@ void TestClass::testingSvm()
 					std::string svmPath = Settings::classifierName2Train + ".yml";
 					std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
 					Hog hog = Hog(svmPath);
-					std::vector < float > predict;
+					std::vector < int > predict;
 					std::vector < float > distances;
 
 					for (auto typeSample : samples) {
@@ -116,7 +232,14 @@ void TestClass::testingSvm()
 							}
 							int value = 0;
 							float distance = 0.0;
-							value = hog.predict(frame);
+							cv::resize(frame, frame, Settings::pedSize);
+							//cv::Point center = cv::Point(frame.cols / 2, frame.rows / 2);
+							//int x = center.x - Settings::pedSize.width / 2;
+							//int y = center.y - Settings::pedSize.height / 2;
+						//	cv::Rect r = cv::Rect(x, y, Settings::pedSize.width, Settings::pedSize.height);
+						//	cv::imshow("im", frame);
+							//cv::waitKey(0);
+							value = cvRound(hog.predict(frame));
 							distance = hog.getDistance(frame);
 							predict.push_back(value);
 							distances.push_back(distance);
@@ -124,19 +247,34 @@ void TestClass::testingSvm()
 							frame.release();
 						}
 					}
-					std::string output = "./mySamples/output/predicted_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" +std::to_string(type) + ".txt";
-					std::string output2 = "./mySamples/output/distances_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::gamma) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + std::to_string(type) + ".txt";
+					std::string output = "./mySamples/ot/predicted_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::paramNu) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + ".txt";
+					std::string output2 = "./mySamples/ot/distances_" + posSample + "_" + negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::paramNu) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + ".txt";
 					std::ofstream output_file(output);
 					std::ofstream output_file2(output2);
-					std::ostream_iterator<float> output_iterator(output_file, "\n");
-					std::ostream_iterator<float> output_iterator2(output_file2, "\n");
-					std::copy(predict.begin(), predict.end(), output_iterator);
-					std::copy(distances.begin(), distances.end(), output_iterator2);
+				//	std::ostream_iterator<int> output_iterator(output_file, "\n");
+				//	std::ostream_iterator<float> output_iterator2(output_file2, "\n");
+				//	std::copy(predict.begin(), predict.end(), output_iterator);
+				//	std::copy(distances.begin(), distances.end(), output_iterator2);
+			//		std::cout << predict.size() << std::endl;
+			//		std::cout << distances.size() << std::endl;
+					//std::ofstream f("somefile.txt");
+					for (int a = 0; a < predict.size(); a++)
+					{
+						output_file << predict[a] << std::endl;
+						output_file2 << distances[a] << std::endl;
+					}
+					output_file.close();
+					output_file2.close();
+				//	for (std::vector<int>::const_iterator pr = predict.begin(); pr != predict.end(); ++pr) {
+					//	output_file << *pr << '\n';
+				//	}
+					///for (std::vector<float>::const_iterator di = distances.begin(); di != distances.end(); ++di) {
+						//output_file2 << *di << '\n';
+					//}
 					std::cout << "RESULT FOR: " << output << std::endl;
-					evaluate("mySamples/gt.txt", output);
+					evaluate("mySamples/gtB.txt", output);
 				}
 			}
-		}
 	}
 }
 

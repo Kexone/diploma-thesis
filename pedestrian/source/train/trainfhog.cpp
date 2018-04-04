@@ -64,7 +64,7 @@ void TrainFHog::throwInvalidBoxErrorMessage( const std::string& dataset_filename
 	throw dlib::error("\n" + dlib::wrap_string(sout.str()) + "\n" + sout2.str());
 }
 
-void TrainFHog::train()
+void TrainFHog::train() try
 {
 
 	const std::string parser = "dataset/training.xml";
@@ -73,7 +73,7 @@ void TrainFHog::train()
 	dlib::array<dlib::array2d<unsigned char> > images;
 	
 
-	std::fstream sampleFile(samplesPath);
+	//std::fstream sampleFile(samplesPath);
 	std::string oSample;
 	//while (sampleFile >> oSample) {
 		//dlib::cv_image<TrainFHog::pixel_type> cvTmp(sampleFile);
@@ -81,7 +81,7 @@ void TrainFHog::train()
 	//	dstList.push_back(test);
 
 	std::vector<std::vector<dlib::rectangle> > objectLocations, ignore;
-	ignore = load_image_dataset(images, objectLocations,parser);
+	ignore =	load_image_dataset(images, objectLocations, parser);
 
 	std::cout << "Number of images loaded: " << images.size() << std::endl;
 	std::cout << "Number of obj loaded: " << objectLocations[0].size() << std::endl;
@@ -99,7 +99,7 @@ void TrainFHog::train()
 
 
 	trainer.be_verbose();
-	trainer.set_c(0.15325);    // 0.15625
+	trainer.set_c(0.15625);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
 	
@@ -117,17 +117,24 @@ void TrainFHog::train()
 		
 	randomize_samples(images, objectLocations);
 
-	std::cout << numFolds << "-fold cross validation (precision,recall,AP): "
-		<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
+//	std::cout << numFolds << "-fold cross validation (precision,recall,AP): "
+	//	<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
+
+	dlib::serialize("pedDet.svm") << trainer.train(images,objectLocations,ignore);
+	std::cout << "DONE" << std::endl;
+}
+catch (std::exception e)
+{
+	std::cout << e.what() << std::endl;
 }
 
-void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels)
+void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 {
 	typedef dlib::matrix < double, 1980, 1 > sample_type;
 	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
 	std::vector < double > flLabels;
-	dlib::svm_nu_trainer < kernel_type > trainer;
+	dlib::svm_c_trainer < kernel_type > trainer;
 
 	for (int y = 0; y < trainMat.rows; y++)
 	{
@@ -145,9 +152,25 @@ void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels)
 	}
 
 	std::cout << "All samples : " <<  samples.size() << std::endl;
-				
-	trainer.set_kernel(kernel_type(_gamma_par));
-	trainer.set_nu(_nu_par);
+			
+	typedef dlib::probabilistic_decision_function<kernel_type> probabilistic_funct_type;
+	typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
+	pfunct_type learned_pfunct;
+	//trainer.set_kernel(kernel_type(0.15625));
+	//trainer.set_nu(0.15625);
+//	trainer.set_epsilon(0.001);
+	//trainer.
+	trainer.set_c_class1(3.16228);
+	trainer.set_c_class2(3.16228);
+	trainer.set_kernel(kernel_type(0.0316228));
 
+//	learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
 	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
+//	dlib::serialize(_namefile) << learned_pfunct;
+//	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
+	std::cout << "DONE" << std::endl;
+}
+catch (std::exception& e)
+{
+	std::cout << e.what() << std::endl;
 }
