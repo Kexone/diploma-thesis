@@ -305,19 +305,21 @@ void Pipeline::preprocessing(cv::Mat& frame)
 {
 	cv::cvtColor(frame, frame, CV_BGR2GRAY);
 	frame.convertTo(frame, CV_8UC1);
-	//cv::medianBlur(frame, frame, 3);
+	cv::medianBlur(frame, frame,5); //GOOD
 
-	//cv::Mat dst(frame.rows, frame.cols, CV_8UC1);
-	//cv::bilateralFilter(frame, dst, 10, 1.5, 1.5, cv::BORDER_DEFAULT);
-	//cv::GaussianBlur(frame, frame, cv::Size(9, 9), 2,4 , cv::BORDER_DEFAULT);
-	//cv::blur(frame, frame, cv::Size(6, 6)); //medianBlur
+//	cv::Mat dst(frame.size(), CV_8UC1);
+//	cv::bilateralFilter(frame, dst,10, 1, 1, cv::BORDER_DEFAULT); //TO SLOW
+//	cv::GaussianBlur(frame, frame, cv::Size(3,3),3.0,2.5 , cv::BORDER_DEFAULT);
+	//cv::blur(frame, frame, cv::Size(3,3)); //medianBlur
 	//cv::imshow("Blur", frame);
+//	dst.copyTo(frame);
 }
 
 void Pipeline::dilateErode(cv::Mat& frame)
 {
 	cv::dilate(frame, frame, _dilMat);
 	cv::erode(frame, frame, _eroMat);
+
 }
 
 void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)

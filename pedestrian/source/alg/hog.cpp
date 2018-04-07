@@ -55,7 +55,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
 //		test.convertTo(test, CV_8UC3);
-		blur(test, test, cv::Size(2,2));
+	//	blur(test, test, cv::Size(2,2));
 
 	//	cv::cvtColor(test, test, CV_BGR2GRAY);
 	//	cv::equalizeHist(test, test);
@@ -69,11 +69,11 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			test,					// testing img
 			found,					// foundLocation <rect>
 			weight,
-			0.88,						// hitThreshold = 0 // 1
+			0.878,						// hitThreshold = 0 // 1
 			cv::Size(4,4),			// winStride size(8, 8)
 			cv::Size(0, 0),			// padding size(0, 0)
 			1.1,					// scale = 1,05
-			0.989,//1,	/* 1*/					// finalThreshold = 2 // 0
+			0,//1,	/* 1*/					// finalThreshold = 2 // 0
 			false					// use meanshift grouping = false
 		);
 		
