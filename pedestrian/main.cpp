@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 	cv::CommandLineParser parser(argc, argv, keys);
 
 	Settings::getSettings(parser.get<std::string>("settings"));
-	Settings::showVideoFrames = 1; // parser.get<bool>("vizualize"); //@TODO
+	Settings::showVideoFrames = 0; // parser.get<bool>("vizualize"); //@TODO
 
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.5");
 
@@ -372,8 +372,8 @@ void mainFun::video(cv::CommandLineParser parser)
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
 //			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml", 1);
-	//		Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 2); //TOP
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 2); 
+			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP
+		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
 			//Pipeline *pl = new Pipeline(pathB + conf, 2);
 			//Pipeline *pl = new Pipeline("default", 2);
 			Settings::nameFile = vid;// parser.get<std::string>("video");
@@ -385,7 +385,7 @@ void mainFun::video(cv::CommandLineParser parser)
 			Settings::nameTrainedFile.append("_trained.txt");
 			Settings::nameFile.append(".txt");
 			auto startTime = std::chrono::high_resolution_clock::now();
-			//clock_t timer = clock();
+			//clock_t timer = clock();	
 			//pl->execute(parser.get<std::string>("video"));
 			pl->execute(vid);
 			auto endTime = std::chrono::high_resolution_clock::now();
@@ -396,7 +396,7 @@ void mainFun::video(cv::CommandLineParser parser)
 			pl->evaluate();
 			//	cv::waitKey(0);			
 			
-			delete pl;
+ 			delete pl;
 		}
 	}
 	std::cout << "END";

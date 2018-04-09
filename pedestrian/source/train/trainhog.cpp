@@ -173,6 +173,7 @@ void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, b
 	convertSamples2Mat(gradientLst, trainMat);
 }
 
+// From https://github.com/opencv/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/samples/cpp/train_HOG.cpp#L134
 cv::Mat get_hogdescriptor_visu(const cv::Mat& color_origImg, std::vector<float>& descriptorValues, const cv::Size & size)
 {
 	const int DIMX = size.width;
