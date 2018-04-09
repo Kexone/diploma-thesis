@@ -1,7 +1,7 @@
-\section{Přístupové techniky a stav techniky detekce chodců}
+\section{Metody detekce a současná řešení pro detekci chodců}
 V této kapitole budou popsány přístupové techniky a současný stav techniky detekce chodců nejpoužívanějších a nejznámějších detekčních metodik. Všechny tyto metodiky jsou dostupné minimálně v jedné knihovně, použité v této práci.  
 
-\subsection{Existující přístupové techniky}
+\subsection{Metody detekce}
 Navzdory všem výzvám a problémům detekci chodců, zůstává tato oblast výzkumu stále aktivní a byla navržena řada přístupových technik.
 
 \subsubsection{Holistická detekce}
@@ -24,7 +24,7 @@ Tuto přístupovou metodu můžeme použít, pokud jsou pro to vhodné podmínky
 
 Integraci více kalibrovaných kamer pro detekci více chodců navrhnul Fleuret a kolektiv\cite{multiCameras}. Detektor vytváří mapu pravděpodobnostního obsazení (POM), které poskytuje odhad pravděpodobnosti každé buňce, která bude obsazena osobou. Při dvou až čtyř synchronizovaných video streamů pořízených v úrovní očí a z různých úhlů, může tato metoda efektivně kombinovat generativní model s dynamickým programováním k přesnému sledování až šesti osob přes 1000 snímků i přes významné okluze nebo změnám osvětlení. Touto metodou také dokážeme získat metricky přesnou trajektorii pro každého z nich.
 
-\subsection{Současný stav techniky detekce chodců}
+\subsection{Současná řešení pro detekci chodců}
 Od samého počátku tohoto vědeckého odvětví rozpoznávání v obrazech uplynulo již mnoho let. Během těchto let bylo vynalezeno mnoho přístupových technik a metod pro úspěšně detekování chodců v obrazech. V následujících podkapitolách budou popsány některé z nich, které mají největší úspěch v pravděpodobnosti v detekci.
 
 \subsubsection{Mixtura Gaussiánů}
@@ -169,24 +169,24 @@ Implementaci SVM můžeme nalézt již v existujících knihovnách jako jsou na
 
 Tato knihovna byla napsána v roce 2001 \cite{libsvm} a stále se vyvíjí. Podporuje různé formulace SVM pro odhady klasifikace, regrese a distribuce.
 
-\paragraph{$C$-Support vektorová klasifikace (C-SVC)}
+\paragraph*{$C$-Support vektorová klasifikace (C-SVC)}
 Umožnuje nedokonalé oddělení tříd pro n-tříd ($n > 2$) s postihovým multiplikátorem $C$, pro odlehlé hodnoty ($C > 0$). \cite{csvmclass}
 
-\paragraph{$\nu$-Support vektorová klasifikace ($\nu$-SVC)}
+\paragraph*{$\nu$-Support vektorová klasifikace ($\nu$-SVC)}
 $n$- třídní klasifikace s možností nedokonalé separace. Tato klasifikace přidává nový parametr $\nu \varepsilon (0,1]$ a čím větší je jeho hodnota tím hladší je rozhodovací funkce. \cite{nusvmsvrclass}
 
-\paragraph{Distribuční odhad (Jednotřídní SVM)}
+\paragraph*{Distribuční odhad (Jednotřídní SVM)}
 Distribution Estimation (One-class SVM), jak název, již sám o sobě napovídá, všechny tréninková data pocházejí z jedné třídy, SVM vytvoří hranici, která odděluje třídu od zbývající části. \cite{oneclasssvm}
 
-\paragraph{$\varepsilon$-Support vektorová regrese ($\varepsilon$-SVR)}
+\paragraph*{$\varepsilon$-Support vektorová regrese ($\varepsilon$-SVR)}
 Vzdálenost mezi vektory příznaků a rozdělovací nadrovinou musí být menší než $p (\varepsilon)$. Pro odlehlé hodnoty opět použijeme multiplikátor $C$. Musí tedy platit: $C > 0$ a $\varepsilon > 0$. \cite{svrsvm}
 
-\paragraph{$\nu$-Support vektorová regrese ($\nu$-SVR)}
+\paragraph*{$\nu$-Support vektorová regrese ($\nu$-SVR)}
 Tato klasifikace je podobná jako $\varepsilon$-SVR. Na místo p se použije parametr $\nu \varepsilon (0,1]$. \cite{nusvmsvrclass}
 
 Účinnost SVM závisí na výběru správného jádra a parametry jádra. Nejběžněji se používá Gaussovo jádro s jedním parametrem $\gamma$. V této knihovně se můžeme setkat s následujícími jádry.
 
-\paragraph{Lineární jádro}
+\paragraph*{Lineární jádro}
 Použití tohoto jádra je velmi rychlé (bez jakékoliv transformace), jedná se lineární diskriminaci a rozdělovací nadrovina bude vždy přímka. Pro toto jádro platí 
 \begin{equation*}
  \label{linearK}
@@ -194,7 +194,7 @@ Použití tohoto jádra je velmi rychlé (bez jakékoliv transformace), jedná s
 \end{equation*}
   kde $x_i$ a $x_j$ jsou vektory vstupního prostoru.
 
-\paragraph{Polynomické jádro}
+\paragraph*{Polynomické jádro}
 Polynomické jádro umožňuje učení nelineárních modelů
 \begin{equation*}
 \label{polyK}
@@ -202,7 +202,7 @@ Polynomické jádro umožňuje učení nelineárních modelů
 \end{equation*}
 kde: $c \geq 0$, volný parametr, který vylučuje vliv vyššího řádu oproti polynomu nižšího řádu (pokud $c = 0$, jádro je homogenní), řád polynomu určuje parametr $d$.
 
-\paragraph{Gaussovo jádro}
+\paragraph*{Gaussovo jádro}
 Gaussovo neboli RBF (Radial Basis Function) jádro se řadí mezi nejpoužívanější a je definované jako
 \begin{equation*}
 \label{RBFK}
@@ -210,7 +210,7 @@ Gaussovo neboli RBF (Radial Basis Function) jádro se řadí mezi nejpoužívan�
 \end{equation*}
 kde: $||x_i - x_j||^2$ značí kvadratickou euklidovskou vzdálenost mezi dvěma vektory příznaků.
 
-\paragraph{Sigmoidní jádro}
+\paragraph*{Sigmoidní jádro}
 toto jádro je podobné sigmoidní funkci v logistické regresi
 \begin{equation*}
 \label{sigmK}
@@ -218,14 +218,14 @@ toto jádro je podobné sigmoidní funkci v logistické regresi
 \end{equation*}
 kde $r$ je volitelný parametr.
 
-\paragraph{Exponenciální jádro}
+\paragraph*{Exponenciální jádro}
 Exponenciální jádro $\chi$2 je podobné RBF jádru a využívá se převážně na histogramy
 \begin{equation*}
 \label{expK}
  K(x_i, x_j) = e^{-\gamma \chi^2(x_i,x_j)}, \chi^2(x_i,x_j) = \frac{(x_i-x_j)^2}{(x_i+x_j)}, \gamma > 0,
 \end{equation*}
 
-\paragraph{Jádro histogramu průsečíků}
+\paragraph*{Jádro histogramu průsečíků}
 Toto jádro je také známé jako \textit{Min Kernel}, jedná se o nejnovější jádro v této knihovně a je velmi rychlé a užitečné při klasifikaci
 \begin{equation*}
 \label{innK}
@@ -274,7 +274,7 @@ Kaskádový klasifikátor se skládá z více slabších klasifikátorů umíst�
 Klasifikátory si mezi sebou předávají všechny informace o vstupním obraze. Tímto kaskádovým vyhodnocováním se může redukovat čas, nutný pro detekci v daném obraze. Prvním takovým klasifikátorem byl detektor obličeje Viola-Jones \cite{violajones}.  
 \begin{figure}[H]
 \centering
-\includegraphics[width=.7\linewidth]{figures/cascadeClass.pdf}
+\includegraphics[width=.7\linewidth]{figures/cc.pdf}
 \caption{Ukázka pipeline kaskádového klasifikátoru}
 \label{fig:ccpipeline}
 \end{figure}
