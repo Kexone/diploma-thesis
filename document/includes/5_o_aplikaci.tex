@@ -3,6 +3,14 @@ Aplikace je napsaná v nativní C++-14 ve vývojovém prostředí Visual Studio 
 
 Její obsluha je jednoduchá a funguje na bázi argumentů, které určují její chování. Nastavení parametrů se provádí přes externí soubor, což umožňuje jednodušší a pohodlnější manipulaci s aplikací. Disponuje širokým spektrem nástrojů od testování klasifikátorů, po jejich trénování až po samotnou detekci. Její nástroje jsou popsány v následujících podkapitolách.
 
+ \begin{figure}[H]
+\centering
+\includegraphics[width=16cm]{figures/alg_moghog}
+\caption{Algoritmus aplikace při selekci kombinace MoG a HoG detekce}
+\label{mog_algorithm}
+\end{figure}
+
+Obrázek \ref{mog_algorithm} ilustruje průběh algoritmu při volbě detekce pomocí HoGu a MoGu. Prvním krokem algoritmu je získání snímku z aktuální videosekvence nebo kamery, pokud obrázek je prázdný cyklus zde končí. Snímek se následně předzpracovává převodem do stupně šedi a aplikací rozostřovacího filtru. Tento obrázek je následně zpracováván metodikou substrakcí pozadí a na tento obraz se aplikuje eroze a dilatace, to proto, aby se v snímku vyfiltrovaly malé nevýznamné oblasti a následně spojily ty větší potencionální oblasti. Tyto oblasti se obalí kontury a převedou se na rámečky. Díky těmto rámcům se z obrazu vystřihnou a získáme výstřižky, na kterých v následujícím kroku probíhá samotná detekce. Detekční metoda vrátí rámce potencionálních oblastí chodců a vykreslí se do původního obrazu a proces se opakuje do té doby, pokud získaný obrázek z kamery není prázdný. Pokud obrázek po aplikování masky substrakce pozadí neobsahuje dostatečně velké oblasti k aplikaci rámců, program pokračuje načítáním dalšího rámce z kamery.  
 
 \subsection{Testování klasifikátoru}
 Testování klasifikátoru dle jejich parametrů vůči nějaké sadě negativních a pozitivních dat je nedílnou součástí vytvoření ideálního a úspěšného klasifikátoru.  Aplikace nabízí testování OpenCV a Dlib klasifikátoru. Diskriminační klasifikátor SVM z OpenCV lze testovat třemi způsoby. První a náhodný přístup je generování parametrů a různou iterací.
@@ -26,6 +34,8 @@ Další možností je vytrénovaní klasifikátoru z knihovny Dlib. Trénování
 Poslední možností trénování je kombinace výše zmíněných postupů. Vzorky se zpracují za pomocí OpenCV knihovny a vstupem do trénovací metody klasifikátoru z Dlibu je trénovací matice. Tu je nejprve nutné převést na formát této knihovny a poté je možné provést trénování.
 
 Podstatný rozdíl mezi těmito binárními klasifikátory je v rozdílu jejich štítků. OpenCV klasifikátor můžeme definovat štítky libovolně, nejčastější však 1 pro pozitivní vzorky a 0 pro negativní. Zatím co Dlib klasifikátor přijímá pouze 1 pro pozitivní a zápornou 1 pro negativní vzorky.
+
+Trénování klasifikátoru je velmi náročnou  operací na hardwarové prostředky. Ovšem závisí na trénovací sadě. Sada o počtu 200 tisíc vzorků zkonzumuje až 16 GB paměti.  Trénování kaskádového klasifikátoru je povoleno jen na  64-bitovém Windows, protože k trénování je využívána externí OpenCV aplikace. 
 
 \subsection{Anotace chodců v obraze}
 Aplikace také disponuje nástrojem pro anotaci chodců v obraze. Najednou umožňuje anotovat až 5 chodců a tyto anotace, i když to není až tak potřebné pro správnost anotace, jsou od sebe barevně odlišeny. Manipulace s tímto nástrojem je velmi snadná a jeho náhled je na obrázku \ref{tool_anotate}.

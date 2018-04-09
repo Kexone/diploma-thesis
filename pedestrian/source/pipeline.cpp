@@ -303,8 +303,8 @@ void Pipeline::mogAndCascade(cv::Mat &frame, int cFrame)
 
 void Pipeline::preprocessing(cv::Mat& frame)
 {
-	cv::cvtColor(frame, frame, CV_BGR2GRAY);
 	frame.convertTo(frame, CV_8UC1);
+	cv::cvtColor(frame, frame, CV_BGR2GRAY);
 	cv::medianBlur(frame, frame,5); //GOOD
 
 //	cv::Mat dst(frame.size(), CV_8UC1);

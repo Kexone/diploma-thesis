@@ -371,8 +371,9 @@ void mainFun::video(cv::CommandLineParser parser)
 			{
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml", 1);
-//			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 2);
+//			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml", 1);
+	//		Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 2); //TOP
+			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 2); 
 			//Pipeline *pl = new Pipeline(pathB + conf, 2);
 			//Pipeline *pl = new Pipeline("default", 2);
 			Settings::nameFile = vid;// parser.get<std::string>("video");

@@ -144,9 +144,47 @@ void TestClass::testingSvm()
 		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
 	};
-	for(auto conf: confs)
+	std::string sudisConfs[] = {
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
+		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
+		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
+		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml"
+	};
+	for(auto conf: sudisConfs)
 	{
-		std::string svmPath = "E:/USE_SVM/bigUse/" + conf ;
+		std::string svmPath = "E:/USE_SVM/sudi/" + conf ;
 		std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
 		Hog hog = Hog(svmPath);
 		std::vector < int > predict;
@@ -180,8 +218,8 @@ void TestClass::testingSvm()
 				frame.release();
 			}
 		}
-		std::string output = "./mySamples/ot/predicted_"  + conf + ".txt";
-		std::string output2 = "./mySamples/ot/distances_" + conf + ".txt";
+		std::string output = "./mySamples/final_predict/predicted_"  + conf + ".txt";
+		std::string output2 = "./mySamples/final_predict/distances_" + conf + ".txt";
 		std::ofstream output_file(output);
 		std::ofstream output_file2(output2);
 		for (int a = 0; a < predict.size(); a++)
@@ -192,7 +230,7 @@ void TestClass::testingSvm()
 		output_file.close();
 		output_file2.close();
 		std::cout << "RESULT FOR: " << output << std::endl;
-		evaluate("mySamples/gtBn.txt", output);
+		evaluate("mySamples/final_imp/gt.txt", output);
 	}
 		int iterations[] = { 1000, /*1100, 1200, 1300, 1400, 1500,*/ 2000,  2500, 3000, 3500, 4000, 4500 };
 		for (int i : iterations)
@@ -272,7 +310,7 @@ void TestClass::testingSvm()
 						//output_file2 << *di << '\n';
 					//}
 					std::cout << "RESULT FOR: " << output << std::endl;
-					evaluate("mySamples/gtB.txt", output);
+					evaluate("mySamples/final/gt.txt", output);
 				}
 			}
 	}

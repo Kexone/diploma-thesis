@@ -39,7 +39,7 @@ samplesPos=samples/new/daimlerM3.txt
 samplesNeg=samples/negative/neg3000.txt
 
 samplesPosTest=mySamples/pos3k.txt
-samplesNegTest=mySamples/negB5k.txt
+samplesNegTest=mySamples/neg4000.txt
 classifierName2Train=KONFIGURACE_
 //classifierName2Train=EPS_LIN_BMP_30
 //classifierName2Train=EPS_LIN_JPG_30

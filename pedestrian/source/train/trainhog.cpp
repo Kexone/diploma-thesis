@@ -110,7 +110,7 @@ void TrainHog::train(bool saveData)
 
 		for (size_t i = 0; i < negSamplesLst.size(); i++)
 		{
-			my_hog.detectMultiScale(negSamplesLst[i], detections, foundWeights);
+			my_hog.detectMultiScale(negSamplesLst[i], detections);
 			for (size_t j = 0; j < detections.size(); j++)
 			{
 				cv::Mat detection = negSamplesLst[i](detections[j]).clone();

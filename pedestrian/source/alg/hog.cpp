@@ -69,11 +69,11 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			test,					// testing img
 			found,					// foundLocation <rect>
 			weight,
-			0.878,						// hitThreshold = 0 // 1
+			0.778,						// hitThreshold = 0 // 1
 			cv::Size(4,4),			// winStride size(8, 8)
 			cv::Size(0, 0),			// padding size(0, 0)
 			1.1,					// scale = 1,05
-			0,//1,	/* 1*/					// finalThreshold = 2 // 0
+			0.90,//1,	/* 1*/					// finalThreshold = 2 // 0
 			false					// use meanshift grouping = false
 		);
 		
@@ -87,7 +87,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		std::cout << found.size();
 		//hog.groupRectangles(found, weight,0, 2.2);
 		std::cout << "   "<<found.size() << std::endl << std::endl;
-		cv::groupRectangles(found, 2, 0.8);
+		cv::groupRectangles(found, 2, 0.9);
 		for (int i = 0; i < found.size(); i++) {
 			std::cout << weight[i] << std::endl;
 			std::cout << found[i].area() << std::endl;
@@ -264,7 +264,7 @@ void Hog::hogDetectMultiScale(cv::Mat img, std::vector<cv::Rect>& found)
 float Hog::getDistance(cv::Mat img)
 {
 	float dist = predict(img, true); //cv::ml::StatModel::RAW_OUTPUT
-	return 1.0f / (1.0f + std::exp(-dist));
+	return 1.0f / (1.0f + std::exp(dist));
 }
 
 float Hog::predict(cv::Mat img, int flags)
