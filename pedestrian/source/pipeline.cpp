@@ -414,7 +414,7 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 	}
 }
 
-void Pipeline::evaluate()
+void Pipeline::evaluate(std::map<std::string, int> & results)
 {
 	std::vector< std::vector<cv::Rect> > trained;
 	std::vector< std::vector<cv::Rect> > test;
@@ -455,6 +455,11 @@ void Pipeline::evaluate()
 	//std::cout << "Precision : " << precision << std::endl;
 	//std::cout << "Recall: " << recall << std::endl;
 	std::cout << "END" << std::endl;
+	
+	results["tp"] = truePos;
+	results["fp"] = falsePos;
+	results["fn"] = falseNeg;
+	results["f1"] = cvRound(f1score);
 }
 
 

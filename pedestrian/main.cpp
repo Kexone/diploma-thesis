@@ -17,7 +17,6 @@
 //	 DECLARATION	 //
 //////////////////////
 namespace mainFun {
-	void train(cv::CommandLineParser parser);
 	void type(cv::CommandLineParser parser);
 	void camera(cv::CommandLineParser parser);
 	void video(cv::CommandLineParser parser);
@@ -46,7 +45,6 @@ namespace mainFun {
 *		CALC DISTANCE
 *		CALC F1 SCORE
 *		ROC curves
-* @TODO OWN DETECT MULTISCALE
 *		RESIZE SAMPLES FOR CC TRAIN
 *		LBP TESTING
 *		HAAR TESTING
@@ -203,6 +201,7 @@ void mainFun::image(cv::CommandLineParser parser)
 //		std::cout << "Bad selection.\n";
 //		return;
 //	}
+//	if( typeAlg == 7) { TestPipeline("testingSVM.txt", "testingVideos.txt").execute(); return; }
 //	Pipeline *pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
 //	Settings::nameFile = parser.get<std::string>("video");
 //
@@ -213,11 +212,12 @@ void mainFun::image(cv::CommandLineParser parser)
 //	Settings::nameTrainedFile.append("_trained.txt");
 //	Settings::nameFile.append(".txt");
 //
-//	clock_t timer = clock();
+//	auto startTime = std::chrono::high_resolution_clock::now();
 //	pl->execute(parser.get<std::string>("video"));
-//	timer = clock() - timer;
+//	auto endTime = std::chrono::high_resolution_clock::now();
+//	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 //
-//	printResults(timer);
+//	printResults(time);
 //	pl->evaluate();
 //	cv::waitKey(0);
 //

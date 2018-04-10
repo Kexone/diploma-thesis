@@ -22,30 +22,30 @@ public:
 	Pipeline(std::string svmPath, int typeAlg);
 
 	/**
-	* @brief Executed for images. Function for ran detection on images. 
+	* @brief Executed for images. Function for ran detection on images.
 	*
 	* @param testSamplesPath path to file with images paths
 	*/
-    void executeImages(std::string testSamplesPath);
+	void executeImages(std::string testSamplesPath);
 
 	/**
 	* @brief Executed for camera feed. Function for ran in videostream
 	*
 	* @param cameraFeed choose camera type
 	*/
-    void execute(int cameraFeed);
+	void execute(int cameraFeed);
 
 	/**
 	* @brief Executed for videostream. Function for ran detection in videostream
 	*
 	* @param cameraFeed path to video file
 	*/
-    void execute(std::string cameraFeed);
+	void execute(std::string cameraFeed);
 
 	/**
 	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
 	*/
-	void evaluate();
+	void evaluate(std::map<std::string, int> & results = std::map<std::string, int>());
 
 	static int allDetections;
 

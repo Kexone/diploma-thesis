@@ -166,7 +166,6 @@
     <ClCompile Include="source\alg\fhog.cpp" />
     <ClCompile Include="source\alg\hog.cpp" />
     <ClCompile Include="source\alg\mog.cpp" />
-    <ClCompile Include="source\alg\ownHog.cpp" />
     <ClCompile Include="source\media\videostream.cpp" />
     <ClCompile Include="source\pipeline.cpp" />
     <ClCompile Include="source\test\diffEvoTest.cpp" />
@@ -186,7 +185,6 @@
     <ClInclude Include="source\alg\fhog.h" />
     <ClInclude Include="source\alg\hog.h" />
     <ClInclude Include="source\alg\mog.h" />
-    <ClInclude Include="source\alg\ownHog.h" />
     <ClInclude Include="source\media\croppedimage.h" />
     <ClInclude Include="source\media\videostream.h" />
     <ClInclude Include="source\pipeline.h" />
