@@ -1,7 +1,7 @@
 #ifndef DIFFERENTIALEVOLUTIONTEST_H
 #define DIFFERENTIALEVOLUTIONTEST_H
 #include <vector>
-#include "../../3dparty/de/DifferentialEvolution.h"
+#include "../3dparty/de/DifferentialEvolution.h"
 #include "svmTest.h"
 class DiffEvoTest : public de::IOptimizable
 {

@@ -4,6 +4,7 @@
 #include <opencv2/core/utility.hpp>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
+#include "source/testingPipeline.h"
 #include "source/train/combinedTrainHog.h"
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
@@ -25,9 +26,7 @@ namespace mainFun {
 	void createSample(cv::CommandLineParser parser);
 	/**
 	* Print the results on screen
-	*
 	* @param timer represent time of the duration of the algorithm
-	*
 	*/
 	void printResults(clock_t timer);
 }
@@ -72,18 +71,18 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	const cv::String keys =
-		"{ help h ?           |                  |  print help message                       }"
-		"{ alg	              |         1        |  alg type                                 }"
-		"{ video v            |                  |  use video as input                       }"
-		"{ image i            |                  |  use list of images as input              }"
-		"{ camera c           |                  |  enable camera capturing                  }"
-		"{ class svm          |    default       |  trained clasifier path                   }"
-		"{ settings  st       |   settings.txt   |  file with settings for app               }"
-		"{ type  t            |                  |  type of alg (train, test)                }"
-		"{ extract e          |                  |  extract ROI from videostream             }"
-		"{ vizualize          |         0        |  show result in window                    }"
-		"{ verbose            |         0        |  print information about train etc.       }"
-		"{ createSample cs    |         0        |  creating samples from image              }"
+		"{ help h ?           |                                |  print help message                       }"
+		"{ alg	              |               1                |  alg type                                 }"
+		"{ video v            |                                |  use video as input                       }"
+		"{ image i            |                                |  use list of images as input              }"
+		"{ camera c           |                                |  enable camera capturing                  }"
+		"{ class svm          |            default             |  trained clasifier path                   }"
+		"{ settings  st       |   data/settings/settings.txt   |  file with settings for app               }"
+		"{ type  t            |                                |  type of alg (train, test)                }"
+		"{ extract e          |                                |  extract ROI from videostream             }"
+		"{ vizualize          |               0                |  show result in window                    }"
+		"{ verbose            |               0                |  print information about train etc.       }"
+		"{ createSample cs    |               0                |  creating samples from image              }"
 		;
 	
 
@@ -192,7 +191,7 @@ void mainFun::image(cv::CommandLineParser parser)
 //		std::cout << "Bad selection.\n";
 //		return;
 //	}
-//	if( typeAlg == 7) { TestPipeline("testingSVM.txt", "testingVideos.txt").execute(); return; }
+//	if( typeAlg == 7) { TestingPipeline("testingSVM.txt", "testingVideos.txt").execute(); return; }
 //	Pipeline *pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
 //	Settings::nameFile = parser.get<std::string>("video");
 //
@@ -217,6 +216,7 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
+	TestingPipeline("testingSVM.txt", "testingVideos.txt").execute();
 	std::string bigConfs[] = {
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
 		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
@@ -367,6 +367,7 @@ void mainFun::video(cv::CommandLineParser parser)
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
 			//Pipeline *pl = new Pipeline(pathB + conf, 2);
 			//Pipeline *pl = new Pipeline("default", 2);
+			Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Settings::nameFile = vid;// parser.get<std::string>("video");
 
 			replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
@@ -423,7 +424,6 @@ void mainFun::printResults(clock_t timer)
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
 	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
-//	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
 	std::cout << "Possibly detection: " << Pipeline::allDetections << " frames." << std::endl;
 }
 

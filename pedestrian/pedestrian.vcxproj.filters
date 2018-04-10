@@ -102,6 +102,9 @@
     <ClCompile Include="source\test\dlibSvmTest.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
+    <ClCompile Include="source\testingPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="source\test\dlibSvmTest.h">
       <Filter>Header Files\test</Filter>
+    </ClInclude>
+    <ClInclude Include="source\testingPipeline.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

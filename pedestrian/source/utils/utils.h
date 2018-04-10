@@ -41,6 +41,22 @@ public:
 	}
 
 	/**
+	* @brief This function sets the names for GT and test file
+	*
+	* @param videoName path to video file
+	*/
+	static void setEvaluationFiles(std::string videoName)
+	{
+		Settings::nameFile = videoName;
+		replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
+		replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
+		Settings::nameTrainedFile = "data//trained//" + Settings::nameFile;
+		Settings::nameFile = "data//tested//" + Settings::nameFile;
+		Settings::nameTrainedFile.append("_trained.txt");
+		Settings::nameFile.append(".txt");
+	}
+
+	/**
 	* @brief Converts dlib list of rectangles to openCV rectangles
 	*
 	* @param r list of dlib rectangles

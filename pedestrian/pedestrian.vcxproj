@@ -168,6 +168,7 @@
     <ClCompile Include="source\alg\mog.cpp" />
     <ClCompile Include="source\media\videostream.cpp" />
     <ClCompile Include="source\pipeline.cpp" />
+    <ClCompile Include="source\testingPipeline.cpp" />
     <ClCompile Include="source\test\diffEvoTest.cpp" />
     <ClCompile Include="source\test\dlibSvmTest.cpp" />
     <ClCompile Include="source\test\svmTest.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="source\media\videostream.h" />
     <ClInclude Include="source\pipeline.h" />
     <ClInclude Include="source\settings.h" />
+    <ClInclude Include="source\testingPipeline.h" />
     <ClInclude Include="source\test\diffEvoTest.h" />
     <ClInclude Include="source\test\dlibSvmTest.h" />
     <ClInclude Include="source\test\svmTest.h" />

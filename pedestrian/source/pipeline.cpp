@@ -459,7 +459,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	results["tp"] = truePos;
 	results["fp"] = falsePos;
 	results["fn"] = falseNeg;
-	results["f1"] = cvRound(f1score);
+	results["f1"] = cvRound(f1score*100);
 }
 
 

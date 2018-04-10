@@ -1,4 +1,5 @@
 ﻿#include "testingPipeline.h"
+#include "utils\utils.h"
 #include <chrono>
 #include <ctime>
 
@@ -16,7 +17,6 @@ TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 	file.close();
 
 	file.open(videosPath);
-	std::string line;
 	if (file.is_open()) {
 		while (!file.eof()) {
 			file >> line;
@@ -32,30 +32,33 @@ void TestingPipeline::execute()
 	fs.open("armTestingResult.txt");
 	std::time_t currTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
-	std::vector < std::string > videos;
+	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
 	std::string algNames[] = { "HOG", "MOG + HOG", "FHOG", "MOG + FHOG" };
-	for (auto video : videos) {
-
-		fs << video << " FPS: " << VideoStream::fps << ". Video duration : " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
-			"s. Total frames: " << VideoStream::totalFrames << "." << std::endl << std::endl;
-
-		for (size_t i = 0; i < _svms2Test.size(); i++) {
-			for (size_t j = 0; j < _videos2Test.size(); j++) {
-
+	for (auto video : _videos2Test) {
+		fs << " TYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
+		for (size_t i = 0; i < _svms2Test.size(); i++) { //SELECT ALG TYPE
+			for (int k = 0; k < 2; k++) { // MOG OR NOT
 				std::map<std::string, int> results;
-				Pipeline pip = Pipeline(_svms2Test[i], i);
 
-				std::cout << algNames[i] << std::endl;
+				Settings::getSettings();
+				Pipeline pip = Pipeline(_svms2Test[i], i + k + 1);
+
+				Utils::setEvaluationFiles(video);
+				std::cout << algNames[i + k] << std::endl;
 				auto startTime = std::chrono::high_resolution_clock::now();
-				pip.execute(_videos2Test[j]);
+				pip.execute(video);
 				auto endTime = std::chrono::high_resolution_clock::now();
 				double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-
+				
 				pip.evaluate(results);
-				fs << algNames[i] << " & ";
+				fs << algNames[i + k] << " & ";
 				saveResults(fs, results, time);
 			}
 		}
+		fs << std::endl << std::endl;
+		fs << video << " FPS: " << VideoStream::fps << ". Video duration : " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
+			"s. Total frames: " << VideoStream::totalFrames << ". Show frames: " << showFrames << std::endl << std::endl;
+		fs << std::setfill('_') << std::setw(100);
 		fs << std::endl << std::endl;
 	}
 }
@@ -73,5 +76,5 @@ void TestingPipeline::saveResults(std::ofstream &file, std::map<std::string, int
 	}
 	// name & ALG FPS & Detection took & TP & FN & FP & F1
 	file << VideoStream::totalFrames / (static_cast<float>(time) / CLOCKS_PER_SEC) << " & " << static_cast<float>(time) / CLOCKS_PER_SEC << " & " <<
-		results["tp"] << " & " << results["fn"] << " & " << results["fp"] << " & " << results["f1"] << " \\ " << std::endl;
+		results["tp"] << " & " << results["fn"] << " & " << results["fp"] << " & " << results["f1"] << " \\\\ " << std::endl;
 }
