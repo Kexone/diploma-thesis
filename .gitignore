@@ -5,7 +5,15 @@
 
 #custom filter
 backup*
-
+DP.aux
+DP.lof
+DP.lol
+DP.out
+DP.pdf
+DP.synctex.gz
+DP.toc
+DP.lot
+main.tex
 # User-specific files
 *.suo
 *.user
