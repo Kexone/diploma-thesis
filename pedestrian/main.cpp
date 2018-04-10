@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <csignal>
 #include <opencv2/core/utility.hpp>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
@@ -7,7 +8,6 @@
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
 #include "source/test/testClass.h"
-#include <csignal>
 #include "source/train/trainCascade.h"
 
 
@@ -72,26 +72,18 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	const cv::String keys =
-		"{ help h ?           |         |  print help message                       }"
-		"{ alg	              |    1    |  alg type                                 }"
-		"{ video v            |         |  use video as input                       }"
-//		"{ video v            |     video/cctv4.mp4    |  use video as input                       }"
-		"{ image i            |         |  use list of images as input              }"
-		"{ camera c           |         |  enable camera capturing                  }"
-		"{ class svm          | KONFIGURACE_2.yml |  trained clasifier path                   }"
-		//"{ class svm          |EPS_LIN_JPG_30.yml |  trained clasifier path                   }"
-		//"{ class svm          |EPS_LIN_PGMM_30.yml |  trained clasifier path                   }"
-		//"{ class svm          |EPS_LIN_PGMS_30.yml |  trained clasifier path                   }"
-		//"{ class svm          |EPS_LIN_PNG_30.yml |  trained clasifier path                   }"
-		//"{ class svm          |EPS_LIN_PNGP_30.yml |  trained clasifier path                   }"
-		//"{ class svm          | default |  trained clasifier path                   }"
-		//"{ class svm          | 48_96_16_8_8_9_01.yml |  trained clasifier path                   }"
-		"{ settings  st       |   settings.txt   |  file with settings for app                }"
-		"{ type  t            |         |  type of alg (train, test)                }"
-		"{ extract e          |         |  extract ROI from videostream             }"
-		"{ vizualize          |    0    |  show result in window                    }"
-		"{ verbose          |    0    |  print information about train etc.                   }"
-		"{ createSample cs    |    0    |  creating samples from image              }"
+		"{ help h ?           |                  |  print help message                       }"
+		"{ alg	              |         1        |  alg type                                 }"
+		"{ video v            |                  |  use video as input                       }"
+		"{ image i            |                  |  use list of images as input              }"
+		"{ camera c           |                  |  enable camera capturing                  }"
+		"{ class svm          |    default       |  trained clasifier path                   }"
+		"{ settings  st       |   settings.txt   |  file with settings for app               }"
+		"{ type  t            |                  |  type of alg (train, test)                }"
+		"{ extract e          |                  |  extract ROI from videostream             }"
+		"{ vizualize          |         0        |  show result in window                    }"
+		"{ verbose            |         0        |  print information about train etc.       }"
+		"{ createSample cs    |         0        |  creating samples from image              }"
 		;
 	
 
@@ -100,7 +92,7 @@ int main(int argc, char *argv[])
 	Settings::getSettings(parser.get<std::string>("settings"));
 	Settings::showVideoFrames = 0; // parser.get<bool>("vizualize"); //@TODO
 
-	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.5");
+	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.6");
 
 
 	if (parser.has("help"))	{
@@ -125,7 +117,6 @@ int main(int argc, char *argv[])
 	else if (parser.has("createSample")) {
 		mainFun::createSample(parser);
 	}
-	
 	 	return 0;
 }
 
