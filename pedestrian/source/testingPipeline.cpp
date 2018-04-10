@@ -10,8 +10,10 @@ TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 	std::string line;
 	if (file.is_open()) {
 		while (!file.eof()) {
+			line = "";
 			file >> line;
-			_svms2Test.push_back(line);
+			if (!line.empty())
+				_svms2Test.push_back(line);
 		}
 	}
 	file.close();
@@ -19,8 +21,10 @@ TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 	file.open(videosPath);
 	if (file.is_open()) {
 		while (!file.eof()) {
+			line = "";
 			file >> line;
-			_videos2Test.push_back(line);
+			if(!line.empty())
+				_videos2Test.push_back(line);
 		}
 	}
 	file.close();	
@@ -35,12 +39,12 @@ void TestingPipeline::execute()
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
 	std::string algNames[] = { "HOG", "MOG + HOG", "FHOG", "MOG + FHOG" };
 	for (auto video : _videos2Test) {
-		fs << " TYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
+		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 		for (size_t i = 0; i < _svms2Test.size(); i++) { //SELECT ALG TYPE
 			for (int k = 0; k < 2; k++) { // MOG OR NOT
 				std::map<std::string, int> results;
 
-				Settings::getSettings();
+				Settings::getSettings("data/settings/settings.txt");
 				Pipeline pip = Pipeline(_svms2Test[i], i + k + 1);
 
 				Utils::setEvaluationFiles(video);
@@ -56,10 +60,9 @@ void TestingPipeline::execute()
 			}
 		}
 		fs << std::endl << std::endl;
-		fs << video << " FPS: " << VideoStream::fps << ". Video duration : " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
-			"s. Total frames: " << VideoStream::totalFrames << ". Show frames: " << showFrames << std::endl << std::endl;
-		fs << std::setfill('_') << std::setw(100);
-		fs << std::endl << std::endl;
+		fs << video << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
+			"s Total frames:" << VideoStream::totalFrames << " Resolution:" << VideoStream::vidRes << "WxH Show frames:" << showFrames << std::endl << std::endl;
+		fs << std::string("_", 20) << std::endl << std::endl;
 	}
 }
 

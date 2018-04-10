@@ -216,7 +216,7 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	TestingPipeline("testingSVM.txt", "testingVideos.txt").execute();
+	TestingPipeline("testing/testingSVM.txt", "testing/testingVideos.txt").execute();
 	std::string bigConfs[] = {
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
 		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
@@ -467,3 +467,21 @@ std::string Settings::samplesNegTest = "samples/listNegTestMin.txt";
 std::string Settings::classifierName2Train = "classifier";
 int Settings::dilationSize = 3;
 int Settings::erosionSize = 2;
+
+double Settings::hogHitTreshold = 0.92;
+cv::Size Settings::hogWinStride = cv::Size(8, 8);
+cv::Size Settings::hogPadding = cv::Size(0, 0);
+double Settings::hogScale = 1.1;
+double Settings::hogFinalTreshold = 0.95;
+bool Settings::hogMeanshiftGrouping = 0;
+int Settings::hogGroupTreshold = 2;
+double Settings::hogEps = 0.8;
+double Settings::cropHogHitTreshold = 0.878;
+cv::Size Settings::cropHogWinStride = cv::Size(4, 4);
+cv::Size Settings::cropHogPadding = cv::Size(0, 0);
+double Settings::cropHogScale = 1.09;
+double Settings::cropHogFinalTreshold = 0;
+bool Settings::cropHogMeanshiftGrouping = 0;
+int Settings::cropHogGroupTreshold = 2;
+double Settings::cropHogEps = 0.8;
+int Settings::cropHogMinArea = 4999;

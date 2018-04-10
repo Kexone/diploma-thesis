@@ -72,20 +72,12 @@ private:
 	* @brief Gets SVM detector which is needed to detection
 	*
 	* @param svm svm pointer
-	* @param vector of floats
+	* @param hog_detector vector of floats
 	*/
     void getSvmDetector( const cv::Ptr< cv::ml::SVM > &svm, std::vector< float > &hog_detector );
 
-	/**
-	* @brief This function calls function detectMultiScale from openCV
-	*
-	* @param img image to processing
-	* @param found vector of found rectangles
-	*/
-	void hogDetectMultiScale(cv::Mat img, std::vector< cv::Rect > &found);
-	
-    cv::HOGDescriptor hog;
-	cv::Ptr<cv::ml::SVM> svm;
+    cv::HOGDescriptor _hog;
+	cv::Ptr<cv::ml::SVM> _svm;
 };
 
 #endif // HOG_H

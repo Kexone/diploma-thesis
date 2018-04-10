@@ -16,6 +16,7 @@ private:
 public:
 	static int fps;
 	static int totalFrames;
+	static cv::Size vidRes;
 	VideoStream();
     VideoStream(int cam);
     VideoStream(std::string camSource);

@@ -17,13 +17,13 @@ Hog::Hog(std::string svmPath)
 			cv::Size(Settings::blockSize, Settings::blockSize), //,blocksize //def
 			cv::Size(Settings::strideSize, Settings::strideSize), //blockStride // def
 			cv::Size(Settings::cellSize, Settings::cellSize), //cellSize, //def
-			9, //nbins,
-			0, //derivAper,
-			-1, //winSigma,
-			0, //histogramNormType,
-			0.2, //L2HysThresh,
-			1 //gammal corRection,
-			  //nlevels=64
+			9,		//nbins,
+			0,		//derivAper,
+			-1,		//winSigma,
+			0,		//histogramNormType,
+			0.2,	//L2HysThresh,
+			1		//gamma corRection,
+					//nlevels=64
 		);
 		_hog.svmDetector.clear();
 		std::vector< float > hogDetector;
@@ -55,20 +55,20 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 	//	cv::imshow("test", test);
 #endif
 		_hog.detectMultiScale(
-			test,					// img
-			found,					// foundLocation
-			0.878,//878				// hitThreshold
-			cv::Size(4,4),			// winStride
-			cv::Size(0,0),			// padding
-			1.09,					// scale
-			0,//1,	/* 1*/			// finalThreshold
-			false					// use meanshift grouping
+			test,								// img
+			found,								// foundLocation
+			Settings::cropHogHitTreshold,       // hitThreshold
+			Settings::cropHogWinStride,			// winStride
+			Settings::cropHogPadding,			// padding
+			Settings::cropHogScale,				// scale
+			Settings::cropHogFinalTreshold,		// finalThreshold
+			Settings::cropHogMeanshiftGrouping  // use meanshift grouping
 		);
 
 		if (found.empty()) {
 			continue;
 		}
-		cv::groupRectangles(found, 2, 0.80);
+		cv::groupRectangles(found, Settings::cropHogGroupTreshold, Settings::cropHogEps);
 		//std::cout << (predicted) << std::endl;
 		//float confidence = 1.0 / (1.0 + exp(-predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT)));
 		//std::cout << confidence << std::endl;
@@ -84,7 +84,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			cv::Mat cropped(test(found[i]));
 			cv::imwrite(imgName, cropped);
 #endif
-			if(found[i].area() > 4999)
+			if(found[i].area() > Settings::cropHogMinArea)
 				rects[x].push_back( found[i] );
 			//distances[x].push_back( getDistance(cropped) );
 		}
@@ -100,17 +100,17 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	cv::blur(frame, frame, cv::Point(6,6));
 
 	_hog.detectMultiScale(
-		frame,					// img
-		rects,					// foundLocation
-		0.92,					// hitThreshold
-		cv::Size(8, 8),			// winStride
-		cv::Size(0, 0),			// padding
-		1.1,					// scale
-		0.95,					// finalThreshold
-		false					// use meanshift grouping
+		frame,							// img
+		rects,							// foundLocation
+		Settings::hogHitTreshold,		// hitThreshold
+		Settings::hogWinStride,			// winStride
+		Settings::hogPadding,			// padding
+		Settings::hogScale,				// scale
+		Settings::hogFinalTreshold,		// finalThreshold
+		Settings::hogMeanshiftGrouping	// use meanshift grouping
 	);
 	std::vector< int > weights;
-	cv::groupRectangles(rects, weights,2,0.8);
+	cv::groupRectangles(rects, weights, Settings::hogGroupTreshold, Settings::hogEps);
 #if BAD_SAMPLES
 	for (size_t i = 0; i<rects.size(); i++)
 	{

@@ -137,9 +137,6 @@
     <ClInclude Include="source\test\svmTest.h">
       <Filter>Header Files\test</Filter>
     </ClInclude>
-    <ClInclude Include="3dparty\de\DifferentialEvolution.h">
-      <Filter>Header Files\3dparty</Filter>
-    </ClInclude>
     <ClInclude Include="source\test\diffEvoTest.h">
       <Filter>Header Files\test</Filter>
     </ClInclude>
@@ -169,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="source\testingPipeline.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\3dparty\de\DifferentialEvolution.h">
+      <Filter>Header Files\3dparty</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

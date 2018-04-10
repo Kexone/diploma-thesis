@@ -180,7 +180,7 @@
     <ClCompile Include="source\utils\extractorROI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="3dparty\de\DifferentialEvolution.h" />
+    <ClInclude Include="source\3dparty\de\DifferentialEvolution.h" />
     <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
     <ClInclude Include="source\alg\fhog.h" />

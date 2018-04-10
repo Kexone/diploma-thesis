@@ -23,7 +23,7 @@ kde:
 \end{itemize}
 
 Druhém kroku dochází k vytvoření histogramu v každé buňce. Každý pixel v buňce má svou váhu, který se podílí na vytvoření orientovaného histogramu, založeného na hodnotách nalezených ve výpočtu gradientu. Samotné buňky jsou rovnoměrně rozloženy do 9 kanálů (binů) po \ang{20}. Pokud buňka vyjde na pomezí úhlu, přičte se její magnituda do obou těchto binů.
-Tyto buňky spojíme do větších propojených bloků z důvodu normalizace osvětlení a kontrastu. Pro chodce se používá L2-norm normalizace \ref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R-HOG) a kruhové bloky (C-HOG), viz obrázek \ref{variants_block}.  
+Tyto buňky spojíme do větších propojených bloků z důvodu normalizace osvětlení a kontrastu. Pro chodce se používá L2-norm normalizace \eqref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R-HOG) a kruhové bloky (C-HOG), viz obrázek \ref{variants_block}.  
 \begin{equation}
 \centering
  \label{eq:normHog}

@@ -52,7 +52,24 @@ struct Settings
 	static int dilationSize;
 	static int erosionSize;
 
+	static double hogHitTreshold;
+	static cv::Size hogWinStride;
+	static cv::Size hogPadding;
+	static double hogScale;
+	static double hogFinalTreshold;
+	static bool hogMeanshiftGrouping;
+	static int hogGroupTreshold;
+	static double hogEps;
 
+	static double cropHogHitTreshold;
+	static cv::Size cropHogWinStride;
+	static cv::Size cropHogPadding;
+	static double cropHogScale;
+	static double cropHogFinalTreshold;
+	static bool cropHogMeanshiftGrouping;
+	static int cropHogGroupTreshold;
+	static double cropHogEps;
+	static int cropHogMinArea;
 
 	static void getSettings(std::string pathFile)
 	{
@@ -130,6 +147,60 @@ struct Settings
 							dilationSize = std::stoi(value.c_str());
 						else if (key.compare("erosionSize") == 0)
 							erosionSize = std::stoi(value.c_str());
+						else if (key.compare("hogHitTreshold") == 0)
+							hogHitTreshold = std::stod(value.c_str());
+						else if (key.compare("hogWinStride") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							hogWinStride = cv::Size(value1, value2);
+						}
+						else if (key.compare("hogPadding") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							hogPadding = cv::Size(value1, value2);
+						}
+						else if (key.compare("hogScale") == 0)
+							hogScale = std::stod(value.c_str());
+						else if (key.compare("hogFinalTreshold") == 0)
+							hogFinalTreshold = std::stod(value.c_str());
+						else if (key.compare("hogMeanshiftGrouping") == 0)
+							hogMeanshiftGrouping = std::stod(value.c_str());
+						else if (key.compare("hogGroupTreshold") == 0)
+							hogGroupTreshold = std::stoi(value.c_str());
+						else if (key.compare("hogEps") == 0)
+							hogEps = std::stod(value.c_str());
+						else if (key.compare("cropHogHitTreshold") == 0)
+							cropHogHitTreshold = std::stod(value.c_str());
+						else if (key.compare("cropHogWinStride") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							cropHogWinStride = cv::Size(value1, value2);
+						}
+						else if (key.compare("cropHogPadding") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							cropHogPadding = cv::Size(value1, value2);
+						}
+						else if (key.compare("cropHogScale") == 0)
+							cropHogScale = std::stod(value.c_str());
+						else if (key.compare("cropHogFinalTreshold") == 0)
+							cropHogFinalTreshold = std::stod(value.c_str());
+						else if (key.compare("cropHogMeanshiftGrouping") == 0)
+							cropHogMeanshiftGrouping = std::stod(value.c_str());
+						else if (key.compare("cropHogGroupTreshold") == 0)
+							cropHogGroupTreshold = std::stoi(value.c_str());
+						else if (key.compare("cropHogEps") == 0)
+							cropHogEps = std::stod(value.c_str());
+						else if (key.compare("cropHogMinArea") == 0)
+							cropHogMinArea = std::stoi(value.c_str());
 					}
 				}
 			}

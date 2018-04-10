@@ -2,6 +2,7 @@
 
 int VideoStream::fps = 0;
 int VideoStream::totalFrames = 0;
+cv::Size VideoStream::vidRes = cv::Size(0, 0);
 VideoStream::VideoStream()
 {
 }
@@ -32,6 +33,7 @@ void VideoStream::openCamera()
         capture.open(camSource);
 		VideoStream::totalFrames = static_cast<int>(capture.get(cv::CAP_PROP_FRAME_COUNT));
         VideoStream::fps = static_cast<int>(capture.get(cv::CAP_PROP_FPS));
+		VideoStream::vidRes = cv::Size(static_cast<int>(capture.get(cv::CAP_PROP_FRAME_WIDTH)), static_cast<int>(capture.get(cv::CAP_PROP_FRAME_HEIGHT)));
     }
 }
 

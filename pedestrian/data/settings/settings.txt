@@ -1,16 +1,41 @@
+//mog settings
 mogHistory=90 //115
 mogThresh=9
 mogDetectShadows=1
+
+//convex hull settings
 cvxHullExtSize=10
 cvxHullExtTimes=4
 cvxHullThresh=180 //180
 cvxHullMaxValue=1 //255
-//pedSize=(24,48)
+
+//global size settings (test, train, detection) 
 pedSize=(48,96)
 //pedSize=(64,128)
 blockSize=16
 cellSize=8
 strideSize=8
+
+// HOG detectMultiScale on full frame
+hogHitTreshold=0.92
+hogWinStride=(8,8)
+hogPadding=(0,0)
+hogScale=1.1
+hogFinalTreshold=0.95
+hogMeanshiftGrouping=0
+hogGroupTreshold=2
+hogEps=0.8
+
+// HOF detectMultiScale on cropped images
+cropHogHitTreshold=0.878
+cropHogWinStride=(4,4)
+cropHogPadding=(0,0)
+cropHogScale=1.09
+cropHogFinalTreshold=0
+cropHogMeanshiftGrouping=0
+cropHogGroupTreshold=2
+cropHogEps=0.8
+cropHogMinArea=4999
 
 
 //TRAIN PARAMS
@@ -25,28 +50,15 @@ gamma=0.0001
 paramNu=0.6
 paramP=0.1
 paramC=0.05
-// 
+ 
 //samplesPos=samples/posSamples.txt
 //samplesNeg=samples/negSamples.txt
-
-/samplesPos=samples/new/bmp.txt
-/samplesPos=samples/new/jpg.txt
-/samplesPos=samples/new/daimler.txt
 samplesPos=samples/new/daimlerM3.txt
-/samplesPos=samples/new/png.txt
-/samplesPos=samples/new/pngPrid.txt
-//samplesNeg=samples/negative/neg30000.txt
 samplesNeg=samples/negative/neg3000.txt
 
 samplesPosTest=mySamples/pos3k.txt
 samplesNegTest=mySamples/neg4000.txt
 classifierName2Train=KONFIGURACE_
-//classifierName2Train=EPS_LIN_BMP_30
-//classifierName2Train=EPS_LIN_JPG_30
-//classifierName2Train=EPS_LIN_PGMM_30
-//classifierName2Train=EPS_LIN_PGMS_30
-//classifierName2Train=EPS_LIN_PNG_30
-//classifierName2Train=EPS_LIN_PNGP_30
 
 
 dilationSize=3
