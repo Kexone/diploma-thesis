@@ -41,10 +41,10 @@ void TestingPipeline::execute()
 	for (auto video : _videos2Test) {
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 		for (size_t i = 0; i < _svms2Test.size(); i++) { //SELECT ALG TYPE
-			for (int k = 0; k < 2; k++) { // MOG OR NOT
+			for (int k = 0; k < 1; k++) { // MOG OR NOT
 				std::map<std::string, int> results;
 
-				Settings::getSettings("data/settings/settings.txt");
+				Settings::getSettings("data/settings/settings1.txt");
 				Pipeline pip = Pipeline(_svms2Test[i], i + k + 1);
 
 				Utils::setEvaluationFiles(video);

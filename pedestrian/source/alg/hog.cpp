@@ -97,8 +97,8 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	assert(!frame.empty());
 	rects.clear();
-	cv::blur(frame, frame, cv::Point(6,6));
-
+	//cv::blur(frame, frame, cv::Point(6,6));
+	//cv::medianBlur(frame, frame, 3);
 	_hog.detectMultiScale(
 		frame,							// img
 		rects,							// foundLocation
@@ -109,11 +109,19 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 		Settings::hogFinalTreshold,		// finalThreshold
 		Settings::hogMeanshiftGrouping	// use meanshift grouping
 	);
+	if (rects.empty()) {
+		return;
+	}
 	std::vector< int > weights;
 	cv::groupRectangles(rects, weights, Settings::hogGroupTreshold, Settings::hogEps);
-#if BAD_SAMPLES
+	std::vector<cv::Rect> found;
+
 	for (size_t i = 0; i<rects.size(); i++)
 	{
+	//	std::cout << rects[i].size() << std::endl;
+	//	if (rects[i].width < 60)
+			found.push_back(rects[i]);
+#if BAD_SAMPLES
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int_distribution<> dis(0, 1000);
@@ -121,8 +129,9 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 		std::sprintf(imgName, "bad/%d_posSample_%d.jpg", i, dis(gen));
 		cv::Mat cropped(frame(rects[i]));
 		cv::imwrite(imgName, cropped);
-		}
 #endif
+	}
+	rects = found;
 }
 
 void Hog::detect(std::vector<cv::Mat> testLst, int &nTrue, int &nFalse, bool pedestrian)

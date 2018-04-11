@@ -77,10 +77,10 @@ int main(int argc, char *argv[])
 		"{ image i            |                                |  use list of images as input              }"
 		"{ camera c           |                                |  enable camera capturing                  }"
 		"{ class svm          |            default             |  trained clasifier path                   }"
-		"{ settings  st       |   data/settings/settings.txt   |  file with settings for app               }"
+		"{ settings  st       |   data/settings/settings1.txt   |  file with settings for app               }"
 		"{ type  t            |                                |  type of alg (train, test)                }"
 		"{ extract e          |                                |  extract ROI from videostream             }"
-		"{ vizualize          |               0                |  show result in window                    }"
+		"{ vizualize          |               true                |  show result in window                    }"
 		"{ verbose            |               0                |  print information about train etc.       }"
 		"{ createSample cs    |               0                |  creating samples from image              }"
 		;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	cv::CommandLineParser parser(argc, argv, keys);
 
 	Settings::getSettings(parser.get<std::string>("settings"));
-	Settings::showVideoFrames = 0; // parser.get<bool>("vizualize"); //@TODO
+	Settings::showVideoFrames = 1;// parser.get<bool>("vizualize"); //@TODO
 
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.6");
 
@@ -216,7 +216,7 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	TestingPipeline("testing/testingSVM.txt", "testing/testingVideos.txt").execute();
+//	TestingPipeline("testing/testingSVM.txt", "testing/testingVideos.txt").execute();
 	std::string bigConfs[] = {
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
 		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
@@ -355,19 +355,20 @@ void mainFun::video(cv::CommandLineParser parser)
 		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
 	};
-	std::string videos[] = { "video/cctv4.avi", "video/school.avi" };
+	std::string videos[] = { "video/cctv4.mp4" };
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
-		for (auto conf : bigNuSelectedConfs)
+		for (auto conf : sudisConfs)
 			{
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-//			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml", 1);
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP
+			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 2); //for small ?
+	//		Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
-			//Pipeline *pl = new Pipeline(pathB + conf, 2);
+		//	Pipeline *pl = new Pipeline(path + conf, 1);
 			//Pipeline *pl = new Pipeline("default", 2);
-			Utils::setEvaluationFiles(parser.get<std::string>("video"));
+			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
+			Utils::setEvaluationFiles(vid);
 			Settings::nameFile = vid;// parser.get<std::string>("video");
 
 			replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
@@ -391,7 +392,7 @@ void mainFun::video(cv::CommandLineParser parser)
  			delete pl;
 		}
 	}
-	std::cout << "END";
+		std::cout << "END";
 }
 
 void mainFun::extract(cv::CommandLineParser parser)

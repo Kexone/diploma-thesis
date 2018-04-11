@@ -27,7 +27,6 @@ public:
 	*/
 	static void makeDir(std::string path)
 	{
-#pragma GCC diagnostic ignored "-Wwrite-strings"
 		char * mkDirStr = static_cast<char *>("mkdir ");
 		int lenComm = 6;
 		char *temp = new char[path.length()];

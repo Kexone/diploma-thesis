@@ -207,7 +207,8 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 
 	_hog.detect(frame, foundRect);
 	draw2mat(foundRect);
-	_rects2Eval[cFrame].push_back(foundRect);
+	if(!foundRect.empty())
+		_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
 }
@@ -328,11 +329,10 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 {
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
-			cv::Rect r = rect[j][i];
-			cv::rectangle(_localFrame, r.tl(), r.br(), cv::Scalar(0, 255, 0), 3);
+			cv::rectangle(_localFrame, rect[j][i], cv::Scalar(0, 255, 0), 3);
 #if MY_DEBUG
 			if (!trained[test].empty()) {//@DEBUG
-				cv::rectangle(_localFrame, r & trained[test][0], cv::Scalar(255, 0, 0), 3);
+				cv::rectangle(_localFrame, rect[j][i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
 			}
 #endif
 		}
@@ -345,6 +345,11 @@ void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
 {
 	for (uint i = 0; i < rect.size(); i++) {
 		cv::rectangle(_localFrame, rect[i], cv::Scalar(0, 255, 0), 3);
+#if MY_DEBUG
+		if (!trained[test].empty()) {//@DEBUG
+			cv::rectangle(_localFrame, rect[i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
+		}
+#endif
 	}
 	allDetections += rect.size();
 }
@@ -429,13 +434,14 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 		int lastTruePos = truePos;
 		
 		for (int j = 0; j < test[i].size(); j++) {
-			for (int k = j; k < trained[i].size(); k++) {
+			for (int k = 0; k < trained[i].size(); k++) {
 				//float inter = static_cast<float>((trained[i][k] & test[i][j]).area());
 				//float uni = static_cast<float>((trained[i][k] | test[i][j]).area());
 				if ((trained[i][k] & test[i][j]).area()  >(trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
 				//if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
 				{
 					truePos++; // pedestrian found
+					trained[i].erase(trained[i].begin() + k);
 				}
 				else	{	falseNeg++;	} // pedestrian not found
 			}
