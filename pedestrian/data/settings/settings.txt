@@ -17,6 +17,7 @@ cellSize=8
 strideSize=8
 
 // HOG detectMultiScale on full frame
+hogBlurFilter=(6,6)
 hogHitTreshold=0.92
 hogWinStride=(8,8)
 hogPadding=(0,0)
