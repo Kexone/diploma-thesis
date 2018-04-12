@@ -1,4 +1,4 @@
-// this file is setted for cctv4.avi (720p)
+// this file is setted for cctv4.mov (1080p)
 
 
 //mog settings
@@ -21,24 +21,24 @@ strideSize=8
 
 // HOG detectMultiScale on full frame
 hogBlurFilter=(6,6)
-hogHitTreshold=0.92
+hogHitTreshold=0.62
 hogWinStride=(8,8)
 hogPadding=(0,0)
-hogScale=1.1
+hogScale=1.3
 hogFinalTreshold=0.95
 hogMeanshiftGrouping=0
-hogGroupTreshold=2
+hogGroupTreshold=20
 hogEps=0.8
 
 // HOF detectMultiScale on cropped images
 cropHogHitTreshold=0.878
 cropHogWinStride=(4,4)
-cropHogPadding=(2,2)
+cropHogPadding=(0,0)
 cropHogScale=1.09
-cropHogFinalTreshold=0.1
+cropHogFinalTreshold=0
 cropHogMeanshiftGrouping=0
-cropHogGroupTreshold=1
-cropHogEps=0.82
+cropHogGroupTreshold=2
+cropHogEps=0.8
 cropHogMinArea=4999
 
 

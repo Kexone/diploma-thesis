@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 		"{ image i            |                                |  use list of images as input              }"
 		"{ camera c           |                                |  enable camera capturing                  }"
 		"{ class svm          |            default             |  trained clasifier path                   }"
-		"{ settings  st       |   data/settings/settings1.txt   |  file with settings for app               }"
+		"{ settings  st       |   data/settings/settings.txt   |  file with settings for app               }"
 		"{ type  t            |                                |  type of alg (train, test)                }"
 		"{ extract e          |                                |  extract ROI from videostream             }"
 		"{ vizualize          |               true                |  show result in window                    }"
@@ -355,16 +355,16 @@ void mainFun::video(cv::CommandLineParser parser)
 		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
 	};
-	std::string videos[] = { "video/cctv4.mp4" };
+	std::string videos[] = { "video/cctv4.mov" };
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 		for (auto conf : sudisConfs)
 			{
-			Settings::getSettings("data/settings/settings1.txt");
+			Settings::getSettings("data/settings/settings2.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //for small ?
-		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",2); //TOP
+		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //top small
+			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
 		//	Pipeline *pl = new Pipeline(path + conf, 1);
 			//Pipeline *pl = new Pipeline("default", 2);

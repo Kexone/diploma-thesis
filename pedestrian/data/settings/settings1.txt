@@ -1,3 +1,5 @@
+// this file is setted for cctv4.mp4 (VGA)
+
 //mog settings
 mogHistory=90 //115
 mogThresh=9
