@@ -97,7 +97,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	assert(!frame.empty());
 	rects.clear();
-	//cv::blur(frame, frame, cv::Point(6,6));
+	//cv::blur(frame, frame, cv::Point(6,6)); // @TODO add to settings
 	//cv::medianBlur(frame, frame, 3);
 	_hog.detectMultiScale(
 		frame,							// img

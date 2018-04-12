@@ -426,28 +426,27 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	loadRects(Settings::nameFile, test);
 	loadRects(Settings::nameTrainedFile, trained);
 	int truePos = 0, falsePos = 0, falseNeg = 0;
-	for (int i = 0; i < trained.size(); i++) {
-		if (test[i].empty() && !trained[i].empty())		{	falseNeg += trained[i].size(); continue;} // There is pedestrian but no detect
-		if (!test[i].empty() && trained[i].empty())		{	falsePos += test[i].size(); continue;	} // There is no pedestrian but something detected
 
-		int currTruePos = test[i].size();
-		int lastTruePos = truePos;
-		
-		for (int j = 0; j < test[i].size(); j++) {
-			for (int k = 0; k < trained[i].size(); k++) {
-				//float inter = static_cast<float>((trained[i][k] & test[i][j]).area());
-				//float uni = static_cast<float>((trained[i][k] | test[i][j]).area());
-				if ((trained[i][k] & test[i][j]).area()  >(trained[i][k].area() / 2)) // If intersect between detection and ground truth is at least 50 % of ground truth F1-0.855721
-				//if(static_cast<float>(inter / uni) >= 0.25f) //IoU  - Intersection over Union 
-				{
-					truePos++; // pedestrian found
-					trained[i].erase(trained[i].begin() + k);
+	for (int i = 0; i < test.size(); i++)
+		falsePos += test[i].size();
+
+	for (int i = 0; i < trained.size(); i++) {
+		for (int j = 0; j < test.size(); j++) {
+			if (i == j)
+				for (int ii = 0; ii < trained[i].size(); ii++) {
+					bool found = false;
+					for (int jj = 0; jj < test[j].size(); jj++) {
+						if (!trained[i].empty() && (trained[i][ii] & test[j][jj]).area() >(trained[i][ii].area() / 2)) {
+							truePos++; // pedestrian found
+							found = true;
+							trained[i].erase(trained[i].begin() + ii);
+						}
+					}
+					if (!found) falseNeg++;
 				}
-				else	{	falseNeg++;	} // pedestrian not found
-			}
 		}
-		if (truePos != (currTruePos + lastTruePos)) {  falsePos += currTruePos - (truePos - lastTruePos); } //if all current detections not are pedestrians
 	}
+	falsePos -= truePos;
 
 	float precision = static_cast<float>(truePos) / (truePos + falsePos); // Precision is the percentage true positives in the retrieved results.
 	float recall = static_cast<float>(truePos) / (truePos + falseNeg); // Recall is the percentage of the pedestrians that the system retrieves.

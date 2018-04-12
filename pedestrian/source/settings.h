@@ -52,6 +52,7 @@ struct Settings
 	static int dilationSize;
 	static int erosionSize;
 
+	static cv::Size hogBlurFilter;
 	static double hogHitTreshold;
 	static cv::Size hogWinStride;
 	static cv::Size hogPadding;
@@ -147,6 +148,13 @@ struct Settings
 							dilationSize = std::stoi(value.c_str());
 						else if (key.compare("erosionSize") == 0)
 							erosionSize = std::stoi(value.c_str());
+						else if (key.compare("hogBlurFilter") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							hogBlurFilter = cv::Size(value1, value2);
+						}
 						else if (key.compare("hogHitTreshold") == 0)
 							hogHitTreshold = std::stod(value.c_str());
 						else if (key.compare("hogWinStride") == 0) {

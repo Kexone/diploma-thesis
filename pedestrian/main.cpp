@@ -360,10 +360,11 @@ void mainFun::video(cv::CommandLineParser parser)
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 		for (auto conf : sudisConfs)
 			{
+			Settings::getSettings("data/settings/settings1.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 2); //for small ?
-	//		Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP
+			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //for small ?
+		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",2); //TOP
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
 		//	Pipeline *pl = new Pipeline(path + conf, 1);
 			//Pipeline *pl = new Pipeline("default", 2);
@@ -387,7 +388,7 @@ void mainFun::video(cv::CommandLineParser parser)
 
 			printResults(time);
 			pl->evaluate();
-			//	cv::waitKey(0);			
+			cv::waitKey(0);			
 			
  			delete pl;
 		}
@@ -469,6 +470,7 @@ std::string Settings::classifierName2Train = "classifier";
 int Settings::dilationSize = 3;
 int Settings::erosionSize = 2;
 
+cv::Size Settings::hogBlurFilter = cv::Size(6,6);
 double Settings::hogHitTreshold = 0.92;
 cv::Size Settings::hogWinStride = cv::Size(8, 8);
 cv::Size Settings::hogPadding = cv::Size(0, 0);
