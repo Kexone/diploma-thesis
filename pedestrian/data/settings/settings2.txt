@@ -13,22 +13,23 @@ cvxHullThresh=180 //180
 cvxHullMaxValue=1 //255
 
 //global size settings (test, train, detection) 
-pedSize=(48,96)
-//pedSize=(64,128)
+//pedSize=(48,96)
+pedSize=(64,128)
 blockSize=16
 cellSize=8
 strideSize=8
 
 // HOG detectMultiScale on full frame
-hogBlurFilter=(6,6)
-hogHitTreshold=0.62
+hogBlurFilter=(0,0)
+hogHitTreshold=0.919
 hogWinStride=(8,8)
-hogPadding=(0,0)
+hogPadding=(4,4)
 hogScale=1.3
-hogFinalTreshold=0.95
+hogFinalTreshold=0.73
 hogMeanshiftGrouping=0
-hogGroupTreshold=20
-hogEps=0.8
+hogGroupTreshold=3
+hogEps=0.78
+hogMinArea=12000
 
 // HOF detectMultiScale on cropped images
 cropHogHitTreshold=0.878

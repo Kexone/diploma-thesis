@@ -431,12 +431,12 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 		falsePos += test[i].size();
 
 	for (int i = 0; i < trained.size(); i++) {
-		for (int j = 0; j < test.size(); j++) {
-			if (i == j)
+	//	for (int j = 0; j < test.size(); j++) {
+	//		if (i == j)
 				for (int ii = 0; ii < trained[i].size(); ii++) {
 					bool found = false;
-					for (int jj = 0; jj < test[j].size(); jj++) {
-						if (!trained[i].empty() && (trained[i][ii] & test[j][jj]).area() >(trained[i][ii].area() / 2)) {
+					for (int jj = 0; jj < test[i].size(); jj++) {
+						if (!trained[i].empty() && (trained[i][ii] & test[i][jj]).area() >(trained[i][ii].area() / 2)) {
 							truePos++; // pedestrian found
 							found = true;
 							trained[i].erase(trained[i].begin() + ii);
@@ -444,7 +444,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 					}
 					if (!found) falseNeg++;
 				}
-		}
+//		}
 	}
 	falsePos -= truePos;
 

@@ -118,8 +118,7 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 
 	for (size_t i = 0; i<rects.size(); i++)
 	{
-	//	std::cout << rects[i].size() << std::endl;
-	//	if (rects[i].width < 60)
+		if (rects[i].area() > Settings::hogMinArea)
 			found.push_back(rects[i]);
 #if BAD_SAMPLES
 		std::random_device rd;
