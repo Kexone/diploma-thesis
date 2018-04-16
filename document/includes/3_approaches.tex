@@ -5,8 +5,8 @@ V této kapitole budou popsány nejpoužívanější a nejznámější detekčn�
 Navzdory všem výzvám a problémům detekci chodců, zůstává tato oblast výzkumu stále aktivní a byla navržena řada přístupových technik.
 %@TODO
 \subsubsection*{Histogram orientovaných gradientů}
-
 Tato metoda vznikla v roce 2005 za účelem detekování chodců v obrazech a je založena na histogramech orientovaných gradientů (\textit{HOG - Histogram of Oriented Gradients}). Autoři této metodiky jsou N. Dalal a B. Triggs \cite{hog:dalal}. Základní myšlenkou je, že místní vzhled a~tvar objektu může být často charakterizován distribucí intenzity gradientů nebo směry hran, aniž by byly přesně známy odpovídající gradientové nebo hranové polohy.  
+
 Prvním krokem před samotným výpočtem příznaků by mělo dojít k zajištění normalizaci barev a gamy, v případě černobílých obrázků normalizaci kontrastu. Tento krok může být ovšem vynechán, jak zdůrazňují autoři Dalal a Triggs. Normalizace deskriptorů dosahují stejného výsledku, a tedy předběžné zpracování obrázku má malý vliv na výkon. Místo toho je prvním krokem výpočet gradientních hodnot. Nejběžnější metodou je aplikování 1-D derivační masky v jednom nebo obou horizontálních a vertikálních směrů. Autoři také experimentovali s komplexnějšími masky, jako je například $3x3$ Sobelova maska nebo diagonální masky, avšak tyto masky se prokázaly jako méně účinné. Stejně tak neúčinné bylo použití jakéhokoliv vyhlazení obrazu před aplikací derivační masky. Tedy nejlepší kombinací parametrů bylo použití konvolucí Gaussovského filtrování $\sigma = 0$ na obraze $I$ s maskou $[-1, 0, 1]$, $[-1,0,1]^\top$:
 \begin{equation}
 \centering
@@ -88,7 +88,7 @@ Ukázka dělení obrazového okna je na obrázku \ref{hog_cells}.
 \end{figure}
 
 \subsubsection*{Haarovy příznaky} % #TODO
-Na tomto přístupu je založen objektový detektor Viola-Jones \textit{Viola-Jones object detector framework}, který poskytuje v reálném čase spolehlivou a konkurenceschopnou detekci objektů. Tento systém byl navržen v roce 2001 a i když může být vycvičen pro detekci různých objektových tříd, byl primárně použit především pro detekci obličeje. Detektor pracuje s obrazy ve stupně šedi a skládá se ze tří částí. Z integrálního obrazu, Haarových příznaků a AdaBoost algoritmu. 
+Na tomto přístupu je založen objektový detektor Viola-Jones (\textit{Viola-Jones object detector framework}), který poskytuje v reálném čase spolehlivou a konkurenceschopnou detekci objektů. Tento systém byl navržen v roce 2001 a i když může být vycvičen pro detekci různých objektových tříd, byl primárně použit především pro detekci obličeje. Detektor pracuje s obrazy ve stupně šedi a skládá se ze tří částí. Z integrálního obrazu, Haarových příznaků a AdaBoost algoritmu. 
 
 Integrální obraz je takový obraz (obrázek \ref{fig:integralimage}), kde každý bod $x$ představuje součet hodnot předchozích pixelů doleva a nahoru. Spodní pravý bod obsahuje součet všech pixelů v obraze.
 Zápis integrálního obrazu je
@@ -212,15 +212,86 @@ Výhoda této metody je její rychlý a snadný výpočet a odolnost vůči růz
 \label{fig:lbpvzory}
 \end{figure}
 
-Pro detekování chodců v obrazech se LPB kombinují s metodou HOG. \cite{hoglpb}
-
 \subsubsection*{HOG + LBP}
-\subsubsection*{HOG + SVM ? }
+Kombinací přístupové techniky histogramů orientovaných hran a lokálního binárního vzoru jako sadu příznaků navrhuje nový způsob detekci chodce schopnou manipulovat s částečnou okluzí. Jeden detektor slouží ke globálnímu skenování obrazu a částečný detektor pro konkrétních oblastí a oba jsou naučeni z trénovacích dat lineárního klasifikátoru SVM. Pro každé nejednoznačné skenovací okénko se vytvoří mapa pravděpodobnosti okluze dle odezvy každého bloku HOG příznaku na globální detektor (obrázek \ref{fig:hoglbp}). Tato mapa pravděpodobnosti okluze se dále segmentuje metodou Mean shift. Segmentovaná část okna s větší negativní odpovědí je označena jako okludovaná část. Pokud je indikována okluze s vysokou pravděpodobností v nějakém skenovacím okénku, část detektorů je aplikována na oblasti bez okluze k dosažení konečné klasifikace aktuálního skenovacího okna. \cite{hoglpb}
 
-\subsection{Další metody v kombinaci se segmentací nebo detekci pohybu} % @TODO 
+\begin{figure}[H]
+\centering
+\includegraphics[width=.6\linewidth]{figures/hoglbp_obr}
+\caption{ První řádek ilustruje nejednoznačné výstřižky ze skenovacího okénka. Druhý řádek zobrazuje segmentové pravděpodobnostní mapy okluze odpovídajícím k obrazům z prvního řádku.\cite{hoglpb}}
+\label{fig:hoglbp}
+\end{figure}
+
+\subsubsection*{HOG + LUV}
+Tato metoda využívá Histogram orientovaných gradientů a LUV kanály obrazů pro extrakci příznaků. Kanály RGB vzorku se převedou na kanály LUV. Z každého kanálu se samostatně vypočtou příznaky, tento převod ilustruje obrázek \ref{fig:luv}. Tyto příznaky můžeme spojit do jednoho vektoru příznaků nebo využít jen některé z nich. Kanál $L$ je složka luminiscence (jas) a kanály $UV$ značí sytost barev. 
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.3\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/rgb_luv}
+  \caption*{RGB kanály}
+\end{minipage}%
+\begin{minipage}[b]{.3\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/luma}
+  \caption*{Luminiscence  (L)}
+\end{minipage}
+\begin{minipage}[b]{.3\textwidth}
+  \centering
+  \includegraphics[width=.7\linewidth]{figures/uv_chroma}
+  \caption*{Sytost barev (UV)}
+\end{minipage}
+\caption{Rozdíl mezi RGB a LUV kanály. Obrázek je obsažen v trénovací sadě SudipDas. \cite{sudipDas}}
+\label{fig:luv}
+\end{figure}
+
+\subsection{Metoda detekce v kombinaci detekcí pohybu} % @TODO 
+Další možností detekce chodců v obraze je substrakcí pozadí, díky které můžeme vyfiltrovat dynamické části v obraze. Použitím této metodiky v kombinaci například s přístupem založený na příznacích můžeme získat rychlý a optimální detektor.
+
+\subsubsection*{Mixtura Gaussiánů}
+Mixtura Gaussiánů (\textit{MOG - Gaussian mixture model background subtraction}) \cite{mog:zivkovic} je metoda substrakce pozadí.  Je běžná a~široce používaná technika pro generování masky v~popředí pomocí statických kamer. Jak už jde poznat z~názvu, algoritmus vypočítá masku v~popředí a~odečítá ji mezi aktuálním rámcem (obrázek \ref{mog_scheme}) a~modelem pozadí obsahující statickou část scény nebo obecně vše, co se dá považovat za statické pozadí vzhledem k~charakteristice pozorované scény. 
+
+Skládá se ze dvou hlavních kroků:
+ \begin{enumerate}
+    \item{Inicializace pozadí;}
+    \item{Aktualizace pozadí.}
+ \end{enumerate}
+ V~prvním kroku je vypočítán model pozadí, zatímco v~druhém kroku je tento model aktualizován, aby se přizpůsobil možným změnám ve scéně. \cite{openCV:MOG}
+Jeho chování a citlivost detekce lze ovlivnit nastavením parametrů a jeho novější verze v knihovně OpenCV disponuje i parametrem pro detekci stínů v obraze.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=12cm]{figures/mog_scheme}
+  \caption{Schéma metody substrakce pozadí \cite{openCV:MOG}}
+  \label{mog_scheme}
+\end{figure}
+
+Tento přístup, jak je výše zmíněno jen oddělí dynamické pozadí od statického, proto je vhodné získat tyto dynamické oblasti například konvexním obalem.
+
+\subsubsection*{Konvexní obal}
+Konvexní obal (\textit{Convex hull}), je metoda sloužící k~obalování pixelů v~prahovém obraze. Funkce používá Sklanskýho algoritmus \cite{openCV:sklansky} a~má složitost  $O(N \log(N))$.  Vstupem je množina bodů uložená v~matici nebo vektoru a~výstupem je vektor indexů nebo vektor bodů. Tyto body, které vytvářejí právě zmiňovaný konvexní obal se nakreslí do obrazu. \\
+Příklad konvexního obalu je na obrázku \ref{fig:convexHull}.
+\begin{figure}[H]
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{figures/Hull_Original}
+  \caption*{Před aplikací}
+  \label{fig:original}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{figures/Hull_Result}
+  \caption*{Po aplikaci}
+  \label{fig:result}
+\end{minipage}
+\caption{Aplikace konvexního obalu v~obraze}
+\label{fig:convexHull}
+\end{figure} 
 
 \subsection{Klasifikátory}
-\subsubsection*{SVM} % @TODO
+Klasifikace je obecný proces související s kategorizací objektů do určitých tříd. Termín klasifikátor někdy odkazuje také na matematickou funkci, implementovanou klasifikačním algoritmem.
+\subsubsection*{Support vector machines} % @TODO
 Support vector machines (SVM) jsou učební modely, které jsou velmi populární v oblasti strojového učení. Původně tato technika sloužila k vytvoření optimálního binárního klasifikátoru, později byla rozšířena do regresního a clustering problémů. Tato metoda je založena na tzv. jádrových algoritmech (kernel machines) s využitím podpůrných vektorů (support vectors).
 
 Primárním cílem SVM je nalézt nadrovinu, která optimálně rozděluje prostor příznaků tak, aby trénovací data náležela do konkrétních tříd, viz obrázek \ref{fig:svm}. Pokud mezera mezi oddělující nadrovinou a nejbližšími vektory příznaků z obou kategorií (v případě binárního klasifikátoru) je maximální, jedná se o optimální řešení. Vektory příznaků v blízkosti této nadroviny se nazývají podpůrné vektory, což znamená, že pozice ostatních vektorů nemá vliv na nadrovinu (rozhodovací funkce). 
@@ -351,3 +422,61 @@ Klasifikátory si mezi sebou předávají všechny informace o vstupním obraze.
 \textbf{AdaBoost}, neboli Adaptive Boosting byl představen v práci pánů Freund a Schapire \cite{adaboost}. Tento klasifikátor kombinuje slabé klasifikátory k vytvoření jednoho silného klasifikátoru. V kombinaci více klasifikátorů s výběrem trénovací sady v každé iteraci algoritmu a přidělení správné váhy na konci trénování, docílíme klasifikátoru s dobrou přesností. Klasifikátory v tomto řetězci, které mají klasifikační přesnost menší než 50\% jsou ohodnoceny zápornou vahou. Váhou nula jsou ohodnoceny klasifikátory, které mají přesnost 50\%. Pouze ty, co mají přesnost vyšší než 50\% jsou přínosné do této kombinace a můžeme hovořit o zesílení (boosting) klasifikace. 
 
 \subsection{Deep learning}
+Deep learning neboli hluboké učení, známe také jako hierarchické učení je sbírka algoritmů používané ve strojovém učení, používají se k modelování abstrakcí na vysoké úrovni v datech za pomocí modelových architektur, které se skládají s několika nelineárních transformací. Hluboké učení je součástí široké skupiny metod používané pro strojové učení a jsou založeny na učení reprezentace dat. Hluboké strukturované učení může být:
+\begin{itemize}
+  \item{\textbf{Kontrolované (s učitelem)} - všechna data jsou oštítkovaná, algoritmy se učí předpovídat výstup ze vstupních dat.}
+  \item{\textbf{Částečně kontrolované} - některá data jsou oštítkovaná, ale většina z nich není. Pří tomto přístupu učení lze využít kombinaci kontrolovaného a nekontrolovaného přístupu učení.}
+  \item{\textbf{Nekontrolované (bez učitele)} - data nejsou oštítkovaná, algoritmy se učí ze struktury vstupních dat.}
+\end{itemize}
+Hluboké učení je specifický přístup použitý k budování a učení neuronových sítí, které jsou považovány za velmi spolehlivé rozhodovací uzly. Jestliže vstupní data algoritmu procházejí řadou nelinearit a nelineárních transformací, tak tento algoritmus je považován za ``deep'' algoritmus. 
+
+Odstraňuje ruční identifikaci příznaků (obrázek \ref{fig:ml_vs_ann}) z dat a místo toho se spoléhá na jakýkoliv trénovací proces, která má za úkol zjistit užitečné vzory ve vstupních příkladech. To dělá neuronovou síť jednodušší a rychlejší a může přinést lepší výsledky než z oblasti umělé inteligence.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=.7\linewidth]{figures/ml_vs_ann}
+\caption{Hlavním rozdílem mezi strojovým a hlubokým učením je, že u strojového se příznaky musí extrahovat manuálně. \cite{fig:mlvsann}}
+\label{fig:ml_vs_ann}
+\end{figure}
+
+\subsubsection*{Neuronové sítě}
+Neuronové sítě (\textit{ANN} - Artificial Neural Network) jsou inspirované lidským mozkem, který je složený z různých vzájemně propojených vrstev neuronů, kde každý z nich přijímá informaci z předchozího, zpracovává tuto informaci a odesílá jí do dalšího, dokud není přijat konečný výstup. Může se jednat o oštítkovaný výstup, jestliže se jedná o kontrolované učení nebo o určitá kritéria v případě nekontrolovaného učení.
+
+Výhodou ANN nad ostatními strojovými učícími strategiemi, jako je například SVM je ten, že ANN je pravděpodobnostní klasifikátor umožňující klasifikaci více tříd. To znamená, že může zajistit více než jeden objekt v obraze, na rozdíl od SVM klasifikátoru, který je pravděpodobnostní binární klasifikátor. Příklad topologie neuronové sítě je na obrázku \ref{fig:ann}. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=.8\linewidth]{figures/ann.pdf}
+\caption{Neuronová síť je propojená skupinou uzlů, podobná síti neuronů v mozku.}
+\label{fig:ann}
+\end{figure}
+
+Typickým příkladem neuronové sítě je vícevrstvý perceptron (ANN-MLP). Tato neuronová síť se skládá minimálně ze tří vrstev uzlů (vstupní, výstupní a skrytou). Každý z uzlů je neuron, který využívá nelineární aktivační funkci s výjimkou vstupních uzlu:
+\begin{itemize}
+  \item{\textbf{Vstupní vrstva} - jedná se o pasivní vrstvu, která nemodifikuje data. Pouze získává data ze světa a pošle je do sítě. Počet uzlů v této vrstvě závisí na množství příznaků nebo deskriptivních informací, které chceme extrahovat z obrázku.}
+  \item{\textbf{Skrytá vrstva} - v této vrstvě probíhá transformace vstupů do něčeho, co může výstupní nebo jiná skrytá vrstva využít (za předpokladu, že existuje více skrytých vrstev). Počet uzlů je určen složitostí problému a přesnosti, které chceme přidat do sítě. }
+  \item{\textbf{Výstupní vrstva} - tato vrstva musí také vždy existovat v topologii, ovšem počet uzlů v tomto případě bude definován vybranou neuronovou sítí. Pokud detekujeme na obrázku pouze jeden objekt, bude mít vrstva jen jeden uzel (lineární regrese) a bude vracet hodnotu definující pravděpodobnost konkrétního objektu v rozmezí $[-1,1]$.}
+\end{itemize}
+
+Vysoká dimenze zvyšuje přesnost výsledků ovšem také zvýší výpočetní náklady. Dalším rozhodnutím je použití aktivační funkce pro skrytou vrstvu, která umožnuje přizpůsobit nelineární hypotézy a získat lepší detekci vzoru v závislosti na poskytnutých datech. Běžná volba aktivační funkce pro vícevrstvý perceptron je Sigmoid, ale může být použita funkce tanh nebo ReLU. Při hlubším pohledu na skrytou vrstvu můžeme říct, že všechny neurony chovají podobně. Hodnoty jsou získávány z předchozí vrstvy, sečteny s určitými váhami a hodnotou zkreslení.
+Suma těchto hodnot je transformována pomocí aktivační funkce, která se může také lišit pro různé neurony.
+
+
+\subsubsection*{Konvoluční neuronové sítě}
+Další možností je použití konvoluční neuronové sítě (\textit{CNN} - Convolution neural network). Tyto sítě jsou speciálním druhem vícevrstvých neuronových sítí a jsou navrženy tak, aby rozpoznaly vizuální vzory přímo z pixelu obrazu s minimálním předzpracováním. Mohou rozpoznat vzory s extrémní variabilitou (například ručně psané znaky) a odolnost k vůči deformacím a jednoduchým geometrickým transformacím. Název ``konvoluční neuronové sítě'' označují, že síť využívá matematickou operaci zvanou konvoluce alespoň v jedné jejich vrstvě.
+
+Nejznámnější a nejvíce používanou konvoluční neuronovu sítí jsou modely LeNet \cite{}.
+Hlavní kroky LeNet sítě jsou:
+\begin{itemize}
+  \item{\textbf{Konvoluce} - tyto vrstvy provádějí konvoluci nad vstupy do neuronové sítě.} %TODO
+  \item{\textbf{Nelinearita (ReLU)} - tato vrsta je použita po každé konvoluční vrstvě a jejim cílem je nahrazení všech negativních pixelů nulou ve výstupu této vrsty (příznaková mapa).}
+  \item{\textbf{Pooling/sub sampling} - ze vstupního obrazu vyextrahuje pouze zajímavé části pomocí některých matematických operací (max, avg, sum) a tím redukuje jeho dimenzionalitu}
+  \item{\textbf{Fully connected layer/klasifikace} - tato vrstva vychází z původních umělých neuronových sítí, konkrétně vícevrstvý perceptron. Tato vrstva je typicky umístěna na konci sítě a je propojena s klasifikační vstvou pro predikci.}
+\end{itemize}
+
+Tyto vrsty jsou ilustrované v obrázku \ref{fig:cnn}.
+\begin{figure}[H]
+\centering
+\includegraphics[width=1.\linewidth]{figures/cnn.pdf}
+\caption{Řetězec LeNet konvoluční neuronové sítě}
+\label{fig:cnn}
+\end{figure}

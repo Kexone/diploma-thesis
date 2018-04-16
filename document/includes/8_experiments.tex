@@ -19,7 +19,8 @@ Nalezení ideálního a spolehlivého klasifikátoru je klíčovou částí cel�
 
 Nejlepších výsledků jsem dosáhl s pozitivní trénovací sadou pana Dase \cite{sudipDas} a mou negativní sadou, která byla vytvořena z různých fotografií, které neobsahovaly žádnou osobu. Tyto sady jsou přiloženy v příloze této práce. Následujícím krokem je zvolení správných parametrů trénování klasifikátoru. Trénování klasifikátoru je velmi citlivé na tyto parametry, při změně některého z nich jen o tisícinu, můžeme dostat úplně jiný výsledek. Trénování klasifikátoru probíhalo dvakrát za sebou. Při druhém trénování se klasifikátor učil ze svých špatných detekcí, čemu se říká ``Bootstraping''. To znamená, že detekce se spustila na negativních vzorcích s tímto klasifikátorem a pokud detektor vrátil nějaký výsledek, byl zpět uložen do negativní sady a znovu natrénován, tento postup je ilustrován ve zdrojovém kódu \ref{src:double_train}.
 \newpage
-\begin{lstlisting}[label=src:double_train, language=c, caption=Bootstraping]
+
+\begin{lstlisting}[label=src:double_train, language=cpp, caption=Bootstraping]
 		cv::Size posSize = posSamplesLst[0].size();
 		cv::HOGDescriptor myHog;
 		myHog.winSize = posSize;
