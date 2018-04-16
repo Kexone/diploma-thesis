@@ -61,6 +61,7 @@ struct Settings
 	static bool hogMeanshiftGrouping;
 	static int hogGroupTreshold;
 	static double hogEps;
+	static int hogMinArea;
 
 	static double cropHogHitTreshold;
 	static cv::Size cropHogWinStride;
@@ -181,6 +182,8 @@ struct Settings
 							hogGroupTreshold = std::stoi(value.c_str());
 						else if (key.compare("hogEps") == 0)
 							hogEps = std::stod(value.c_str());
+						else if (key.compare("hogMinArea") == 0)
+							hogMinArea = std::stoi(value.c_str());
 						else if (key.compare("cropHogHitTreshold") == 0)
 							cropHogHitTreshold = std::stod(value.c_str());
 						else if (key.compare("cropHogWinStride") == 0) {

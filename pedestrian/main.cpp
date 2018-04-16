@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 		"{ settings  st       |   data/settings/settings.txt   |  file with settings for app               }"
 		"{ type  t            |                                |  type of alg (train, test)                }"
 		"{ extract e          |                                |  extract ROI from videostream             }"
-		"{ vizualize          |               true                |  show result in window                    }"
+		"{ vizualize          |               0                |  show result in window                    }"
 		"{ verbose            |               0                |  print information about train etc.       }"
 		"{ createSample cs    |               0                |  creating samples from image              }"
 		;
@@ -358,15 +358,15 @@ void mainFun::video(cv::CommandLineParser parser)
 	std::string videos[] = { "video/cctv4.mov" };
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
-		for (auto conf : sudisConfs)
+		for (auto conf : bigConfs)
 			{
 			Settings::getSettings("data/settings/settings2.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //top small
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
-		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 1); 
-		//	Pipeline *pl = new Pipeline(path + conf, 1);
+		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
+			Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml", 1);  //big ?
+		//	Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/" + conf, 1);
 			//Pipeline *pl = new Pipeline("default", 2);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
@@ -381,7 +381,7 @@ void mainFun::video(cv::CommandLineParser parser)
 			auto startTime = std::chrono::high_resolution_clock::now();
 			//clock_t timer = clock();	
 			//pl->execute(parser.get<std::string>("video"));
-			pl->execute(vid);
+	//		pl->execute(vid);
 			auto endTime = std::chrono::high_resolution_clock::now();
 			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
 			//timer = clock() - timer;
@@ -479,6 +479,7 @@ double Settings::hogFinalTreshold = 0.95;
 bool Settings::hogMeanshiftGrouping = 0;
 int Settings::hogGroupTreshold = 2;
 double Settings::hogEps = 0.8;
+int Settings::hogMinArea = 4999;
 double Settings::cropHogHitTreshold = 0.878;
 cv::Size Settings::cropHogWinStride = cv::Size(4, 4);
 cv::Size Settings::cropHogPadding = cv::Size(0, 0);
