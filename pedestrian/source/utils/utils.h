@@ -60,12 +60,14 @@ public:
 	*
 	* @param r list of dlib rectangles
 	*/
-	static std::vector < cv::Rect > vecDlibRectangle2VecOpenCV(std::vector< dlib::rectangle > r)
+	static std::vector < cv::Rect > vecDlibRectangle2VecOpenCV(std::vector< dlib::rectangle > r, int minRectSize = 0)
 	{
 		std::vector < cv::Rect > rects;
-		for (int i = 0; i < r.size(); i++)
-			rects.push_back(cv::Rect(cv::Point2i(r[i].left(), r[i].top()), cv::Point2i(r[i].right() + 1, r[i].bottom() + 1)));
-
+		for (int i = 0; i < r.size(); i++) {
+			cv::Rect rect = cv::Rect(cv::Point2i(r[i].left(), r[i].top()), cv::Point2i(r[i].right() + 1, r[i].bottom() + 1));
+			if(rect.area() > minRectSize)
+				rects.push_back(rect);
+		}
 		return rects;
 	}
 

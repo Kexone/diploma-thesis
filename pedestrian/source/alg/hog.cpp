@@ -52,8 +52,10 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
 #if MY_DEBUG
-	//	cv::imshow("test", test);
+		//	cv::imshow("test", test);
 #endif
+		if (Settings::hogBlurFilter.width != 0)
+			cv::blur(test, test, Settings::hogBlurFilter);
 		_hog.detectMultiScale(
 			test,								// img
 			found,								// foundLocation
@@ -73,7 +75,18 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		//float confidence = 1.0 / (1.0 + exp(-predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT)));
 		//std::cout << confidence << std::endl;
 	//	std::cout << 1.0f / (1.0f + std::exp(predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT))) << std::endl;
-	
+
+		if (found.size() > 1) {
+			for (size_t i = 0; i < found.size(); i++) {
+				for (size_t j = i; j < found.size(); j++) {
+					if ((found[i] & found[j]).area() > 1500) {
+						found.erase(found.begin() + j);
+						break;
+					}
+				}
+			}
+		}
+
 		for (size_t i = 0; i< found.size(); i++)	{
 #if BAD_SAMPLES
 			std::random_device rd;
@@ -97,7 +110,8 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	assert(!frame.empty());
 	rects.clear();
-	//cv::blur(frame, frame, cv::Point(6,6)); // @TODO add to settings
+	if(Settings::hogBlurFilter.width !=0)
+		cv::blur(frame, frame, Settings::hogBlurFilter);
 	//cv::medianBlur(frame, frame, 3);
 	_hog.detectMultiScale(
 		frame,							// img

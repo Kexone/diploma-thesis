@@ -163,7 +163,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\alg\cascadeClass.cpp" />
     <ClCompile Include="source\alg\convexhull.cpp" />
-    <ClCompile Include="source\alg\fhog.cpp" />
+    <ClCompile Include="source\alg\myFhog.cpp" />
     <ClCompile Include="source\alg\hog.cpp" />
     <ClCompile Include="source\alg\mog.cpp" />
     <ClCompile Include="source\media\videostream.cpp" />
@@ -183,7 +183,7 @@
     <ClInclude Include="source\3dparty\de\DifferentialEvolution.h" />
     <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
-    <ClInclude Include="source\alg\fhog.h" />
+    <ClInclude Include="source\alg\myFhog.h" />
     <ClInclude Include="source\alg\hog.h" />
     <ClInclude Include="source\alg\mog.h" />
     <ClInclude Include="source\media\croppedimage.h" />

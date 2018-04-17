@@ -13,6 +13,7 @@ public:
 private:
 	std::vector < std::string > _svms2Test;
 	std::vector < std::string > _videos2Test;
+	std::vector < std::string > _settings;
 	void saveResults(std::ofstream &file, std::map<std::string, int> results, std::time_t time, bool print = false);
 };
 

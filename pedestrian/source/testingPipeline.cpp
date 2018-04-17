@@ -7,7 +7,7 @@ TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 {
 	std::ifstream file;
 	file.open(svmsPath);
-	std::string line;
+	std::string line,sett;
 	if (file.is_open()) {
 		while (!file.eof()) {
 			line = "";
@@ -22,9 +22,11 @@ TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 	if (file.is_open()) {
 		while (!file.eof()) {
 			line = "";
-			file >> line;
-			if(!line.empty())
+			file >> line >> sett;
+			if (!line.empty()) {
 				_videos2Test.push_back(line);
+				_settings.push_back(sett);
+			}
 		}
 	}
 	file.close();	
@@ -38,19 +40,19 @@ void TestingPipeline::execute()
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
 	std::string algNames[] = { "HOG", "MOG + HOG", "FHOG", "MOG + FHOG" };
-	for (auto video : _videos2Test) {
+	for (int vid = 0; vid < _videos2Test.size(); vid++) {
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 		for (size_t i = 0; i < _svms2Test.size(); i++) { //SELECT ALG TYPE
 			for (int k = 0; k < 1; k++) { // MOG OR NOT
 				std::map<std::string, int> results;
 
-				Settings::getSettings("data/settings/settings1.txt");
+				Settings::getSettings(_settings[vid]);
 				Pipeline pip = Pipeline(_svms2Test[i], i + k + 1);
 
-				Utils::setEvaluationFiles(video);
+				Utils::setEvaluationFiles(_videos2Test[vid]);
 				std::cout << algNames[i + k] << std::endl;
 				auto startTime = std::chrono::high_resolution_clock::now();
-				pip.execute(video);
+				pip.execute(_videos2Test[vid]);
 				auto endTime = std::chrono::high_resolution_clock::now();
 				double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 				
@@ -60,7 +62,7 @@ void TestingPipeline::execute()
 			}
 		}
 		fs << std::endl << std::endl;
-		fs << video << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
+		fs << _videos2Test[vid] << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
 			"s Total frames:" << VideoStream::totalFrames << " Resolution:" << VideoStream::vidRes << "WxH Show frames:" << showFrames << std::endl << std::endl;
 		fs << std::string("_", 20) << std::endl << std::endl;
 	}

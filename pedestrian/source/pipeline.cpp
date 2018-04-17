@@ -20,7 +20,7 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
 	else if (_typeAlgorithm == PURE_FHOG || _typeAlgorithm == MIXTURED_FHOG)
-		_fhog = new FHog("data.svm");
+		_fhog = new MyFHog("data.svm");
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE)

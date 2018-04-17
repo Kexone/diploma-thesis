@@ -67,8 +67,10 @@ void TrainFHog::throwInvalidBoxErrorMessage( const std::string& dataset_filename
 void TrainFHog::train() try
 {
 
-	const std::string parser = "dataset/training.xml";
-	const std::string samplesPath = "dataset/imgSamples.txt";
+	//const std::string parser = "dataset/training.xml";
+	//const std::string samplesPath = "dataset/imgSamples.txt";
+	const std::string parser = "D:/dlib/tools/imglab/build/Release/training.xml";
+	//const std::string samplesPath = "dataset/imgSamples.txt";
 
 	dlib::array<dlib::array2d<unsigned char> > images;
 	
@@ -99,7 +101,7 @@ void TrainFHog::train() try
 
 
 	trainer.be_verbose();
-	trainer.set_c(0.15625);    // 0.15625
+	trainer.set_c(0.1);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
 	
@@ -131,10 +133,10 @@ catch (std::exception e)
 void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 {
 	typedef dlib::matrix < double, 1980, 1 > sample_type;
-	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
+	typedef dlib::linear_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
 	std::vector < double > flLabels;
-	dlib::svm_c_trainer < kernel_type > trainer;
+	dlib::svr_linear_trainer< kernel_type > trainer;
 
 	for (int y = 0; y < trainMat.rows; y++)
 	{
@@ -158,16 +160,21 @@ void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 	pfunct_type learned_pfunct;
 	//trainer.set_kernel(kernel_type(0.15625));
 	//trainer.set_nu(0.15625);
-//	trainer.set_epsilon(0.001);
-	//trainer.
-	trainer.set_c_class1(3.16228);
-	trainer.set_c_class2(3.16228);
-	trainer.set_kernel(kernel_type(0.0316228));
+	trainer.set_epsilon(0.001);
+	trainer.set_c(0.01054);
+//	trainer.set_c_class1(3.16228);
+//	trainer.set_c_class2(3.16228);
+	//trainer.set_kernel(kernel_type(0.0316228));
+//	trainer.set_kernel();
+	//learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
+	auto trained = trainer.train(samples, flLabels);
+	dlib::serialize("trained.dat") << trained;
+	dlib::serialize("traind.svm") << trained;
+//	dlib::serialize("pfunct.svm") << learned_pfunct.function.decision_funct;
+//	dlib::serialize("pfunct.dat") << learned_pfunct.function.decision_funct;
+	std::cout << "\nnumber of support vectors in our learned_function is "
+		<< learned_pfunct.function.decision_funct.basis_vectors.size() << std::endl;
 
-//	learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
-	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
-//	dlib::serialize(_namefile) << learned_pfunct;
-//	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
 	std::cout << "DONE" << std::endl;
 }
 catch (std::exception& e)

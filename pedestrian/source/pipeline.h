@@ -6,7 +6,7 @@
 
 #include "alg/mog.h"
 #include "alg/hog.h"
-#include "alg/fhog.h"
+#include "alg/myFhog.h"
 #include "alg/convexhull.h"
 #include "media/croppedimage.h"
 #include "media/videostream.h"
@@ -52,7 +52,7 @@ public:
 private:
     Mog _mog;
 	Hog _hog;
-	FHog *_fhog;
+	MyFHog *_fhog;
 	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;
