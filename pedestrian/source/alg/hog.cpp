@@ -52,10 +52,10 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
 #if MY_DEBUG
-		//	cv::imshow("test", test);
+			cv::imshow("test", test);
 #endif
-		if (Settings::hogBlurFilter.width != 0)
-			cv::blur(test, test, Settings::hogBlurFilter);
+			if (Settings::cropHogBlurFilter.width != 0)
+			cv::blur(test, test, Settings::cropHogBlurFilter);
 		_hog.detectMultiScale(
 			test,								// img
 			found,								// foundLocation

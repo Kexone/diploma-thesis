@@ -482,6 +482,7 @@ bool Settings::hogMeanshiftGrouping = 0;
 int Settings::hogGroupTreshold = 2;
 double Settings::hogEps = 0.8;
 int Settings::hogMinArea = 4999;
+cv::Size Settings::cropHogBlurFilter = cv::Size(0, 0);
 double Settings::cropHogHitTreshold = 0.878;
 cv::Size Settings::cropHogWinStride = cv::Size(4, 4);
 cv::Size Settings::cropHogPadding = cv::Size(0, 0);

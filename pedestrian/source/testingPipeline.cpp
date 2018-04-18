@@ -6,26 +6,18 @@
 TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
 {
 	std::ifstream file;
-	file.open(svmsPath);
-	std::string line,sett;
-	if (file.is_open()) {
-		while (!file.eof()) {
-			line = "";
-			file >> line;
-			if (!line.empty())
-				_svms2Test.push_back(line);
-		}
-	}
-	file.close();
-
+	std::string video,sett, svm;
+	int typeAlg;
 	file.open(videosPath);
 	if (file.is_open()) {
 		while (!file.eof()) {
-			line = "";
-			file >> line >> sett;
-			if (!line.empty()) {
-				_videos2Test.push_back(line);
+			video = "";
+			file >> video >> sett >> svm >> typeAlg ;
+			if (!video.empty()) {
+				_videos2Test.push_back(video);
 				_settings.push_back(sett);
+				_typeAlg.push_back(typeAlg);
+				_svms2Test.push_back(svm);
 			}
 		}
 	}
@@ -40,29 +32,25 @@ void TestingPipeline::execute()
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
 	std::string algNames[] = { "HOG", "MOG + HOG", "FHOG", "MOG + FHOG" };
-	for (int vid = 0; vid < _videos2Test.size(); vid++) {
+	for (int i = 0; i < _videos2Test.size(); i++) {
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
-		for (size_t i = 0; i < _svms2Test.size(); i++) { //SELECT ALG TYPE
-			for (int k = 0; k < 1; k++) { // MOG OR NOT
 				std::map<std::string, int> results;
 
-				Settings::getSettings(_settings[vid]);
-				Pipeline pip = Pipeline(_svms2Test[i], i + k + 1);
+				Settings::getSettings(_settings[i]);
+				Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 
-				Utils::setEvaluationFiles(_videos2Test[vid]);
-				std::cout << algNames[i + k] << std::endl;
+				Utils::setEvaluationFiles(_videos2Test[i]);
+				std::cout << algNames[i] << std::endl;
 				auto startTime = std::chrono::high_resolution_clock::now();
-				pip.execute(_videos2Test[vid]);
+				pip.execute(_videos2Test[i]);
 				auto endTime = std::chrono::high_resolution_clock::now();
 				double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 				
 				pip.evaluate(results);
-				fs << algNames[i + k] << " & ";
+				fs << algNames[i] << " & ";
 				saveResults(fs, results, time);
-			}
-		}
 		fs << std::endl << std::endl;
-		fs << _videos2Test[vid] << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
+		fs << _videos2Test[i] << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
 			"s Total frames:" << VideoStream::totalFrames << " Resolution:" << VideoStream::vidRes << "WxH Show frames:" << showFrames << std::endl << std::endl;
 		fs << std::string("_", 20) << std::endl << std::endl;
 	}

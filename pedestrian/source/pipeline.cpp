@@ -175,7 +175,7 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 	//endTime = std::chrono::high_resolution_clock::now();
 	//time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 	//std::cout << "CH  took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
-	//cv::imshow("mog", frame);
+	cv::imshow("mog", frame);
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
@@ -191,7 +191,8 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 		//std::cout << "HOG took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
 		_distances[cFrame] = distances;
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
-		draw2mat(croppedImages, foundRect);
+		if (Settings::showVideoFrames)
+			draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -206,7 +207,8 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 	std::vector < cv::Rect > foundRect;
 
 	_hog.detect(frame, foundRect);
-	draw2mat(foundRect);
+	if (Settings::showVideoFrames)
+		draw2mat(foundRect);
 	if(!foundRect.empty())
 		_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
@@ -232,7 +234,8 @@ void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 
 		_fhog->detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
-		draw2mat(croppedImages, foundRect);
+		if (Settings::showVideoFrames)
+			draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -247,7 +250,8 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 	std::vector < cv::Rect > foundRect;
 
 	_fhog->detect(frame, foundRect);
-	draw2mat(foundRect);
+	if (Settings::showVideoFrames)
+		draw2mat(foundRect);
 	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
@@ -258,7 +262,8 @@ void Pipeline::processStandaloneImage(cv::Mat &frame)
 	_localFrame = frame.clone();
 	std::vector < cv::Rect  > foundRect;
 	_hog.detect(frame, foundRect); 
-	draw2mat(foundRect);
+	if (Settings::showVideoFrames)
+		draw2mat(foundRect);
 
 	if(Settings::showVideoFrames)
 		cv::imshow("Result", _localFrame);
@@ -273,7 +278,8 @@ void Pipeline::pureCascade(cv::Mat &frame, int cFrame)
 	std::vector < cv::Rect > foundRect;
 
 	_cc.detect(frame, foundRect);
-	draw2mat(foundRect);
+	if (Settings::showVideoFrames)
+		draw2mat(foundRect);
 	_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
@@ -298,7 +304,8 @@ void Pipeline::mogAndCascade(cv::Mat &frame, int cFrame)
 
 		_cc.detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
-		draw2mat(croppedImages, foundRect);
+		if (Settings::showVideoFrames)
+			draw2mat(croppedImages, foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -327,6 +334,8 @@ void Pipeline::dilateErode(cv::Mat& frame)
 
 void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
 {
+	if (!trained[test].empty())
+		cv::rectangle(_localFrame, trained[test][0], cv::Scalar(255, 0, 0), 3);
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::rectangle(_localFrame, rect[j][i], cv::Scalar(0, 255, 0), 3);
@@ -431,20 +440,17 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 		falsePos += test[i].size();
 
 	for (int i = 0; i < trained.size(); i++) {
-	//	for (int j = 0; j < test.size(); j++) {
-	//		if (i == j)
-				for (int ii = 0; ii < trained[i].size(); ii++) {
-					bool found = false;
-					for (int jj = 0; jj < test[i].size(); jj++) {
-						if (!trained[i].empty() && (trained[i][ii] & test[i][jj]).area() >(trained[i][ii].area() / 2)) {
-							truePos++; // pedestrian found
-							found = true;
-							trained[i].erase(trained[i].begin() + ii);
-						}
-					}
-					if (!found) falseNeg++;
+		for (int ii = 0; ii < trained[i].size(); ii++) {
+			bool found = false;
+			for (int jj = 0; jj < test[i].size(); jj++) {
+				if (!trained[i].empty() && (trained[i][ii] & test[i][jj]).area() > (trained[i][ii].area() / 2)) {
+					truePos++; // pedestrian found
+					found = true;
+					trained[i].erase(trained[i].begin() + ii);
 				}
-//		}
+			}
+			if (!found) falseNeg++;
+		}
 	}
 	falsePos -= truePos;
 

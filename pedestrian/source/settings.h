@@ -63,6 +63,7 @@ struct Settings
 	static double hogEps;
 	static int hogMinArea;
 
+	static cv::Size cropHogBlurFilter;
 	static double cropHogHitTreshold;
 	static cv::Size cropHogWinStride;
 	static cv::Size cropHogPadding;
@@ -184,6 +185,13 @@ struct Settings
 							hogEps = std::stod(value.c_str());
 						else if (key.compare("hogMinArea") == 0)
 							hogMinArea = std::stoi(value.c_str());
+						else if (key.compare("cropHogBlurFilter") == 0) {
+							int value1, value2;
+							auto commaPos = value.find(',');
+							value1 = stoi(value.substr(1, commaPos - 1));
+							value2 = stoi(value.substr(commaPos + 1, value.length() - 1));
+							cropHogBlurFilter = cv::Size(value1, value2);
+						}
 						else if (key.compare("cropHogHitTreshold") == 0)
 							cropHogHitTreshold = std::stod(value.c_str());
 						else if (key.compare("cropHogWinStride") == 0) {
