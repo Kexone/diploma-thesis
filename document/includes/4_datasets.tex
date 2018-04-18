@@ -1,16 +1,16 @@
-\section{Dataset} % @TODO 
+\section{Datasety chodců} 
 V průběhu let bylo shromážděno nespočet trénovacích sad pro chodce, které jsou veřejné na internetu. Všechny mají rozdílné charakteristiky, slabé a silné stránky. 
 
-Sada INRIA \cite{} patří mezi nejstarší sady vůbec. Ačkoliv obsahuje poměrně málo vzorků, přináší díky tomu vysokou kvalitu anotací chodců v různých prostředích, což je většinou hlavní důvod, proč je tato sada vybrána pro trénování. Na rozdíl sady ETH \cite{} a TUD-Brussels \cite{} patří mezi středně velké video vzorky. Další známou trénovací sadou je Daimler \cite{}, kterou nelze použít pro všechny metodiky, poněvadž poskytuje vzorku v odstínech šedi. Sady ETH, KITTI \cite{} a Daimler-Stereo \cite{} poskytují stereofonní informace. Na obrázku \ref{fig:daimler_stereo} je ukázka tréninkové a testovací sady Daimler-Stereo. 
+Sada INRIA \cite{inria} patří mezi nejstarší sady vůbec. Ačkoliv obsahuje poměrně málo vzorků, přináší díky tomu vysokou kvalitu anotací chodců v různých prostředích, což je většinou hlavní důvod, proč je tato sada vybrána pro trénování. Na rozdíl sady ETH \cite{eth} a TUD-Brussels \cite{tudbrussels} patří mezi středně velké video vzorky. Další známou trénovací sadou je Daimler \cite{daimler}, kterou nelze použít pro všechny metodiky, poněvadž poskytuje vzorku v odstínech šedi. Sady ETH, KITTI \cite{kitti} a Daimler-Stereo \cite{daimlerstereo} poskytují stereofonní informace. Na obrázku \ref{fig:daimler_stereo} je ukázka tréninkové a testovací sady Daimler-Stereo. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=16cm]{figures/daimler_stereo}
-\caption{Ukázka trénovací a testovací sady Daimler-Stereo \cite{}}
+\caption{Ukázka trénovací a testovací sady Daimler-Stereo \cite{daimlerstereo}}
 \label{fig:daimler_stereo}
 \end{figure}
 
-V dnešní době převládají Caltech-USA \cite{} a KITTI jako trénovací sady pro chodce. Obě poskytují poměrně velký počet vzorků. Caltech-USA vyniká počtem možným využitím a obsahuje více než 2300 jedinečných anotací chodců. KITTI zase předčí svou testovací sadou, která je více rozmanitější, ale na druhou stranu se tato sada nepoužívá tak často. V roce 2014 vznikl projekt PETA (Pedestrian Attribute Recognition At Far Distance), tento projekt kombinuje mnoho trénovacích sad a vytváří tak jednu velkou a rozmanitou sadu, která usnadnuje učení robustních detektorů s dobrých výkonem.
+V dnešní době převládají Caltech-USA \cite{caltech} a KITTI jako trénovací sady pro chodce. Obě poskytují poměrně velký počet vzorků. Caltech-USA vyniká počtem možným využitím a obsahuje více než 2300 jedinečných anotací chodců. KITTI zase předčí svou testovací sadou, která je více rozmanitější, ale na druhou stranu se tato sada nepoužívá tak často. V roce 2014 vznikl projekt PETA (Pedestrian Attribute dataset)\cite{peta}, tento projekt kombinuje mnoho trénovacích sad a vytváří tak jednu velkou a rozmanitou sadu, která usnadnuje učení robustních detektorů s dobrých výkonem.
 
-V této práci používám převážně trénovací sadu CUHK01 \cite{}, sadu pana Sudip Das \cite{sudipdas} a jako negativní sadu Daimler \cite{} a vzorky vytvořené z fotografií.
+V této práci používám převážně trénovací sadu CUHK01 \cite{cuhk}, sadu pana Sudip Das \cite{sudipdas} a jako negativní sadu Daimler-Mono \cite{daimler}. Tato negativní sada se vyskytuje v podobě fotografií zachycené kamerou při jezdí autem. 
 

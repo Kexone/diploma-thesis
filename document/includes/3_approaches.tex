@@ -1,4 +1,4 @@
-\section{Metody detekce}
+\section{Metody detekce chodců}
 V této kapitole budou popsány nejpoužívanější a nejznámější detekční metodiky. Všechny tyto metodiky jsou dostupné minimálně v jedné knihovně, použité v této práci.  
 
 \subsection{Metody založené na příznacích}
@@ -23,7 +23,7 @@ kde:
 \end{itemize}
 
 Druhém kroku dochází k vytvoření histogramu v každé buňce. Každý pixel v buňce má svou váhu, který se podílí na vytvoření orientovaného histogramu, založeného na hodnotách nalezených ve výpočtu gradientu. Samotné buňky jsou rovnoměrně rozloženy do 9 kanálů (binů) po \ang{20}. Pokud buňka vyjde na pomezí úhlu, přičte se její magnituda do obou těchto binů.
-Tyto buňky spojíme do větších propojených bloků z důvodu normalizace osvětlení a kontrastu. Pro chodce se používá L2-norm normalizace \eqref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R-HOG) a kruhové bloky (C-HOG), viz obrázek \ref{variants_block}.  
+Tyto buňky spojíme do větších propojených bloků z důvodu normalizace osvětlení a kontrastu. Pro chodce se používá L2-norm normalizace, dle vztahu \eqref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R-HOG) a kruhové bloky (C-HOG), viz obrázek \ref{variants_block}.  
 \begin{equation}
 \centering
  \label{eq:normHog}
@@ -134,7 +134,7 @@ Pro identifikaci lidských postav se používá rozšířená sada vlnek, tzv. H
 \begin{figure}[H]
 \centering
 \includegraphics[width=.6\linewidth]{figures/haar_like}
-\caption{Vybrané prototypy Haar-like příznaků}
+\caption{Vybrané prototypy Haar-like příznaků \cite{haar:like}}
 \label{fig:haarlike}
 \end{figure}
 
@@ -208,7 +208,7 @@ Výhoda této metody je její rychlý a snadný výpočet a odolnost vůči růz
   \includegraphics[width=.9\linewidth]{figures/lbp_edge}
   \caption*{Edge}
 \end{minipage}
-\caption{Lokální okolí LBP metody}
+\caption{Lokální okolí LBP metody \cite{lbp:orig}}
 \label{fig:lbpvzory}
 \end{figure}
 
@@ -242,7 +242,7 @@ Tato metoda využívá Histogram orientovaných gradientů a LUV kanály obrazů
   \includegraphics[width=.7\linewidth]{figures/uv_chroma}
   \caption*{Sytost barev (UV)}
 \end{minipage}
-\caption{Rozdíl mezi RGB a LUV kanály. Obrázek je obsažen v trénovací sadě SudipDas. \cite{sudipDas}}
+\caption{Rozdíl mezi RGB a LUV kanály. Obrázek je obsažen v trénovací sadě SudipDas. \cite{sudipdas}}
 \label{fig:luv}
 \end{figure}
 
@@ -440,7 +440,7 @@ Odstraňuje ruční identifikaci příznaků (obrázek \ref{fig:ml_vs_ann}) z da
 \end{figure}
 
 \subsubsection*{Neuronové sítě}
-Neuronové sítě (\textit{ANN} - Artificial Neural Network) jsou inspirované lidským mozkem, který je složený z různých vzájemně propojených vrstev neuronů, kde každý z nich přijímá informaci z předchozího, zpracovává tuto informaci a odesílá jí do dalšího, dokud není přijat konečný výstup. Může se jednat o oštítkovaný výstup, jestliže se jedná o kontrolované učení nebo o určitá kritéria v případě nekontrolovaného učení.
+Neuronové sítě (\textit{ANN} - Artificial Neural Network) jsou inspirované lidským mozkem \cite{ann}, který je složený z různých vzájemně propojených vrstev neuronů, kde každý z nich přijímá informaci z předchozího, zpracovává tuto informaci a odesílá jí do dalšího, dokud není přijat konečný výstup. Může se jednat o oštítkovaný výstup, jestliže se jedná o kontrolované učení nebo o určitá kritéria v případě nekontrolovaného učení.
 
 Výhodou ANN nad ostatními strojovými učícími strategiemi, jako je například SVM je ten, že ANN je pravděpodobnostní klasifikátor umožňující klasifikaci více tříd. To znamená, že může zajistit více než jeden objekt v obraze, na rozdíl od SVM klasifikátoru, který je pravděpodobnostní binární klasifikátor. Příklad topologie neuronové sítě je na obrázku \ref{fig:ann}. 
 \begin{figure}[H]
@@ -462,12 +462,12 @@ Suma těchto hodnot je transformována pomocí aktivační funkce, která se mů
 
 
 \subsubsection*{Konvoluční neuronové sítě}
-Další možností je použití konvoluční neuronové sítě (\textit{CNN} - Convolution neural network). Tyto sítě jsou speciálním druhem vícevrstvých neuronových sítí a jsou navrženy tak, aby rozpoznaly vizuální vzory přímo z pixelu obrazu s minimálním předzpracováním. Mohou rozpoznat vzory s extrémní variabilitou (například ručně psané znaky) a odolnost k vůči deformacím a jednoduchým geometrickým transformacím. Název ``konvoluční neuronové sítě'' označují, že síť využívá matematickou operaci zvanou konvoluce alespoň v jedné jejich vrstvě.
+Další možností je použití konvoluční neuronové sítě (\textit{CNN} - Convolution neural network) \cite{lenet}. Tyto sítě jsou speciálním druhem vícevrstvých neuronových sítí a jsou navrženy tak, aby rozpoznaly vizuální vzory přímo z pixelu obrazu s minimálním předzpracováním. Mohou rozpoznat vzory s extrémní variabilitou (například ručně psané znaky) a odolnost k vůči deformacím a jednoduchým geometrickým transformacím. Název ``konvoluční neuronové sítě'' označují, že síť využívá matematickou operaci zvanou konvoluce alespoň v jedné jejich vrstvě.
 
 Nejznámnější a nejvíce používanou konvoluční neuronovu sítí jsou modely LeNet \cite{}.
 Hlavní kroky LeNet sítě jsou:
 \begin{itemize}
-  \item{\textbf{Konvoluce} - tyto vrstvy provádějí konvoluci nad vstupy do neuronové sítě.} %TODO
+  \item{\textbf{Konvoluce} - tyto vrstvy provádějí konvoluci nad vstupy do neuronové sítě.}
   \item{\textbf{Nelinearita (ReLU)} - tato vrsta je použita po každé konvoluční vrstvě a jejim cílem je nahrazení všech negativních pixelů nulou ve výstupu této vrsty (příznaková mapa).}
   \item{\textbf{Pooling/sub sampling} - ze vstupního obrazu vyextrahuje pouze zajímavé části pomocí některých matematických operací (max, avg, sum) a tím redukuje jeho dimenzionalitu}
   \item{\textbf{Fully connected layer/klasifikace} - tato vrstva vychází z původních umělých neuronových sítí, konkrétně vícevrstvý perceptron. Tato vrstva je typicky umístěna na konci sítě a je propojena s klasifikační vstvou pro predikci.}
@@ -477,6 +477,6 @@ Tyto vrsty jsou ilustrované v obrázku \ref{fig:cnn}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.\linewidth]{figures/cnn.pdf}
-\caption{Řetězec LeNet konvoluční neuronové sítě}
+\caption{Řetězec LeNet konvoluční neuronové sítě \cite{lenet}}
 \label{fig:cnn}
 \end{figure}
