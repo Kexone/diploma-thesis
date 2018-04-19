@@ -1,14 +1,15 @@
-﻿#include "testingPipeline.h"
+﻿#include "stdafx.h"
+#include "testingPipeline.h"
 #include "utils\utils.h"
 #include <chrono>
 #include <ctime>
 
-TestingPipeline::TestingPipeline(std::string svmsPath, std::string videosPath)
+TestingPipeline::TestingPipeline(std::string testingFile)
 {
 	std::ifstream file;
 	std::string video,sett, svm;
 	int typeAlg;
-	file.open(videosPath);
+	file.open(testingFile);
 	if (file.is_open()) {
 		while (!file.eof()) {
 			video = "";
@@ -31,11 +32,11 @@ void TestingPipeline::execute()
 	std::time_t currTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
-	std::string algNames[] = { "HOG", "MOG + HOG", "FHOG", "MOG + FHOG" };
-	for (int i = 0; i < _videos2Test.size(); i++) {
+	std::string algNames[] = { "HOG", "MOG + HOG", "HOG", "MOG + HOG","HOG", "MOG + HOG" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
+	for (int i = 0; i < _videos2Test.size(); i++) {
 				std::map<std::string, int> results;
-
+				std::cout << _videos2Test[i] << std::endl;
 				Settings::getSettings(_settings[i]);
 				Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 
@@ -49,10 +50,6 @@ void TestingPipeline::execute()
 				pip.evaluate(results);
 				fs << algNames[i] << " & ";
 				saveResults(fs, results, time);
-		fs << std::endl << std::endl;
-		fs << _videos2Test[i] << " FPS:" << VideoStream::fps << " Video duration:" << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) <<
-			"s Total frames:" << VideoStream::totalFrames << " Resolution:" << VideoStream::vidRes << "WxH Show frames:" << showFrames << std::endl << std::endl;
-		fs << std::string("_", 20) << std::endl << std::endl;
 	}
 }
 

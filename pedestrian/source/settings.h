@@ -92,7 +92,8 @@ struct Settings
 						else if (key.compare("mogThresh") == 0)
 							mogThresh = std::stod(value.c_str());
 						else if (key.compare("mogDetectShadows") == 0)
-							mogDetectShadows = std::stoi(value.c_str());
+							mogDetectShadows = std::stoi(value.c_str()) == 1 ? true : false;
+						//mogDetectShadows = std::stoi(value.c_str());
 						else if (key.compare("cvxHullExtSize") == 0)
 							cvxHullExtSize = std::stoi(value.c_str());
 						else if (key.compare("cvxHullExtTimes") == 0)

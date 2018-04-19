@@ -7,7 +7,7 @@ class TestingPipeline
 {
 public:
 	TestingPipeline() {};
-	TestingPipeline(std::string svmsPath, std::string videosPath);
+	TestingPipeline(std::string testingFile);
 	void execute();
 
 private:

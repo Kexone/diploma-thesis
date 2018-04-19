@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "myFhog.h"
 #include "../utils/utils.h"
 
@@ -18,7 +19,8 @@ MyFHog::MyFHog(std::string classPath)
 	//detector = dlib::object_detector<image_scanner_type>(scanner, detector.get_overlap_tester(), detector.get_w());
 	//dlib::deserialize("pedDet.svm") >> scanner;
 	//detector.scanner = scanner;
-	dlib::deserialize("trained.svm") >> detector;
+	dlib::deserialize(classPath) >> detector;
+	
 
 
 }
@@ -31,8 +33,8 @@ void MyFHog::detect(std::vector<CroppedImage>& frame, std::vector< std::vector <
 	std::vector< std::vector < cv::Rect  > > dets (frame.size()) ;
 	for (int i = 0; i < frame.size(); i++) {
 		cv::Mat trz = frame[i].croppedImg;
-		dlib::array2d < dlib::bgr_pixel > img;
-		dlib::cv_image<dlib::bgr_pixel> temp(trz);
+		dlib::array2d < pixel_type > img;
+		dlib::cv_image<pixel_type> temp(trz);
 		dlib::assign_image(img, temp);
 //		win.set_image(img);
 //		win.add_overlay(detector(img), dlib::rgb_pixel(0, 255, 0));
@@ -43,7 +45,7 @@ void MyFHog::detect(std::vector<CroppedImage>& frame, std::vector< std::vector <
 		//extract_fhog_features(img, hog);
 		//	win.set_image(hog(img));
 		//detector.detect()
-		 //dets[i] = Utils::vecDlibRectangle2VecOpenCV(detector(img),6000);
+		 dets[i] = Utils::vecDlibRectangle2VecOpenCV(detector(img),6000);
 		 //dlib::image_window win;
 	//	 win.clear_overlay();
 //		 win.set_image(img);
@@ -76,8 +78,8 @@ void MyFHog::detect(cv::Mat& frame, std::vector< cv::Rect > &rects) try
 
 	
 //		auto startTime = std::chrono::high_resolution_clock::now();
-		dlib::array2d < dlib::bgr_pixel > img;
-		dlib::cv_image<dlib::rgb_pixel> temp(frame);
+		dlib::array2d < pixel_type > img;
+		dlib::cv_image< pixel_type > temp(frame);
 		dlib::assign_image(img, temp);
 		//dlib::impl_fhog::impl_extract_fhog_features(img, hog, 8, 1, 1);
 //		auto endTime = std::chrono::high_resolution_clock::now();
@@ -97,7 +99,7 @@ void MyFHog::detect(cv::Mat& frame, std::vector< cv::Rect > &rects) try
 	//	if (detector(img,1).empty())
 		//	return;
 //		startTime = std::chrono::high_resolution_clock::now();
-	//	rects = Utils::vecDlibRectangle2VecOpenCV(detector(img,0.222),4999);
+		rects = Utils::vecDlibRectangle2VecOpenCV(detector(img,0.222),4999);
 //		endTime = std::chrono::high_resolution_clock::now();
 //		time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 //		std::cout << "DETECT WITH CONV " << time / 1000 << std::endl;
@@ -109,4 +111,14 @@ void MyFHog::detect(cv::Mat& frame, std::vector< cv::Rect > &rects) try
 catch (std::exception& e)
 {
 	std::cout << e.what() << std::endl;
+}
+
+float MyFHog::predict(cv::Mat img, int flags)
+{
+	dlib::array2d < pixel_type > img1;
+	dlib::cv_image<pixel_type> temp(img);
+	dlib::assign_image(img1, temp);
+	//dlib::array2d<dlib::matrix<double, 1080, 1> >  hog;
+	//dlib::impl_fhog::impl_extract_fhog_features(img1, hog, 8, 1, 1);
+	return 0;
 }

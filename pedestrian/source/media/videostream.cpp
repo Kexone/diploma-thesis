@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "videostream.h"
 
 int VideoStream::fps = 0;

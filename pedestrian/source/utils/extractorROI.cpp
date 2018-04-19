@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "extractorROI.h"
 #include "utils.h"
 

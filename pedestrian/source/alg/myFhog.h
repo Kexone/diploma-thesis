@@ -52,7 +52,9 @@ public:
 	*/
 	void detect(cv::Mat& frame, std::vector< cv::Rect > &rects);
 
+	float predict(cv::Mat img, int flags);
 private:
+	using pixel_type = dlib::bgr_pixel;
 	//typedef dlib::matrix < double, 1980, 1  >  image_scanner_type;
 //	typedef dlib::matrix < double, 1980, 1 > image_type;
 	//typedef dlib::radial_basis_kernel< image_type  > image_scanner_type;
@@ -62,8 +64,8 @@ private:
 	//typedef dlib::structural_svm_object_detection_problem<double, dlib::default_fhog_feature_extractor> image_scanner_type;
 //	dlib::scan_fhog_pyramid<dlib::radial_basis_kernel< dlib::matrix < double, 1980, 1 >>> detector;
 //	image_scanner_type scanner;
-	//dlib::object_detector<image_scanner_type> detector;
-	dlib::scan_fhog_pyramid<image_scanner_type> detector;
+	dlib::object_detector<image_scanner_type> detector;
+	//dlib::scan_fhog_pyramid<image_scanner_type> detector;
 };
 
 #endif // FHOG_H

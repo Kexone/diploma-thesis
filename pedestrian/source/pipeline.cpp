@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "pipeline.h"
 #include <sstream>
 
@@ -20,7 +21,7 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
 	else if (_typeAlgorithm == PURE_FHOG || _typeAlgorithm == MIXTURED_FHOG)
-		_fhog = new MyFHog("data.svm");
+		_fhog = new MyFHog(svmPath);
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE)
@@ -97,6 +98,8 @@ void Pipeline::execute(int cameraFeed = 99)
 // Execute for video stream
 void Pipeline::execute(std::string cameraFeed)
 {
+//	cv::Mat test = cv::imread("D:/dlib/tools/imglab/build/Release/sudipDas/0.bmp");/
+//	_fhog->predict(test, 0);
 	_vs = new VideoStream(cameraFeed);
 	_vs->openCamera();
 	std::cout << "Videostream initialized." << std::endl;
@@ -175,7 +178,10 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 	//endTime = std::chrono::high_resolution_clock::now();
 	//time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 	//std::cout << "CH  took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
+	//assert(!test.empty());
+#if MY_DEBUG
 	cv::imshow("mog", frame);
+#endif
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
 		for (size_t i = 0; i < rect.size(); i++) {
@@ -334,8 +340,11 @@ void Pipeline::dilateErode(cv::Mat& frame)
 
 void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
 {
+//	assert(!test.empty());
+#if MY_DEBUG
 	if (!trained[test].empty())
 		cv::rectangle(_localFrame, trained[test][0], cv::Scalar(255, 0, 0), 3);
+#endif
 	for (uint j = 0; j < rect.size(); j++) {
 		for (uint i = 0; i < rect[j].size(); i++) {
 			cv::rectangle(_localFrame, rect[j][i], cv::Scalar(0, 255, 0), 3);

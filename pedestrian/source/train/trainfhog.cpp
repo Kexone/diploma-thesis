@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "trainfhog.h"
 #include "../utils/utils.h"
 #include <dlib/svm_threaded.h>
@@ -101,10 +102,10 @@ void TrainFHog::train() try
 
 
 	trainer.be_verbose();
-	trainer.set_c(0.1);    // 0.15625
+	trainer.set_c(0.15);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
-	
+	trainer.set_loss_per_false_alarm(1.2);
 	const unsigned long upsample_amount = 0;
 	std::vector<std::vector<dlib::rectangle> > removed;
 	removed = remove_unobtainable_rectangles(trainer, images, objectLocations);
@@ -166,11 +167,11 @@ void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 //	trainer.set_c_class2(3.16228);
 	//trainer.set_kernel(kernel_type(0.0316228));
 //	trainer.set_kernel();
-	//learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
+	learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
 	auto trained = trainer.train(samples, flLabels);
-	dlib::serialize("trained.dat") << trained;
-	dlib::serialize("traind.svm") << trained;
-//	dlib::serialize("pfunct.svm") << learned_pfunct.function.decision_funct;
+	//dlib::serialize("trained.dat") << trained;
+	dlib::serialize("trained.svm") << trained;
+	dlib::serialize("pfunct.svm") << learned_pfunct.function.decision_funct;
 //	dlib::serialize("pfunct.dat") << learned_pfunct.function.decision_funct;
 	std::cout << "\nnumber of support vectors in our learned_function is "
 		<< learned_pfunct.function.decision_funct.basis_vectors.size() << std::endl;

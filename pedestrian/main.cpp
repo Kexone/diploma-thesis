@@ -1,6 +1,8 @@
+#include "stdafx.h"
 #include <iostream>
 #include <cstdlib>
 #include <csignal>
+#include "stdafx.h"
 #include <opencv2/core/utility.hpp>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
@@ -216,7 +218,7 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-//	TestingPipeline("testing/testingSVM.txt", "testing/testingVideos.txt").execute();
+//	TestingPipeline("testing/testing.txt").execute();
 	std::string bigConfs[] = {
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
 		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
@@ -355,19 +357,21 @@ void mainFun::video(cv::CommandLineParser parser)
 		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
 	};
-	std::string videos[] = { "video/cctv4.mov" };
+	std::string videos[] = {"video/cctv4.mov" };
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 		//for (auto conf : bigConfs)
 			while (true)
 			{
-			Settings::getSettings("data/settings/a.txt");
+			Settings::getSettings("data/settings/settings_mov.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //top small
-		//	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
-			//Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml", 4);  //big ?
-			Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 2);  // test
+		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //top small
+		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
+		//	//Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml", 4);  //big ?
+		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 2);  // test
+			Pipeline *pl = new Pipeline("KONF_15.yml", 2);
+	//		Pipeline *pl = new Pipeline("pedDet.svm",4);
 		//	Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/" + conf, 1);
 			//Pipeline *pl = new Pipeline("default", 2);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));

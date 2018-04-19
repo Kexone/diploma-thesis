@@ -1,4 +1,5 @@
-﻿#include "combinedTrainHog.h"
+﻿#include "stdafx.h"
+#include "combinedTrainHog.h"
 
 
 void CombinedTrainHog::train()
