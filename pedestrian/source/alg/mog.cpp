@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "mog.h"
 #include "../settings.h"
 #include <opencv2/video/background_segm.hpp>

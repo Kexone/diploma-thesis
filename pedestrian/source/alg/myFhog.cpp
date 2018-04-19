@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "myFhog.h"
 #include "../utils/utils.h"
 

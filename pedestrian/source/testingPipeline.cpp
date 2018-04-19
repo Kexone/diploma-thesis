@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "testingPipeline.h"
+﻿#include "testingPipeline.h"
 #include "utils\utils.h"
 #include <chrono>
 #include <ctime>

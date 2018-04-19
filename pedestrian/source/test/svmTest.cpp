@@ -1,4 +1,3 @@
-#include "stdafx.h"
 /*
  * 
  * Testing trained SVM  on samples data

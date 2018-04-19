@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "cascadeClass.h"
+﻿#include "cascadeClass.h"
 
 
 CascadeClass::CascadeClass()

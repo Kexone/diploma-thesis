@@ -105,9 +105,6 @@
     <ClCompile Include="source\alg\myFhog.cpp">
       <Filter>Source Files\alg</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alg\mog.h">
@@ -172,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="source\alg\myFhog.h">
       <Filter>Header Files\alg</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

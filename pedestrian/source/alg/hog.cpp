@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "hog.h"
 #include "../settings.h"
 #if BAD_SAMPLES

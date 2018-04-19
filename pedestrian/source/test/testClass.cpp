@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "testClass.h"
+﻿#include "testClass.h"
 #include "dlibSvmTest.h"
 
 #define PARAMETER_NU  1

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "trainfhog.h"
 #include "../utils/utils.h"
 #include <dlib/svm_threaded.h>

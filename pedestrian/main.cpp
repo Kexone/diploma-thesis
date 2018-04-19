@@ -1,8 +1,6 @@
-#include "stdafx.h"
 #include <iostream>
 #include <cstdlib>
 #include <csignal>
-#include "stdafx.h"
 #include <opencv2/core/utility.hpp>
 #include "source/train/trainhog.h"
 #include "source/pipeline.h"
@@ -393,7 +391,8 @@ void mainFun::video(cv::CommandLineParser parser)
 			//timer = clock() - timer;
 
 			printResults(time);
-			pl->evaluate();
+			std::map<std::string, int> maps;
+			pl->evaluate(maps);
 			cv::waitKey(0);			
 			
  			delete pl;

@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "dlibSvmTest.h"
+﻿#include "dlibSvmTest.h"
 
 DlibSvmTest::DlibSvmTest(cv::Mat trainMat, std::vector<double> labels)
 {
