@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	cv::CommandLineParser parser(argc, argv, keys);
 
 	Settings::getSettings(parser.get<std::string>("settings"));
-	Settings::showVideoFrames = 1;// parser.get<bool>("vizualize"); //@TODO
+	Settings::showVideoFrames =  parser.get<bool>("vizualize"); //@TODO
 
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.6");
 
@@ -216,7 +216,8 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-//	TestingPipeline("testing/testing.txt").execute();
+	TestingPipeline("testing.txt").execute();
+	return;
 	std::string bigConfs[] = {
 		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
 		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",

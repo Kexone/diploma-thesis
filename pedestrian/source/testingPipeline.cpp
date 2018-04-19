@@ -1,7 +1,5 @@
 ﻿#include "testingPipeline.h"
-#include "utils\utils.h"
-#include <chrono>
-#include <ctime>
+
 
 TestingPipeline::TestingPipeline(std::string testingFile)
 {
@@ -48,7 +46,7 @@ void TestingPipeline::execute()
 				
 				pip.evaluate(results);
 				fs << algNames[i] << " & ";
-				saveResults(fs, results, time);
+				saveResults(fs, results, time,true);
 	}
 }
 
