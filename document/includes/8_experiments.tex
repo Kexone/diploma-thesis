@@ -134,6 +134,15 @@ cctv4.mov 		& 1920 x 1080	& 781  				& 29,97	& 	749				\\ \hline
 \label{videosTab}
 \end{table}
 
+Chodci se ve videosekvenci mohli vyskytovat kdekoliv, proto jsem namísto přesnosti, počítal F1-skóre, které taky vyjadřuje, ale ke svému výpočtu nepotřebuje true negative, které by bylo nemožné získat z každého obrázku z videa. Výpočet F1-skóre je následující:
+\begin{equation*}
+\centering
+ \label{eq:f1score}
+ \begin{aligned}
+F1-score = \frac{ 2TP}{2TP + FP + FN}
+ \end{aligned}
+\end{equation*}
+Také jsem stanovil pravidlo pro pozitivní detekci a to takové, že výstup z detektoru je považován za pozitivní právě tehdy, když jeho plocha je větší než polovina anotované plochy.
 V následujících tabulkách jsou uvedeny výsledek detekce z každého videa na každém zařízení. \ref{resultTabIMX} \ref{resultTabRPI3} \ref{resultTabBPI}.
 \begin{table}[H]
 \catcode`\-=12
@@ -188,6 +197,29 @@ V následujících tabulkách jsou uvedeny výsledek detekce z každého videa n
 \centering
 \caption{Výsledky detekce počítače Banana PI BPI-M1}
 \label{resultTabBPI}
+\begin{tabular}{|c|l|l|l|l|l|l|l|}
+\hline
+                         & Typ algoritmu   & ALG FPS & Délka detekce & TP & FN & FP & F1-skóre \\ \hline
+\multirow{4}{*}{cctv4.mp4} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG &         &               &    &    &    &          \\ \hline\hline 
+\multirow{4}{*}{cctv4.avi} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG &         &               &    &    &    &          \\ \hline \hline
+\multirow{4}{*}{cctv4.mov} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG &         &               &    &    &    &          \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\catcode`\-=12
+\centering
+\caption{Výsledky detekce desktopového počítače}
+\label{resultTabDesktop}
 \begin{tabular}{|c|l|l|l|l|l|l|l|}
 \hline
                          & Typ algoritmu   & ALG FPS & Délka detekce & TP & FN & FP & F1-skóre \\ \hline
