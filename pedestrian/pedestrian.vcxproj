@@ -101,13 +101,14 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENABLE_ASSERTS;_DEBUG;_CONSOLE;MY_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENABLE_ASSERTS;_DEBUG;_CONSOLE;xBAD_SAMPLES;xMY_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(OpenCV)/include;$(dlib)/</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,7 +146,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENABLE_ASSERTS;NDEBUG;_CONSOLE;xMY_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENABLE_ASSERTS;NDEBUG;_CONSOLE;xMY_DEBUG;xBAD_SAMPLES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(OpenCV)/include;$(dlib)/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile />
@@ -163,7 +164,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\alg\cascadeClass.cpp" />
     <ClCompile Include="source\alg\convexhull.cpp" />
-    <ClCompile Include="source\alg\myFhog.cpp" />
+    <ClCompile Include="source\alg\fhog.cpp" />
     <ClCompile Include="source\alg\hog.cpp" />
     <ClCompile Include="source\alg\mog.cpp" />
     <ClCompile Include="source\media\videostream.cpp" />
@@ -174,16 +175,16 @@
     <ClCompile Include="source\test\svmTest.cpp" />
     <ClCompile Include="source\test\testClass.cpp" />
     <ClCompile Include="source\train\combinedTrainHog.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\train\trainCascade.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\train\trainfhog.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\train\trainhog.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\utils\extractorROI.cpp" />
   </ItemGroup>
@@ -191,7 +192,7 @@
     <ClInclude Include="source\3dparty\de\DifferentialEvolution.h" />
     <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
-    <ClInclude Include="source\alg\myFhog.h" />
+    <ClInclude Include="source\alg\fhog.h" />
     <ClInclude Include="source\alg\hog.h" />
     <ClInclude Include="source\alg\mog.h" />
     <ClInclude Include="source\media\croppedimage.h" />

@@ -99,7 +99,7 @@ void TrainFHog::train() try
 	scanner.set_detection_window_size(width, height);
 	dlib::structural_object_detection_trainer<image_scanner_type> trainer(scanner);
 
-
+	
 	trainer.be_verbose();
 	trainer.set_c(0.15);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
@@ -121,8 +121,15 @@ void TrainFHog::train() try
 
 //	std::cout << numFolds << "-fold cross validation (precision,recall,AP): "
 	//	<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
-
-	dlib::serialize("pedDet.svm") << trainer.train(images,objectLocations,ignore);
+	auto trained = trainer.train(images, objectLocations, ignore);
+//	typedef dlib::structural_object_detection_trainer<image_scanner_type> probabilistic_funct_type;
+//	typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
+	//auto learned_pfunct;
+	std::vector < int >  label;
+	label.insert(label.begin(), images.size(), 1.0);
+	//auto learned_pfunct = train_probabilistic_decision_function(trainer,images,label,3);
+	//std::cout << "out " << learned_pfunct(images[1]);
+	dlib::serialize("pedDet.svm") << trained;
 	std::cout << "DONE" << std::endl;
 }
 catch (std::exception e)
@@ -160,20 +167,27 @@ void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 	pfunct_type learned_pfunct;
 	//trainer.set_kernel(kernel_type(0.15625));
 	//trainer.set_nu(0.15625);
+	trainer.set_epsilon_insensitivity(0.001);
 	trainer.set_epsilon(0.001);
-	trainer.set_c(0.01054);
+	trainer.set_c(10); //0.01054
+	trainer.set_max_iterations(2000);
 //	trainer.set_c_class1(3.16228);
 //	trainer.set_c_class2(3.16228);
 	//trainer.set_kernel(kernel_type(0.0316228));
 //	trainer.set_kernel();
-	learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
-	auto trained = trainer.train(samples, flLabels);
+	//auto trained = trainer.train(samples, flLabels);
+	//learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 5);
+	//std::cout << "out " <<  learned_pfunct(samples[1]) << std::endl;
+	dlib::decision_function<kernel_type> df = trainer.train(samples, flLabels);
 	//dlib::serialize("trained.dat") << trained;
-	dlib::serialize("trained.svm") << trained;
-	dlib::serialize("pfunct.svm") << learned_pfunct.function.decision_funct;
+	dlib::serialize("df.svm") << df;
+//	dlib::serialize("pfunct.svm") << learned_pfunct.function.decision_funct;
+//	dlib::serialize("funct.svm") << learned_pfunct.function;
+//	dlib::serialize("all.svm") << learned_pfunct;
+//	dlib::serialize("vector.svm") << learned_pfunct.function.decision_funct.basis_vectors;
 //	dlib::serialize("pfunct.dat") << learned_pfunct.function.decision_funct;
 	std::cout << "\nnumber of support vectors in our learned_function is "
-		<< learned_pfunct.function.decision_funct.basis_vectors.size() << std::endl;
+		<< df.basis_vectors.size() << std::endl;
 
 	std::cout << "DONE" << std::endl;
 }

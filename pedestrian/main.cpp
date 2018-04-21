@@ -160,9 +160,9 @@ void mainFun::type(cv::CommandLineParser parser)
 void mainFun::camera(cv::CommandLineParser parser)
 {
 	Pipeline *pl;
-	pl = new Pipeline(parser.get<std::string>("class"),0);
+	pl = new Pipeline(parser.get<std::string>("class"),2);
 	std::cout << "camera" << std::endl;
-	pl->execute(0);
+	pl->execute(std::stoi(parser.get<std::string>("camera")));
 
 	delete pl;
 }
@@ -216,179 +216,26 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-//	TestingPipeline("testing/testing.txt").execute();
-	std::string bigConfs[] = {
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
-		"CON_B_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
-		"CON_B_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
-		"CON_B_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CON_B_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CON_B_sudipDas.txt_negDam6000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
-		"CON_B_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml"
-	};
-	std::string sudisConfs[] = {
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1100_SVM103_double_1100.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1300_SVM103_double_1300.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1400_SVM103_double_1400.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_3000_SVM103_double_3000.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_3500_SVM103_double_3500.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_4000_SVM103_double_4000.yml",
-		"CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml"
-	};
-	std::string bigNuSelectedConfs[] = {
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.300000_3000_SVM103_double_3000.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
-		"CON_B_daimler.txt_negDam12000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimler.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimler.txt_negDam6000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
-		"CON_B_daimler.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimler.txt_negDam9000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM12.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimlerM12.txt_negDam6000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
-		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM12.txt_negDam9000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimlerM3.txt_negDam6000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimlerM3.txt_negDam6000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM3.txt_negDam9000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimlerM6.txt_negDam12000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
-		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM6.txt_negDam3000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_G0.000100_2500_SVM103_double_2500.yml",
-		"CON_B_daimlerM6.txt_negDam6000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM6.txt_negDam9000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimlerM9.txt_negDam12000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1200_SVM103_double_1200.yml",
-		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.300000_1300_SVM103_double_1300.yml",
-		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.600000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam3000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
-		"CON_B_daimlerM9.txt_negDam6000.txt__C0.050000_NU0.300000_1100_SVM103_double_1100.yml",
-		"CON_B_daimlerM9.txt_negDam6000.txt__C0.050000_NU0.300000_1400_SVM103_double_1400.yml",
-		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_G0.000100_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.300000_1000_SVM103_double_1000.yml",
-		"CON_B_daimlerM9.txt_negDam9000.txt__C0.050000_NU0.600000_2000_SVM103_double_2000.yml",
-		"CON_B_sudipDas.txt_negDam3000.txt__C0.050000_NU0.600000_2500_SVM103_double_2500.yml"
-	};
-	std::string videos[] = {"video/cctv4.mov" };
+	TestingPipeline("testing/testing.txt").execute();
+
+	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
-		//for (auto conf : bigConfs)
 			while (true)
 			{
-			Settings::getSettings("data/settings/settings_mov.txt");
+			Settings::getSettings("data/settings/settings_school.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam3000.txt__C0.050000_G0.000100_1200_SVM103_double_1200.yml", 1); //top small
-		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam12000.txt__C0.050000_G0.000100_1500_SVM103_double_1500.yml", 1); //TOP medium
-		//	//Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/CON_B_daimler.txt_negDam3000.txt__C0.050000_G0.000100_4500_SVM103_double_4500.yml", 4);  //big ?
-		////	Pipeline *pl = new Pipeline("E:/USE_SVM/sudi/CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml", 2);  // test
 			Pipeline *pl = new Pipeline("KONF_15.yml", 2);
-	//		Pipeline *pl = new Pipeline("pedDet.svm",4);
-		//	Pipeline *pl = new Pipeline("E:/USE_SVM/newB/use/" + conf, 1);
-			//Pipeline *pl = new Pipeline("default", 2);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
 			Settings::nameFile = vid;// parser.get<std::string>("video");
 
-			replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
-			replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
-			Settings::nameTrainedFile = "data//trained//" + Settings::nameFile;
-			Settings::nameFile = "data//tested//" + Settings::nameFile;
-			Settings::nameTrainedFile.append("_trained.txt");
-			Settings::nameFile.append(".txt");
-			auto startTime = std::chrono::high_resolution_clock::now();
-			//clock_t timer = clock();	
+				auto startTime = std::chrono::high_resolution_clock::now();
 			//pl->execute(parser.get<std::string>("video"));
 			pl->execute(vid);
 			auto endTime = std::chrono::high_resolution_clock::now();
 			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
-			//timer = clock() - timer;
 
 			printResults(time);
 			std::map<std::string, int> maps;
@@ -431,7 +278,6 @@ void mainFun::printResults(clock_t timer)
 	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
 	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s."<< std::endl;
 	std::cout << "Detection took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
-	std::cout << "Possibly detection: " << Pipeline::allDetections << " frames." << std::endl;
 }
 
 
@@ -495,3 +341,7 @@ bool Settings::cropHogMeanshiftGrouping = 0;
 int Settings::cropHogGroupTreshold = 2;
 double Settings::cropHogEps = 0.8;
 int Settings::cropHogMinArea = 4999;
+int Settings::fhogMinArea = 4999;
+double Settings::fhogAdjustTreshold = 0.2222;
+int Settings::cropFhogMinArea = 6000;
+double Settings::cropFhogAdjustTreshold = 0;

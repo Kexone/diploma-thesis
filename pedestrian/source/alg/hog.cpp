@@ -46,8 +46,10 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 
 	//distances.clear();
 	rects.clear();
-	rects = std::vector < std::vector < cv::Rect > > (frames.size());
+	rects = std::vector < std::vector < cv::Rect > >(frames.size());
+	distances = std::vector < std::vector < float > > (frames.size());
 	for (size_t x = 0; x < frames.size(); x++) {
+		rects[x].clear();
 		std::vector<cv::Rect> found;
 		cv::Mat test = frames[x].croppedImg;
 		assert(!test.empty());
@@ -75,18 +77,17 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 		//float confidence = 1.0 / (1.0 + exp(-predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT)));
 		//std::cout << confidence << std::endl;
 	//	std::cout << 1.0f / (1.0f + std::exp(predict(test(found[0]), cv::ml::StatModel::Flags::RAW_OUTPUT))) << std::endl;
-
 		if (found.size() > 1) {
 			for (size_t i = 0; i < found.size(); i++) {
-				for (size_t j = i; j < found.size(); j++) {
-					if ((found[i] & found[j]).area() > 1500) {
+				for (size_t j = 0; j < found.size(); j++) {
+					//if (i == j) continue;
+					if ((found[i] & found[j]).area() >= found[i].area()/2) {
 						found.erase(found.begin() + j);
 						break;
 					}
 				}
 			}
 		}
-
 		for (size_t i = 0; i< found.size(); i++)	{
 #if BAD_SAMPLES
 			std::random_device rd;
@@ -97,9 +98,11 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 			cv::Mat cropped(test(found[i]));
 			cv::imwrite(imgName, cropped);
 #endif
-			if(found[i].area() > Settings::cropHogMinArea)
-				rects[x].push_back( found[i] );
-			//distances[x].push_back( getDistance(cropped) );
+			if (found[i].area() > Settings::cropHogMinArea) {
+				rects[x].push_back(found[i]);
+				cv::Mat cropped(test(found[i]));
+				distances[x].push_back(getDistance(cropped));
+			}
 		}
 		test.release();
 		found.clear();
@@ -192,6 +195,7 @@ float Hog::getDistance(cv::Mat img)
 float Hog::predict(cv::Mat img, int flags)
 {
 	std::vector< float > descriptors;
+	cv::resize(img, img, Settings::pedSize);
 	_hog.compute(img, descriptors, Settings::pedSize, cv::Size(0, 0));
 	return _svm->predict(descriptors, cv::noArray(), flags);
 }

@@ -6,7 +6,7 @@
 
 #include "alg/mog.h"
 #include "alg/hog.h"
-#include "alg/myFhog.h"
+#include "alg/fhog.h"
 #include "alg/convexhull.h"
 #include "media/croppedimage.h"
 #include "media/videostream.h"
@@ -47,12 +47,11 @@ public:
 	*/
 	void evaluate(std::map<std::string, int> & results);
 
-	static int allDetections;
-
+		
 private:
     Mog _mog;
 	Hog _hog;
-	MyFHog *_fhog;
+	Fhog *_fhog;
 	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;
@@ -139,10 +138,9 @@ private:
 	* @brief Draw rectangles into mat and also increment the allDetections counter
 	*  Used for cropped images to set the default position in frame
 	*
-	* @param croppedImages
 	* @param rect
 	*/
-    void draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect);
+    void draw2mat(std::vector < std::vector < cv::Rect > > &rect);
 
 	/**
 	* @brief Draw rectangles into mat and also increment the allDetections counter

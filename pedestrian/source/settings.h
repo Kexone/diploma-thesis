@@ -74,6 +74,12 @@ struct Settings
 	static double cropHogEps;
 	static int cropHogMinArea;
 
+	static int fhogMinArea;
+	static double fhogAdjustTreshold;
+	static int cropFhogMinArea;
+	static double cropFhogAdjustTreshold;
+
+
 	static void getSettings(std::string pathFile)
 	{
 		std::fstream file;
@@ -179,7 +185,7 @@ struct Settings
 						else if (key.compare("hogFinalTreshold") == 0)
 							hogFinalTreshold = std::stod(value.c_str());
 						else if (key.compare("hogMeanshiftGrouping") == 0)
-							hogMeanshiftGrouping = std::stoi(value.c_str());
+							hogMeanshiftGrouping = std::stoi(value.c_str()) == 1 ? true : false;
 						else if (key.compare("hogGroupTreshold") == 0)
 							hogGroupTreshold = std::stoi(value.c_str());
 						else if (key.compare("hogEps") == 0)
@@ -214,13 +220,21 @@ struct Settings
 						else if (key.compare("cropHogFinalTreshold") == 0)
 							cropHogFinalTreshold = std::stod(value.c_str());
 						else if (key.compare("cropHogMeanshiftGrouping") == 0)
-							cropHogMeanshiftGrouping = std::stoi(value.c_str());
+							cropHogMeanshiftGrouping = std::stoi(value.c_str()) == 1 ? true : false;
 						else if (key.compare("cropHogGroupTreshold") == 0)
 							cropHogGroupTreshold = std::stoi(value.c_str());
 						else if (key.compare("cropHogEps") == 0)
 							cropHogEps = std::stod(value.c_str());
 						else if (key.compare("cropHogMinArea") == 0)
 							cropHogMinArea = std::stoi(value.c_str());
+						else if (key.compare("fhogMinArea") == 0)
+							fhogMinArea = std::stoi(value.c_str());
+						else if (key.compare("fhogAdjustTreshold") == 0)
+							fhogAdjustTreshold = std::stod(value.c_str());
+						else if (key.compare("cropFhogMinArea") == 0)
+							cropFhogMinArea = std::stoi(value.c_str());
+						else if (key.compare("cropFhogAdjustTreshold") == 0)
+							cropFhogAdjustTreshold = std::stod(value.c_str());
 					}
 				}
 			}

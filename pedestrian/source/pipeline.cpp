@@ -8,7 +8,6 @@
 #define PURE_CASCADE 5
 #define MIXTURED_CASCADE 6
 
-int Pipeline::allDetections = 0;
 
 Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 {
@@ -20,7 +19,7 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
 	else if (_typeAlgorithm == PURE_FHOG || _typeAlgorithm == MIXTURED_FHOG)
-		_fhog = new MyFHog(svmPath);
+		_fhog = new Fhog(svmPath);
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE)
@@ -32,7 +31,6 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 		                                cv::Size(2 * erosion_size + 1, 2 * erosion_size + 1),
 		                                cv::Point(erosion_size, erosion_size));
 	}
-	allDetections = 0;
 }
 
 #if MY_DEBUG
@@ -68,26 +66,27 @@ void Pipeline::execute(int cameraFeed = 99)
 	_vs = new VideoStream(cameraFeed);
 	std::cout << "Camera initialized." << std::endl;
 	_vs->openCamera();
-    for(int i = 0; ; i++ ) {
+	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(1);
+    for( ; ; ) {
         cv::Mat frame = _vs->getFrame();
         if(frame.empty()) {
             break;
         }
 		if (_typeAlgorithm == PURE_HOG)
-			pureHoG(frame, i);
+			pureHoG(frame, 0);
 		else if (_typeAlgorithm == MIXTURED_HOG)
-			mogAndHog(frame, i);
+			mogAndHog(frame, 0);
 		else if (_typeAlgorithm == PURE_FHOG)
-			pureFHoG(frame, i);
+			pureFHoG(frame, 0);
 		else if (_typeAlgorithm == MIXTURED_FHOG)
-			mogAndFHog(frame, i);
+			mogAndFHog(frame, 0);
 		else if (_typeAlgorithm == PURE_CASCADE)
-			pureCascade(frame, i);
+			pureCascade(frame, 0);
 		else if (_typeAlgorithm == MIXTURED_CASCADE)
-			mogAndCascade(frame, i);
+			mogAndCascade(frame, 0);
 
 		cv::imshow("Result", _localFrame);
-		cv::waitKey(2);
+		cv::waitKey(10);
         frame.release();
 		cv::waitKey(5);
     }
@@ -97,7 +96,7 @@ void Pipeline::execute(int cameraFeed = 99)
 // Execute for video stream
 void Pipeline::execute(std::string cameraFeed)
 {
-//	cv::Mat test = cv::imread("D:/dlib/tools/imglab/build/Release/sudipDas/0.bmp");/
+//	cv::Mat test = cv::imread("D:/dlib/tools/imglab/build/Release/sudipDas/0.bmp");/ /@TODO
 //	_fhog->predict(test, 0);
 	_vs = new VideoStream(cameraFeed);
 	_vs->openCamera();
@@ -162,42 +161,30 @@ void Pipeline::execute(std::string cameraFeed)
 
 void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 {
+	std::vector< cv::Rect > rect;
 	_localFrame = frame.clone();
 	preprocessing(frame);
-	//auto startTime = std::chrono::high_resolution_clock::now();
 	_mog.processMat(frame);
-	//auto endTime = std::chrono::high_resolution_clock::now();
-	//double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-	//std::cout << "MOG took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
 	dilateErode(frame);
-
-	std::vector< cv::Rect > rect;
-	//startTime = std::chrono::high_resolution_clock::now();
 	_ch.wrapObjects(frame, rect);
-	//endTime = std::chrono::high_resolution_clock::now();
-	//time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-	//std::cout << "CH  took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
-	//assert(!test.empty());
+
 #if MY_DEBUG
 	cv::imshow("mog", frame);
 #endif
+
 	if (rect.size() != 0) {
 		std::vector< CroppedImage > croppedImages;
-		for (size_t i = 0; i < rect.size(); i++) {
-			croppedImages.push_back(CroppedImage(i, _localFrame.clone(), rect[i]));
-		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 		std::vector < std::vector < float > > distances(croppedImages.size());
 
-		//startTime = std::chrono::high_resolution_clock::now();
+		for (size_t i = 0; i < rect.size(); i++) {
+			croppedImages.push_back(CroppedImage(i, _localFrame.clone(), rect[i]));
+		}
 		_hog.detect(croppedImages, foundRect, distances);
-		//endTime = std::chrono::high_resolution_clock::now();
-		//time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-		//std::cout << "HOG took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
-		_distances[cFrame] = distances;
+		_distances[cFrame] = distances; // @TODO
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		if (Settings::showVideoFrames)
-			draw2mat(croppedImages, foundRect);
+			draw2mat(foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -214,7 +201,7 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 	_hog.detect(frame, foundRect);
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
-	if(!foundRect.empty())
+	if(!foundRect.empty() && cFrame >= 0)
 		_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
@@ -240,7 +227,7 @@ void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 		_fhog->detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		if (Settings::showVideoFrames)
-			draw2mat(croppedImages, foundRect);
+			draw2mat(foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -257,7 +244,8 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 	_fhog->detect(frame, foundRect);
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
-	_rects2Eval[cFrame].push_back(foundRect);
+	if (!foundRect.empty() && cFrame >= 0)
+		_rects2Eval[cFrame].push_back(foundRect);
 	foundRect.clear();
 	frame.release();
 }
@@ -310,7 +298,7 @@ void Pipeline::mogAndCascade(cv::Mat &frame, int cFrame)
 		_cc.detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		if (Settings::showVideoFrames)
-			draw2mat(croppedImages, foundRect);
+			draw2mat(foundRect);
 		foundRect.clear();
 	}
 	frame.release();
@@ -337,7 +325,7 @@ void Pipeline::dilateErode(cv::Mat& frame)
 	cv::erode(frame, frame, _eroMat);
 }
 
-void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector < std::vector < cv::Rect > > &rect)
+void Pipeline::draw2mat(std::vector < std::vector < cv::Rect > > &rect)
 {
 //	assert(!test.empty());
 #if MY_DEBUG
@@ -349,13 +337,11 @@ void Pipeline::draw2mat(std::vector< CroppedImage > &croppedImages, std::vector 
 			cv::rectangle(_localFrame, rect[j][i], cv::Scalar(0, 255, 0), 3);
 #if MY_DEBUG
 			if (!trained[test].empty()) {//@DEBUG
-				cv::rectangle(_localFrame, rect[j][i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
+		//		cv::rectangle(_localFrame, rect[j][i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
 			}
 #endif
 		}
-		allDetections += rect[j].size();
 	}
-	rect.clear();
 }
 
 void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
@@ -368,7 +354,6 @@ void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
 		}
 #endif
 	}
-	allDetections += rect.size();
 }
 
 void Pipeline::saveResults()
@@ -381,18 +366,6 @@ void Pipeline::saveResults()
 			for (uint k = 0; k < _rects2Eval[i][j].size(); k++)	{
 				if (_rects2Eval[i][j][k].area() == 0) continue;
 				fs << i << " " << _rects2Eval[i][j][k].tl().x << " " << _rects2Eval[i][j][k].tl().y << " " << _rects2Eval[i][j][k].br().x << " " << _rects2Eval[i][j][k].br().y << std::endl;
-			}
-		}
-	}
-	fs.close();
-
-	fs.open(Settings::nameFile + "_distances.txt");
-	fs << "name of classificator\n";
-	fs << _distances.size() << "\n";
-	for (uint i = 0; i < _distances.size(); i++) {
-		for (uint j = 0; j < _distances[i].size(); j++) {
-			for (uint k = 0; k < _distances[i][j].size(); k++) {
-				fs << i << " " << _distances[i][j][k] << std::endl;
 			}
 		}
 	}
@@ -436,6 +409,7 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 	}
 }
 
+
 void Pipeline::evaluate(std::map<std::string, int> & results)
 {
 	std::vector< std::vector<cv::Rect> > trained;
@@ -443,11 +417,13 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	loadRects(Settings::nameFile, test);
 	loadRects(Settings::nameTrainedFile, trained);
 	int truePos = 0, falsePos = 0, falseNeg = 0;
+	std::vector< int > typeClass(test.size());
 
 	for (int i = 0; i < test.size(); i++)
 		falsePos += test[i].size();
 
 	for (int i = 0; i < trained.size(); i++) {
+		int isPedestrian = 0;
 		for (int ii = 0; ii < trained[i].size(); ii++) {
 			bool found = false;
 			for (int jj = 0; jj < test[i].size(); jj++) {
@@ -455,9 +431,11 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 					truePos++; // pedestrian found
 					found = true;
 					trained[i].erase(trained[i].begin() + ii);
+					isPedestrian = 1;
 				}
 			}
 			if (!found) falseNeg++;
+			typeClass[i] = isPedestrian;
 		}
 	}
 	falsePos -= truePos;
@@ -479,6 +457,34 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	results["fp"] = falsePos;
 	results["fn"] = falseNeg;
 	results["f1"] = cvRound(f1score*100);
+
+
+	std::vector< double > distances(test.size());
+	for (uint i = 0; i < _rects2Eval.size(); i++) {
+		for (uint j = 0; j < _rects2Eval[i].size(); j++) {
+			for (uint k = 0; k < _rects2Eval[i][j].size(); k++) {
+				if (!_distances.empty() && !_distances[i].empty() && !_distances[i][j].empty() ) {
+					distances[i] = _distances[i][j][k];
+				}
+			}
+		}
+	}
+
+	//distances.erase(
+	//	std::remove(distances.begin(), distances.end(), 0),
+	//	distances.end());
+	//distances.shrink_to_fit();
+	std::ofstream fs, fs2;
+	fs.open(Settings::nameFile + "_distances.txt");
+	fs2.open(Settings::nameFile + "_gt.txt");
+	for (uint i = 0; i < distances.size(); i++) {
+		if (distances[i] != 0) {
+			fs << distances[i] << std::endl;
+			fs2 << typeClass[i] << std::endl;
+		}
+	}
+	fs.close();
+	fs2.close();
 }
 
 

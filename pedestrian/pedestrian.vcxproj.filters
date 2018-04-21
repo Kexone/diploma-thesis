@@ -102,7 +102,7 @@
     <ClCompile Include="source\testingPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\alg\myFhog.cpp">
+    <ClCompile Include="source\alg\fhog.cpp">
       <Filter>Source Files\alg</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +167,7 @@
     <ClInclude Include="source\3dparty\de\DifferentialEvolution.h">
       <Filter>Header Files\3dparty</Filter>
     </ClInclude>
-    <ClInclude Include="source\alg\myFhog.h">
+    <ClInclude Include="source\alg\fhog.h">
       <Filter>Header Files\alg</Filter>
     </ClInclude>
   </ItemGroup>

@@ -28,8 +28,10 @@ hogFinalTreshold=0.99
 hogMeanshiftGrouping=0
 hogGroupTreshold=4
 hogEps=0.685
+hogMinArea=0
 
-// HOF detectMultiScale on cropped images
+// HOG detectMultiScale on cropped images
+cropHogBlurFilter=(0,0)
 cropHogHitTreshold=0.7162
 cropHogWinStride=(4,4)
 cropHogPadding=(4,4)
@@ -40,6 +42,13 @@ cropHogGroupTreshold=3
 cropHogEps=0.9
 cropHogMinArea=4600
 
+//FHOG classic
+fhogMinArea=4999
+fhogAdjustTreshold=0.2222
+
+//FHOG on cropped images
+cropFhogMinArea=6000
+cropFhogAdjustTreshold=0
 
 //TRAIN PARAMS
 maxIterations=1000
