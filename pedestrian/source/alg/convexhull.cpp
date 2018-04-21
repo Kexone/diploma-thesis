@@ -102,7 +102,7 @@ void ConvexHull::clearInSameRegion(std::vector<cv::Rect> &rects)
 		cv::Rect testRect = rects[i];
 		for(uint t = i+1; t < rects.size(); t++)
 		{
-			if(testRect.x - rects[t].x < deviation)
+			if((testRect & rects[t] ).area() >= deviation)
 			{
 				rects.erase(rects.begin() + t,rects.end());
 			}
