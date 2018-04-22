@@ -51,7 +51,7 @@ public:
 private:
     Mog _mog;
 	Hog _hog;
-	Fhog *_fhog;
+	Fhog _fhog;
 	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;

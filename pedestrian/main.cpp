@@ -159,25 +159,42 @@ void mainFun::camera(cv::CommandLineParser parser)
 	delete pl;
 }
 
+//void mainFun::image(cv::CommandLineParser parser)
+//{
+//	int typeAlg;
+//
+//	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) only FHoG (dlib) \n";
+//	std::cin >> typeAlg;
+//	if (typeAlg == 1 || typeAlg == 2) {
+//		if (typeAlg == 2) typeAlg = 3;
+//
+//		Pipeline *pl = new Pipeline(parser.get<std::string>("class"), algType);
+//		Utils::setEvaluationFiles(parser.get<std::string>("image"));
+//
+//		pl->executeImages(parser.get<std::string>("image"));
+//		std::map<std::string, int> maps;
+//		pl->evaluate(maps);
+//
+//		delete pl;
+//	}
+//	else { std::cout << "Bad selection.\n"; }
+//
+//}
+
 void mainFun::image(cv::CommandLineParser parser)
-{	
-	int typeAlg;
+{
+		while(true){
+			Settings::getSettings("data/settings/settings_img.txt");
+			Pipeline *pl = new Pipeline(parser.get<std::string>("class"), 1);
+			Utils::setEvaluationFiles(parser.get<std::string>("image"));
 
-	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) only FHoG (dlib) \n";
-	std::cin >> typeAlg;
-	if (typeAlg == 1 || typeAlg == 2) {
-		if (typeAlg == 2) typeAlg = 3;
+			pl->executeImages(parser.get<std::string>("image"));
+			std::map<std::string, int> maps;
+			pl->evaluate(maps);
 
-		Pipeline *pl = new Pipeline(parser.get<std::string>("class"), 1);
-		Utils::setEvaluationFiles(parser.get<std::string>("image"));
-
-		pl->executeImages(parser.get<std::string>("image"));
-		std::map<std::string, int> maps;
-		pl->evaluate(maps);
-
-		delete pl;
+			delete pl;
+			cv::waitKey(0);
 	}
-	else { std::cout << "Bad selection.\n"; }
 
 }
 

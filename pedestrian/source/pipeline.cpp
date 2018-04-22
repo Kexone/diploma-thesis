@@ -19,7 +19,7 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 	if (_typeAlgorithm == PURE_HOG || _typeAlgorithm == MIXTURED_HOG)
 		_hog = Hog(svmPath);
 	else if (_typeAlgorithm == PURE_FHOG || _typeAlgorithm == MIXTURED_FHOG)
-		_fhog = new Fhog(svmPath);
+		_fhog = Fhog(svmPath);
 	else if (_typeAlgorithm == PURE_CASCADE || _typeAlgorithm == MIXTURED_CASCADE)
 		_cc = CascadeClass(svmPath);
 	if (_typeAlgorithm == MIXTURED_HOG || _typeAlgorithm == MIXTURED_FHOG || _typeAlgorithm == MIXTURED_CASCADE)
@@ -49,7 +49,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	//_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >;
 	int i = 0;
 	while (sampleFile >> oSample) {
-		std::cout << oSample << std::endl;
+//		std::cout << oSample << std::endl;
 		frame = cv::imread(oSample, CV_LOAD_IMAGE_UNCHANGED);
         if(frame.empty()) {
 			sampleFile.close();
@@ -62,11 +62,11 @@ void Pipeline::executeImages(std::string testSamplesPath)
        processStandaloneImage(frame,i++);
 	   if (Settings::showVideoFrames)
 		   cv::imshow("Result", _localFrame);
-	   cv::waitKey(0);
+	//   cv::waitKey(0);
        frame.release();
     }
 	saveResults();
-    cv::destroyWindow("Result");
+//    cv::destroyWindow("Result");
 }
 
 //	Execute for webcam stream
@@ -239,7 +239,7 @@ void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 		}
 		std::vector < std::vector < cv::Rect > > foundRect;
 
-		_fhog->detect(croppedImages, foundRect);
+		_fhog.detect(croppedImages, foundRect);
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		if (Settings::showVideoFrames)
 			draw2mat(foundRect);
@@ -256,7 +256,7 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 
 	std::vector < cv::Rect > foundRect;
 
-	_fhog->detect(frame, foundRect);
+	_fhog.detect(frame, foundRect);
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
 	if (!foundRect.empty() && cFrame >= 0)
@@ -270,12 +270,17 @@ void Pipeline::processStandaloneImage(cv::Mat &frame, int cFrame)
 	_localFrame = frame.clone();
 	std::vector < cv::Rect  > foundRect;
 	std::vector < float > distances;
-	_hog.detect(frame, foundRect, distances); 
+	if (_typeAlgorithm == PURE_HOG)
+		_hog.detect(frame, foundRect, distances); 
+	if (_typeAlgorithm == PURE_FHOG)
+		_fhog.detect(frame, foundRect);
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
 
 	_rects2Eval[cFrame].push_back(foundRect);
+#if CALC_DIST
 	_distances[cFrame].push_back(distances);
+#endif
 	foundRect.clear();
 }
 
@@ -381,7 +386,8 @@ void Pipeline::saveResults()
 		for (uint j = 0; j < _rects2Eval[i].size(); j++)	{
 			for (uint k = 0; k < _rects2Eval[i][j].size(); k++)	{
 				if (_rects2Eval[i][j][k].area() == 0) continue;
-				fs << i << " " << _rects2Eval[i][j][k].tl().x << " " << _rects2Eval[i][j][k].tl().y << " " << _rects2Eval[i][j][k].br().x << " " << _rects2Eval[i][j][k].br().y << std::endl;
+				fs << i << " " << _rects2Eval[i][j][k].tl().x << " " << _rects2Eval[i][j][k].tl().y << " " 
+					<< _rects2Eval[i][j][k].br().x << " " << _rects2Eval[i][j][k].br().y << std::endl;
 			}
 		}
 	}
@@ -414,7 +420,8 @@ void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect
 	}
 }
 
-void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages, std::vector<std::vector<cv::Rect>> &rects2Save)
+void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector< CroppedImage > &croppedImages,
+	std::vector<std::vector<cv::Rect>> &rects2Save)
 {
 	for (uint j = 0; j < rects.size(); j++) {
 		for (uint i = 0; i < rects[j].size(); i++) {
@@ -448,6 +455,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 					found = true;
 					trained[i].erase(trained[i].begin() + ii);
 					isPedestrian = 1;
+				//	break;
 				}
 			}
 			if (!found) falseNeg++;

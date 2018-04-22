@@ -58,8 +58,8 @@ void TestingPipeline::saveResults(std::ofstream &file, std::map<std::string, int
 		std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
 		std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(time)) << "." << std::endl;
 		std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
-		std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s." << std::endl;
-		std::cout << "Detection took " << static_cast<float>(time) << "s." << std::endl;
+		std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "ms." << std::endl;
+		std::cout << "Detection took " << static_cast<float>(time) << "ms." << std::endl;
 	}
 	// name & ALG FPS & Detection took & TP & FN & FP & F1
 	file << VideoStream::totalFrames / (static_cast<float>(time) / CLOCKS_PER_SEC) << " & " << static_cast<float>(time) / CLOCKS_PER_SEC << " & " <<
