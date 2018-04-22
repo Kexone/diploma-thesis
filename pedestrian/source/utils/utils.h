@@ -98,40 +98,6 @@ public:
 	}
 
 	/**
-	* @brief Fills vector ofdlib::matrix < TrainFHog::pixel_type> from string path and sets the labels.
-	* @sNeg is switcher for negative and positive samples which determines what will be filled to list of labels
-	* @ TODO remove ? 
-	* @param path path to samples
-	* @param dstList list of dlib::matrix < TrainFHog::pixel_type>
-	* @param labels list of labels
-	* @param  pedSize size of pedestrian (image)
-	* @param isNeg switcher between samples
-	*/
-	static void fillSamples2List(std::string &path, std::vector< dlib::matrix < TrainFHog::pixel_type> > &dstList, std::vector<float> &labels, cv::Size pedSize, bool isNeg = false)
-	{
-		//	int i = 0;
-		assert(!path.empty());
-		cv::Mat frame;
-		//dlib::array2d < dlib::bgr_pixel > frame;
-		std::fstream sampleFile(path);
-		std::string oSample;
-		while (sampleFile >> oSample) {
-			frame = cv::imread(oSample, CV_32FC3);
-			if (frame.empty())		std::cout << "fail" << std::endl;
-			cv::resize(frame, frame, pedSize);
-			dlib::cv_image<TrainFHog::pixel_type> cvTmp(frame);
-			dlib::matrix<TrainFHog::pixel_type> test = dlib::mat(cvTmp);
-			dstList.push_back(test);
-		}
-		if (!isNeg) {
-			labels.push_back(1);
-		}
-		else {
-			labels.push_back(-1);
-		}
-	}
-
-	/**
 	 * @brief This method parsing image by sliding window to samples to train
 	 *
 	 * @param path path to samples
