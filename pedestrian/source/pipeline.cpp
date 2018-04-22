@@ -217,7 +217,9 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 		draw2mat(foundRect);
 	if(!foundRect.empty() && cFrame >= 0)
 		_rects2Eval[cFrame].push_back(foundRect);
+#if CALC_DIST
 	_distances[cFrame].push_back(distances);
+#endif
 	foundRect.clear();
 	frame.release();
 }
@@ -444,26 +446,24 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 
 	for (int i = 0; i < test.size(); i++)
 		falsePos += test[i].size();
+	for (int i = 0; i < trained.size(); i++)
+		falseNeg += trained[i].size();
 
 	for (int i = 0; i < trained.size(); i++) {
 		int isPedestrian = 0;
 		for (int ii = 0; ii < trained[i].size(); ii++) {
-			bool found = false;
 			for (int jj = 0; jj < test[i].size(); jj++) {
-				if (!trained[i].empty() && (trained[i][ii] & test[i][jj]).area() > (trained[i][ii].area() / 2)) {
+				if (!trained[i].empty() && trained[i].size() > ii && (trained[i][ii] & test[i][jj]).area() > (trained[i][ii].area() / 2)) {
 					truePos++; // pedestrian found
-					found = true;
 					trained[i].erase(trained[i].begin() + ii);
 					isPedestrian = 1;
-				//	break;
 				}
 			}
-			if (!found) falseNeg++;
 			typeClass[i] = isPedestrian;
 		}
 	}
 	falsePos -= truePos;
-
+	falseNeg -= truePos;
 	float precision = static_cast<float>(truePos) / (truePos + falsePos); // Precision is the percentage true positives in the retrieved results.
 	float recall = static_cast<float>(truePos) / (truePos + falseNeg); // Recall is the percentage of the pedestrians that the system retrieves.
 	float f1score = 2 * (precision * recall) / (precision + recall);
