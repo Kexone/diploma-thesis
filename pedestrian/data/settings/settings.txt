@@ -57,8 +57,8 @@ paramC=0.05
  
 //samplesPos=samples/posSamples.txt
 //samplesNeg=samples/negSamples.txt
-samplesPos=samples/new/daimlerM3.txt
-samplesNeg=samples/negative/neg3000.txt
+samplesPos=samples/listPosTestMin.txt
+samplesNeg=samples/negSamples1.txt
 
 samplesPosTest=mySamples/pos3k.txt
 samplesNegTest=mySamples/neg4000.txt

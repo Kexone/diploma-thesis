@@ -14,7 +14,7 @@
 \usepackage{tikz}       % makra pro kresleni
 \usepackage{etoolbox}
 \usepackage{multirow}
-
+\usepackage{dirtree}
 \makeatletter   
 \let\oldcite\cite
 \pretocmd{\listoffigures}{\def\cite{\ignorespaces\@gobble}}{}{}
@@ -80,4 +80,5 @@
 \input{includes/references.tex}
 
 \appendix
+\input{includes/_appendix.tex}
 \end{document}

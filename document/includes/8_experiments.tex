@@ -106,7 +106,7 @@ Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
 
 \begin{table}[H]
 \centering
-\caption{Přesnost konfigurace klasifikátoru číslo}
+\caption{Přesnost konfigurace klasifikátoru číslo 15}
 \begin{tabular} { |c|c|c|c|c| }
 \hline
 {}          & {TP/FN} 	 & {TN/FP} 	& {Přesnost \%} & {AUC}  \\ \hline
@@ -127,14 +127,14 @@ Testovací video je ve 3 druzích rozlišení, základní informace o videosekve
 \begin{tabular} { |c|c|c|c|c| }
 \hline
 {Název videa}   & {Rozlišení} 	& {Počet snímků}    & {FPS} & {Výskyt osob na snímcích}  	\\ \hline
-cctv4.mp4 		&  640 x  360	& 781  				& 29,97	& 	754				\\ \hline
-cctv4.avi		& 1280 x  720	& 626  				& 24,00	& 	597				\\ \hline
-cctv4.mov 		& 1920 x 1080	& 781  				& 29,97	& 	749				\\ \hline
+cctv4.mp4 		&  640 x  360	& 781  				& 29,97	& 	754							\\ \hline
+cctv4.avi		& 1280 x  720	& 626  				& 24,00	& 	597							\\ \hline
+cctv4.mov 		& 1920 x 1080	& 781  				& 29,97	& 	749							\\ \hline
 \end{tabular}
 \label{videosTab}
 \end{table}
 
-Chodci se ve videosekvenci mohli vyskytovat kdekoliv, proto jsem namísto přesnosti počítal F1--skóre. Ke svému výpočtu nepotřebuje true negative, které by bylo nemožné získat z každého obrázku z videa. Výpočet F1-skóre je následující:
+Chodci se ve videosekvenci mohli vyskytovat kdekoliv, proto jsem namísto přesnosti počítal F1--skóre. Ke svému výpočtu nepotřebuje true negative, které by bylo nemožné získat z každého snímku z videa. Výpočet F1--skóre je následující:
 \begin{equation*}
 \centering
  \label{eq:f1score}
@@ -142,8 +142,10 @@ Chodci se ve videosekvenci mohli vyskytovat kdekoliv, proto jsem namísto přesn
 F1-score = \frac{ 2TP}{2TP + FP + FN}
  \end{aligned}
 \end{equation*}
-Také jsem stanovil pravidlo pro pozitivní detekci a to takové, že výstup z detektoru je považován za pozitivní právě tehdy, když jeho plocha je větší než polovina anotované plochy. Navzdory tomu, že tyto počítače podporují rozšíření NEON a obě knihovny byly kompilovány s tímto rozšířením, výsledky nebyly až tak časově uspokojivé jak jsem očekával. V následujících tabulkách jsou uvedeny výsledky detekce mého vytrénovaného detektoru včetně původního detektoru lidí, který je obsažen v OpenCV.
-V následujících tabulkách jsou uvedeny výsledek detekce z každého videa na každém zařízení. \ref{resultTabIMX} \ref{resultTabRPI3} \ref{resultTabBPI}.
+Také jsem stanovil pravidlo pro pozitivní detekci a to takové, že výstup z detektoru je považován za pozitivní právě tehdy, když jeho plocha je větší než polovina anotované plochy. 
+
+Navzdory tomu, že tyto počítače podporují rozšíření NEON a obě knihovny byly kompilovány s tímto rozšířením, výsledky nebyly až tak časově uspokojivé jak jsem očekával. V následujících tabulkách jsou uvedeny výsledky detekce mého vytrénovaného detektoru včetně původního detektoru lidí, který je obsažen v OpenCV (v tabulkách je zaznamenán jako ``default'').
+V tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a \ref{resultTabBPI} jsou uvedeny výsledky detekce z každého videa na jednotlivém zařízení. Tabulka \ref{resultTabDesktop} jsou výsledky z desktopového počítače.  
 \begin{table}[H]
 \catcode`\-=12
 \centering
@@ -151,19 +153,25 @@ V následujících tabulkách jsou uvedeny výsledek detekce z každého videa n
 \label{resultTabIMX}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-                         & Typ algoritmu   	& ALG FPS & Délka detekce & TP & FN & FP & F1-skóre \\ \hline
-\multirow{4}{*}{cctv4.mp4} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
-                         & HOG + MOG  		&         &               &    &    &    &          \\ \cline{2-8} 
+                         & Typ algoritmu   	& ALG FPS & Délka detekce & TP & FN & FP & F1--skóre \\ \hline
+\multirow{6}{*}{cctv4.mp4} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
+                         & HOG + MOG  		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & FHOG       		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & FHOG + MOG 		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & default	 		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & default + MOG	&         &               &    &    &    &          \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
+                         & HOG + MOG  		&         &               &    &    &    &          \\ \cline{2-8}  
                          & FHOG       		&         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               &    &    &    &          \\ \hline\hline 
-\multirow{4}{*}{cctv4.avi} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               &    &    &    &          \\ \cline{2-8} 
+                         &  default 		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & default + MOG	&         &               &    &    &    &          \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
                          & HOG + MOG  		&         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG       		&         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               &    &    &    &          \\ \hline \hline
-\multirow{4}{*}{cctv4.mov} & HOG        	&         &               &    &    &    &          \\ \cline{2-8} 
-                         & HOG + MOG  		&         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG       		&         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               &    &    &    &          \\ \hline
+                         & FHOG       		&         &               &    &    &    &          \\ \cline{2-8}  
+                         & FHOG + MOG 		&         &               &    &    &    &          \\ \cline{2-8} 
+                         & default 		 	&         &               &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG 	&         &               &    &    &    &          \\ \hline
 \end{tabular}
 \end{table}
 
@@ -175,19 +183,25 @@ V následujících tabulkách jsou uvedeny výsledek detekce z každého videa n
 \label{resultTabRPI3}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-                         & Typ algoritmu 	& ALG FPS & Délka detekce [s] & TP 		& FN 	& FP 	& F1-skóre [\%] \\ \hline
-\multirow{4}{*}{cctv4.mp4} & HOG         	&   0,95  &   826,7       	  & 441   	& 313   & 158   &   65      	\\ \cline{2-8} 
+                         & Typ algoritmu 	& ALG FPS & Délka detekce [s] & TP 		& FN 	& FP 	& F1--skóre [\%] \\ \hline
+\multirow{6}{*}{cctv4.mp4} & HOG         	&   0,95  &   826,7       	  & 441   	& 313   & 158   &   65      	\\ \cline{2-8} 
                          & HOG + MOG  		&   3,89  &   200,7       	  & 579		& 175  	& 18   	& 	86	        \\ \cline{2-8} 
                          & FHOG       		&         &   			  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \hline\hline 
-\multirow{4}{*}{cctv4.avi} & HOG      		&   0,65  &   963,5        	  & 416   	& 181 	& 13    & 	81	        \\ \cline{2-8} 
-                         & HOG + MOG  		&   1,48  &   524,5       	  & 470		& 127 	& 20   	& 	86	        \\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default	 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default + MOG 	&               	  &    		&    	&    	& 		&        \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG      		&   0,65  &   963,5        	  & 416   	& 181 	& 13    & 	81	        \\ \cline{2-8} 
+                       & HOG + MOG  		&   1,48  &   524,5       	  & 470		& 127 	& 20   	& 	86	        \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \hline \hline
-\multirow{4}{*}{cctv4.mov} & HOG      		&   0,35  &   2 217,1      	  & 572 	& 177 	& 114  	& 	80	        \\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default	 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default + MOG 	&         &               	  &    		&    	&    	& 		        \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG      		&   0,35  &   2 217,1      	  & 572 	& 177 	& 114  	& 	80	        \\ \cline{2-8} 
                          & HOG + MOG  		&   0,38  &   2 080,6      	  & 543		& 206  	& 66	& 	80	        \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \hline
+                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default	 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & default + MOG 	&         &               	  &    		&    	&    	& 		        \\ \hline
 \end{tabular}
 \end{table}
 
@@ -199,19 +213,25 @@ V následujících tabulkách jsou uvedeny výsledek detekce z každého videa n
 \label{resultTabBPI}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-                         & Typ algoritmu	& ALG FPS & Délka detekce [s] & TP 	  & FN 	& FP 	& F1-skóre [\%] \\ \hline
-\multirow{4}{*}{cctv4.mp4} & HOG      		&  0,44   &   1 795,5    	  & 437   & 317 & 157  	&   65     		\\ \cline{2-8} 
+                         & Typ algoritmu	& ALG FPS & Délka detekce [s] & TP 	  & FN 	& FP 	& F1--skóre [\%] \\ \hline
+\multirow{6}{*}{cctv4.mp4} & HOG      		&  0,44   &   1 795,5    	  & 437   & 317 & 157  	&   65     		\\ \cline{2-8} 
                          & HOG + MOG  		&  2,92   &     267,5     	  & 577   & 177 & 15  	&   86     		\\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \hline\hline 
-\multirow{4}{*}{cctv4.avi} & HOG        	&  0,33   &   1 909,3     	  & 416	  & 181  & 13   &   81     		\\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8}  
+                         & default	 		&         &               	  &    &    &    &          \\ \cline{2-8}  
+                         & default + MOG 	&         &               	  &    &    &    &          \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG        	&  0,33   &   1 909,3     	  & 416	  & 181  & 13   &   81     		\\ \cline{2-8} 
                          & HOG + MOG  		&  0,85   &     739,4      	  & 470   & 127  & 20   &   86          \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \hline \hline
-\multirow{4}{*}{cctv4.mov} & HOG        	&  0,14   &   5 718,8     	  & 572	  & 177  & 114  &   80		    \\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8} 
+                         & default	 		&         &               	  &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG 	&         &               	  &    &    &    &          \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG        	&  0,14   &   5 718,8     	  & 572	  & 177  & 114  &   80		    \\ \cline{2-8} 
                          & HOG + MOG  		&  0,21   &   3 709,5      	  & 544   & 205  & 66   &   80          \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \hline
+                         & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8} 
+                         & default	 		&         &               	  &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG 	&         &               	  &    &    &    &          \\ \hline
 \end{tabular}
 \end{table}
 
@@ -222,34 +242,35 @@ V následujících tabulkách jsou uvedeny výsledek detekce z každého videa n
 \label{resultTabDesktop}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-                         & Typ algoritmu   & ALG FPS & Délka detekce & TP & FN & FP & F1-skóre \\ \hline
-\multirow{4}{*}{cctv4.mp4} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & Typ algoritmu   & ALG FPS & Délka detekce & TP & FN & FP & F1--skóre \\ \hline
+\multirow{6}{*}{cctv4.mp4} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
                          & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
                          & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG &         &               &    &    &    &          \\ \hline\hline 
-\multirow{4}{*}{cctv4.avi} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG &         &               &    &    &    &          \\ \cline{2-8}  
+                         & default	 &         &               &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG &         &               &    &    &    &          \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
                          & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
                          & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG &         &               &    &    &    &          \\ \hline \hline
-\multirow{4}{*}{cctv4.mov} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
+                         & FHOG + MOG &         &               &    &    &    &          \\ \cline{2-8} 
+                         & default  &         &               &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG &         &               &    &    &    &          \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG        &         &               &    &    &    &          \\ \cline{2-8} 
                          & HOG + MOG  &         &               &    &    &    &          \\ \cline{2-8} 
                          & FHOG       &         &               &    &    &    &          \\ \cline{2-8} 
-                         & FHOG + MOG &         &               &    &    &    &          \\ \hline
+                         & FHOG + MOG &         &               &    &    &    &          \\ \cline{2-8} 
+                         & default  &         &               &    &    &    &          \\ \cline{2-8} 
+                         & default + MOG &         &               &    &    &    &          \\ \hline
 \end{tabular}
 \end{table}
- První trénování --->špatný dataset
- druhé trénování --->špatné parametry
- třetí trénování --->téměř dobré
- čtvrté trénování -->ideální sada, ideální parametry, 85%
- 
- dodatečné trénování na siluetách --> works
 
+V následujícím obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech videí za použití kombinace HoGu a MoGu. Jak může být zřejmé, klasifikátor není až tak spolehlivý na obsah s vysokým rozlišením, na druhou stranu detekci na průměrném rozlišení (720p) je spolehlivější. Natrénoval jsem klasifikátor na vzorcích o velikosti $48x96$ pixelů proto, aby bylo možné detekovat na různých snímcích bez nutnosti zvětšování obsahu.   
 
- testování --> dlib trvalo strašně dlouho 127h
- testování --> opencv trvalo strašně dlouho - rozšířené parametry
+\begin{figure}[H]
+\centering
+\includegraphics[width=16cm]{figures/roc2}
+\caption{ROC křivky klasifikátoru na videosekvencích z tabulky \ref{videosTab}}
+\label{fig:rocCurve2}
+\end{figure}
 
-
- kombinované trénování  extract features Hog  ->train dlib fhog
- trénování fhog -> čistě pos samples
- trénování hog ->neg/pos samples
-
+Předfiltrování obrazu pomocí subtrakce pozadí se projevilo jako užitečná metodika pro detekci chodců. Nejen, že se zefektivnila detekce odfiltrováním většiny false positive, ale také rychlost samotného algoritmu, například na dvoujádrovém počítači Banana Pi skoro až $7x$ při nízkém rozlišení.  
