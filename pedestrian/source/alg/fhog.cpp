@@ -10,7 +10,7 @@ Fhog::Fhog()
 Fhog::Fhog(std::string classPath)
 {
 //	dlib::deserialize("dlib_pedestrian_detector.svm") >> detector;
-//	dlib::deserialize(classPath) >> detector;
+	dlib::deserialize(classPath) >> detector;
 	//dlib::deserialize("D://Codes//school//backupDT//repo//pedestrian//pedDet.svm") >> detector;
 	//scanner.set_detection_window_size(80, 80);
 	//scanner.set_max_pyramid_levels(1);

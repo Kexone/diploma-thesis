@@ -62,7 +62,7 @@ private:
 	//typedef dlib::radial_basis_kernel< image_type  > image_scanner_type;
  	//typedef  dlib::radial_basis_kernel < dlib::matrix < double, 1980, 1 >> image_scanner_type;
 		//typedef dlib::radial_basis_kernel  image_scanner_type;
-	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down < 3 >, dlib::default_fhog_feature_extractor> image_scanner_type;
+	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down < 6 >, dlib::default_fhog_feature_extractor> image_scanner_type;
 	//typedef dlib::structural_svm_object_detection_problem<double, dlib::default_fhog_feature_extractor> image_scanner_type;
 //	dlib::scan_fhog_pyramid<dlib::radial_basis_kernel< dlib::matrix < double, 1980, 1 >>> detector;
 //	image_scanner_type scanner;

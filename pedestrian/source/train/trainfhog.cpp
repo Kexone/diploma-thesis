@@ -101,7 +101,7 @@ void TrainFHog::train() try
 
 	
 	trainer.be_verbose();
-	trainer.set_c(0.15);    // 0.15625
+	trainer.set_c(0.15625);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
 	trainer.set_loss_per_false_alarm(1.2);

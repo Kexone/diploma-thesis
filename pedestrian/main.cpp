@@ -238,7 +238,7 @@ void mainFun::image(cv::CommandLineParser parser)
 void mainFun::video(cv::CommandLineParser parser)
 {
 
-	TestingPipeline("testing/testing.txt").execute();
+//	TestingPipeline("testing/testing.txt").execute();
 
 	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 
@@ -246,13 +246,13 @@ void mainFun::video(cv::CommandLineParser parser)
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)
 			{
-			Settings::getSettings("data/settings/settings_school.txt");
+			Settings::getSettings("data/settings/settings_vga.txt");
 			std::string path = "E:/USE_SVM/sudi/";
 			std::string pathB = "E:/USE_SVM/bigUse/";
-			Pipeline *pl = new Pipeline("KONF_15.yml", 2);
+			Pipeline *pl = new Pipeline("pedDet.svm", 3);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
-			Settings::nameFile = vid;// parser.get<std::string>("video");
+			//Settings::nameFile = vid;// parser.get<std::string>("video");
 
 				auto startTime = std::chrono::high_resolution_clock::now();
 			//pl->execute(parser.get<std::string>("video"));
