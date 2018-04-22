@@ -39,26 +39,7 @@ namespace mainFun {
 //////////////////////
 
 /*
-* @TODO IMPORTANT TODO!!!
-*		COMBINED DLIB SVM TRAINING
-*		CALC DISTANCE
-*		CALC F1 SCORE
-*		ROC curves
-*		RESIZE SAMPLES FOR CC TRAIN
-*		LBP TESTING
-*		HAAR TESTING
-*		TRAIN HOG
-* @TODO TEST METHOD FOR MORE CLASSIFICATORS
-*		DOCUMENTATION
-*		RENAME OUTPUT (EG MIXTURED HOG TO HOG+MOG)
-*
-* @TODO add choose to set all params
 * @TODO train HAAR, LBP cascade classificator
-* @TODO ADA BOOST train
-* @TODO LBP, HAAR CASCADE CLASSIFICATOR TRAIN
-*
-* @TODO implement cv::groupRectangles();
-
 */
 std::string Settings::nameFile = "";
 std::string Settings::nameTrainedFile = "";
@@ -80,7 +61,7 @@ int main(int argc, char *argv[])
 		"{ settings  st       |   data/settings/settings.txt   |  file with settings for app               }"
 		"{ type  t            |                                |  type of alg (train, test)                }"
 		"{ extract e          |                                |  extract ROI from videostream             }"
-		"{ vizualize          |               0                |  show result in window                    }"
+		"{ vizualize viz      |               0                |  show result in window                    }"
 		"{ verbose            |               0                |  print information about train etc.       }"
 		"{ createSample cs    |               0                |  creating samples from image              }"
 		;
@@ -89,7 +70,7 @@ int main(int argc, char *argv[])
 	cv::CommandLineParser parser(argc, argv, keys);
 
 	Settings::getSettings(parser.get<std::string>("settings"));
-	Settings::showVideoFrames = 1;// parser.get<bool>("vizualize"); //@TODO
+	Settings::showVideoFrames =  parser.get<int>("vizualize")  == 1 ? true : false;
 
 	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.6");
 
@@ -159,8 +140,19 @@ void mainFun::type(cv::CommandLineParser parser)
 
 void mainFun::camera(cv::CommandLineParser parser)
 {
+	int typeAlg;
+	
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
+	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
+	std::cout << " 5) cascade classificator \n";
+	std::cin >> typeAlg;
+	if (typeAlg <= 0 || static_cast<unsigned>(typeAlg) > 6) {
+				std::cout << "Bad selection.\n";
+				return;
+	}
 	Pipeline *pl;
-	pl = new Pipeline(parser.get<std::string>("class"),2);
+
+	pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
 	std::cout << "camera" << std::endl;
 	pl->execute(std::stoi(parser.get<std::string>("camera")));
 
@@ -168,16 +160,25 @@ void mainFun::camera(cv::CommandLineParser parser)
 }
 
 void mainFun::image(cv::CommandLineParser parser)
-{ // @TODO chooseble hOG or FHOG
-	Pipeline *pl = new Pipeline(parser.get<std::string>("class"),1);
-	Utils::setEvaluationFiles(parser.get<std::string>("image"));
-	pl->executeImages(parser.get<std::string>("image"));
-	std::map<std::string, int> maps;
-	pl->evaluate(maps);
-	std::cout << parser.get<std::string>("image") << std::endl;
-	cv::waitKey(0);
+{	
+	int typeAlg;
 
-	delete pl;
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) only FHoG (dlib) \n";
+	std::cin >> typeAlg;
+	if (typeAlg == 1 || typeAlg == 2) {
+		if (typeAlg == 2) typeAlg = 3;
+
+		Pipeline *pl = new Pipeline(parser.get<std::string>("class"), 1);
+		Utils::setEvaluationFiles(parser.get<std::string>("image"));
+
+		pl->executeImages(parser.get<std::string>("image"));
+		std::map<std::string, int> maps;
+		pl->evaluate(maps);
+
+		delete pl;
+	}
+	else { std::cout << "Bad selection.\n"; }
+
 }
 
 //void mainFun::video(cv::CommandLineParser parser)
@@ -187,7 +188,7 @@ void mainFun::image(cv::CommandLineParser parser)
 //	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
 //	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
 //	std::cout << " 5) cascade classificator \n";
-//	std::cout << " x) TEST MODE \n" << std::endl;
+//	std::cout << " 7) TEST MODE \n" << std::endl;
 //	std::cin >> typeAlg;
 //
 //	if (typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6) {
@@ -219,9 +220,11 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
+
 	TestingPipeline("testing/testing.txt").execute();
 
 	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
+
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)

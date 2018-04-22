@@ -61,9 +61,8 @@ void TrainHog::trainFromMat(cv::Mat trainMat, std::vector<int> labels)
 	trainSvm(trainMat, labels);
 }
 
-void TrainHog::train(bool saveData)
+void TrainHog::train(bool saveData, bool trainTwice)
 {
-	bool trainTwice = false;
 	std::vector< cv::Mat > posSamplesLst;
 	std::vector< cv::Mat > negSamplesLst;
     std::vector< cv::Mat > gradientLst;
@@ -87,11 +86,11 @@ void TrainHog::train(bool saveData)
     extractFeatures(negSamplesLst, gradientLst);
     convertSamples2Mat(gradientLst, trainMat);
 
-	//if (saveData) saveLabeledMat(trainMat, labels);
+	if (saveData) saveLabeledMat(trainMat, labels);
 
     trainSvm(trainMat, labels);
 
-	if (saveData) //@TODO
+	if (trainTwice)
 	{
 		cv::Size pos_image_size = posSamplesLst[0].size();
 		std::cout << "Testing trained detector on negative images.this may take a few minutes...";
@@ -138,12 +137,12 @@ void TrainHog::train(bool saveData)
 		trainSvm(trainMat, labels);
 		std::cout << "...[done]" << std::endl;
 	}
-	std::vector< float > hog_detector;
-	cv::HOGDescriptor hog;
-	hog.winSize = pedestrianSize;
-	getSvmDetector(svm, hog_detector);
-	hog.setSVMDetector(hog_detector);
-	hog.save("my_detector.yml");
+	//std::vector< float > hog_detector;
+	//cv::HOGDescriptor hog;
+	//hog.winSize = pedestrianSize;
+	//getSvmDetector(svm, hog_detector);
+	//hog.setSVMDetector(hog_detector);
+	//hog.save("my_detector.yml");
 }
 
 void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, bool isDlib)

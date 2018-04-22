@@ -99,7 +99,7 @@ public:
 	*
 	* @saveData condition for save trained matrix and her labels
 	*/
-    void train(bool saveData);
+    void train(bool saveData = false, bool trainTwice = false);
 
 	/**
 	* @brief Extractiong gradients from samples by one by one and stored in vector gradientLst

@@ -46,7 +46,6 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	cv::Mat frame;
 	std::fstream sampleFile(testSamplesPath);
 	std::string oSample;
-	cv::namedWindow("Result", CV_WINDOW_AUTOSIZE);
 	//_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >;
 	int i = 0;
 	while (sampleFile >> oSample) {
@@ -56,8 +55,13 @@ void Pipeline::executeImages(std::string testSamplesPath)
 			sampleFile.close();
             break;
         }
-		_rects2Eval.resize(i+1);
+		_rects2Eval.resize(i + 1);
+#if CALC_DIST
+		_distances.resize(i+1);
+#endif
        processStandaloneImage(frame,i++);
+	   if (Settings::showVideoFrames)
+		   cv::imshow("Result", _localFrame);
 	   cv::waitKey(0);
        frame.release();
     }
@@ -270,8 +274,6 @@ void Pipeline::processStandaloneImage(cv::Mat &frame, int cFrame)
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
 
-	if(Settings::showVideoFrames)
-		cv::imshow("Result", _localFrame);
 	_rects2Eval[cFrame].push_back(foundRect);
 	_distances[cFrame].push_back(distances);
 	foundRect.clear();

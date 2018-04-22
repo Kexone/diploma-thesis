@@ -2,7 +2,9 @@
 #define TESTING_PIPELINE_H
 #include <string>
 #include "pipeline.h"
-
+#include "utils/utils.h"
+#include <chrono>
+#include <ctime> 
 class TestingPipeline
 {
 public:
