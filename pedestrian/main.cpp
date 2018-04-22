@@ -238,8 +238,8 @@ void mainFun::image(cv::CommandLineParser parser)
 void mainFun::video(cv::CommandLineParser parser)
 {
 
-//	TestingPipeline("testing/testing.txt").execute();
-
+	TestingPipeline("testing/testing.txt").execute();
+	return;
 	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {
