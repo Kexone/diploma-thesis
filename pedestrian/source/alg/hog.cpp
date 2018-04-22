@@ -44,7 +44,6 @@ Hog::Hog(std::string svmPath)
 //detection on cropped frames
 void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > &distances) {
 
-	//distances.clear();
 	rects.clear();
 	rects = std::vector < std::vector < cv::Rect > >(frames.size());
 	distances = std::vector < std::vector < float > > (frames.size());
@@ -100,8 +99,10 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 #endif
 			if (found[i].area() > Settings::cropHogMinArea) {
 				rects[x].push_back(found[i]);
+#if CALC_DIST
 				cv::Mat cropped(test(found[i]));
 				distances[x].push_back(getDistance(cropped));
+#endif
 			}
 		}
 		test.release();
@@ -110,7 +111,7 @@ void Hog::detect(std::vector<CroppedImage>& frames, std::vector< std::vector < c
 }
 
 //detection on full frame
-void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
+void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects,  std::vector < float > &distances) {
 	assert(!frame.empty());
 	rects.clear();
 	if(Settings::hogBlurFilter.width !=0)
@@ -133,10 +134,21 @@ void Hog::detect(cv::Mat& frame, std::vector < cv::Rect > &rects) {
 	cv::groupRectangles(rects, weights, Settings::hogGroupTreshold, Settings::hogEps);
 	std::vector<cv::Rect> found;
 
-	for (size_t i = 0; i<rects.size(); i++)
+	size_t i, j;
+	for (i = 0; i<rects.size(); i++)
 	{
-		if (rects[i].area() > Settings::hogMinArea)
-			found.push_back(rects[i]);
+		cv::Rect r = rects[i];
+		for (j = 0; j<rects.size(); j++)
+			if (j != i && (r & rects[j]) == r)
+				break;
+		if (j == rects.size() && rects[i].area() > Settings::hogMinArea) {
+			found.push_back(r);
+#if CALC_DIST
+			cv::Mat cropped(frame(rects[i]));
+			distances.push_back(getDistance(cropped));
+#endif
+		}
+
 #if BAD_SAMPLES
 		std::random_device rd;
 		std::mt19937 gen(rd());

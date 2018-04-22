@@ -170,7 +170,10 @@ void mainFun::camera(cv::CommandLineParser parser)
 void mainFun::image(cv::CommandLineParser parser)
 { // @TODO chooseble hOG or FHOG
 	Pipeline *pl = new Pipeline(parser.get<std::string>("class"),1);
+	Utils::setEvaluationFiles(parser.get<std::string>("image"));
 	pl->executeImages(parser.get<std::string>("image"));
+	std::map<std::string, int> maps;
+	pl->evaluate(maps);
 	std::cout << parser.get<std::string>("image") << std::endl;
 	cv::waitKey(0);
 

@@ -118,7 +118,7 @@ private:
 	*
 	* @param frame actual frame
 	*/
-	void processStandaloneImage(cv::Mat &frame);
+	void processStandaloneImage(cv::Mat &frame, int cFrame);
 
 	/**
 	* @brief Method for preprocessing, convert to gray is standard

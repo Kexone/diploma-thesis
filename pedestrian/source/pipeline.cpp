@@ -47,16 +47,21 @@ void Pipeline::executeImages(std::string testSamplesPath)
 	std::fstream sampleFile(testSamplesPath);
 	std::string oSample;
 	cv::namedWindow("Result", CV_WINDOW_AUTOSIZE);
+	//_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >;
+	int i = 0;
 	while (sampleFile >> oSample) {
+		std::cout << oSample << std::endl;
 		frame = cv::imread(oSample, CV_LOAD_IMAGE_UNCHANGED);
         if(frame.empty()) {
 			sampleFile.close();
             break;
         }
-       processStandaloneImage(frame);
+		_rects2Eval.resize(i+1);
+       processStandaloneImage(frame,i++);
 	   cv::waitKey(0);
        frame.release();
     }
+	saveResults();
     cv::destroyWindow("Result");
 }
 
@@ -102,7 +107,9 @@ void Pipeline::execute(std::string cameraFeed)
 	_vs->openCamera();
 	std::cout << "Videostream initialized." << std::endl;
 	_rects2Eval = std::vector < std::vector < std::vector < cv::Rect > > >(_vs->totalFrames);
+#if CALC_DIST
 	_distances = std::vector < std::vector < std::vector < float > > >(_vs->totalFrames);
+#endif
 
 #if MY_DEBUG
 	loadRects(Settings::nameTrainedFile, trained);
@@ -181,7 +188,9 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 			croppedImages.push_back(CroppedImage(i, _localFrame.clone(), rect[i]));
 		}
 		_hog.detect(croppedImages, foundRect, distances);
-		_distances[cFrame] = distances; // @TODO
+#if CALC_DIST
+		_distances[cFrame] = distances;
+#endif
 		rectOffset(foundRect, croppedImages, _rects2Eval[cFrame]);
 		if (Settings::showVideoFrames)
 			draw2mat(foundRect);
@@ -197,12 +206,14 @@ void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 	//preprocessing(frame);
 
 	std::vector < cv::Rect > foundRect;
+	std::vector < float > distances;
 
-	_hog.detect(frame, foundRect);
+	_hog.detect(frame, foundRect, distances);
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
 	if(!foundRect.empty() && cFrame >= 0)
 		_rects2Eval[cFrame].push_back(foundRect);
+	_distances[cFrame].push_back(distances);
 	foundRect.clear();
 	frame.release();
 }
@@ -250,16 +261,19 @@ void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 	frame.release();
 }
 
-void Pipeline::processStandaloneImage(cv::Mat &frame)
+void Pipeline::processStandaloneImage(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
 	std::vector < cv::Rect  > foundRect;
-	_hog.detect(frame, foundRect); 
+	std::vector < float > distances;
+	_hog.detect(frame, foundRect, distances); 
 	if (Settings::showVideoFrames)
 		draw2mat(foundRect);
 
 	if(Settings::showVideoFrames)
 		cv::imshow("Result", _localFrame);
+	_rects2Eval[cFrame].push_back(foundRect);
+	_distances[cFrame].push_back(distances);
 	foundRect.clear();
 }
 
@@ -458,7 +472,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	results["fn"] = falseNeg;
 	results["f1"] = cvRound(f1score*100);
 
-
+#if CALC_DIST
 	std::vector< double > distances(test.size());
 	for (uint i = 0; i < _rects2Eval.size(); i++) {
 		for (uint j = 0; j < _rects2Eval[i].size(); j++) {
@@ -485,6 +499,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	}
 	fs.close();
 	fs2.close();
+#endif
 }
 
 
