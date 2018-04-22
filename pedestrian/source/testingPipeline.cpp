@@ -29,7 +29,7 @@ void TestingPipeline::execute()
 	std::time_t currTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
-	std::string algNames[] = { "HOG", "MOG + HOG", "HOG", "MOG + HOG","HOG", "MOG + HOG" };
+	std::string algNames[] = { "HOG", "MOG + HOG", "HOG", "MOG + HOG","HOG", "MOG + HOG", "default", "default + mog" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 	for (int i = 0; i < _videos2Test.size(); i++) {
 				std::map<std::string, int> results;
