@@ -245,6 +245,63 @@ struct Settings
 		}
 		file.close();
 	}
+
+	static void printSettings()
+	{
+		std::cout << "mogHistory " << mogHistory << std::endl;
+		std::cout << "mogThresh " << mogThresh << std::endl;
+		std::cout << "mogDetectShadows " << mogDetectShadows << std::endl;
+		std::cout << "cvxHullExtSize " << cvxHullExtSize << std::endl;
+		std::cout << "cvxHullExtTimes " << cvxHullExtTimes << std::endl;
+		std::cout << "cvxHullThresh " << cvxHullThresh << std::endl;
+		std::cout << "cvxHullMaxValue " << cvxHullMaxValue << std::endl;
+		std::cout << "pedSize " << pedSize << std::endl;
+		std::cout << "blockSize " << blockSize << std::endl;
+		std::cout << "cellSize " << cellSize << std::endl;
+		std::cout << "strideSize " << strideSize << std::endl;
+		std::cout << "maxIterations " << maxIterations << std::endl;
+		std::cout << "termCriteria " << termCriteria << std::endl;
+		std::cout << "kernel " << kernel << std::endl;
+		std::cout << "type " << type << std::endl;
+		std::cout << "epsilon " << epsilon << std::endl;
+		std::cout << "coef0 " << coef0 << std::endl;
+		std::cout << "degree " << degree << std::endl;
+		std::cout << "gamma " << gamma << std::endl;
+		std::cout << "paramNu " << paramNu << std::endl;
+		std::cout << "paramP " << paramP << std::endl;
+		std::cout << "paramC " << paramC << std::endl;
+		std::cout << "samplesPos " << samplesPos << std::endl;
+		std::cout << "samplesNeg " << samplesNeg << std::endl;
+		std::cout << "samplesPosTest " << samplesPosTest << std::endl;
+		std::cout << "samplesNegTest " << samplesNegTest << std::endl;
+		std::cout << "classifierName2Train " << classifierName2Train << std::endl;
+		std::cout << "dilationSize " << dilationSize << std::endl;
+		std::cout << "erosionSize " << erosionSize << std::endl;
+		std::cout << "hogBlurFilter " << hogBlurFilter << std::endl;
+		std::cout << "hogHitTreshold " << hogHitTreshold << std::endl;
+		std::cout << "hogWinStride " << hogWinStride << std::endl;
+		std::cout << "hogPadding " << hogPadding << std::endl;
+		std::cout << "hogScale " << hogScale << std::endl;
+		std::cout << "hogFinalTreshold " << hogFinalTreshold << std::endl;
+		std::cout << "hogMeanshiftGrouping " << hogMeanshiftGrouping << std::endl;
+		std::cout << "hogGroupTreshold " << hogGroupTreshold << std::endl;
+		std::cout << "hogEps " << hogEps << std::endl;
+		std::cout << "hogMinArea " << hogMinArea << std::endl;
+		std::cout << "cropHogBlurFilter " << cropHogBlurFilter << std::endl;
+		std::cout << "cropHogHitTreshold " << cropHogHitTreshold << std::endl;
+		std::cout << "cropHogWinStride " << cropHogWinStride << std::endl;
+		std::cout << "cropHogPadding " << cropHogPadding << std::endl;
+		std::cout << "cropHogScale " << cropHogScale << std::endl;
+		std::cout << "cropHogFinalTreshold " << cropHogFinalTreshold << std::endl;
+		std::cout << "cropHogMeanshiftGrouping " << cropHogMeanshiftGrouping << std::endl;
+		std::cout << "cropHogGroupTreshold " << cropHogGroupTreshold << std::endl;
+		std::cout << "cropHogEps " << cropHogEps << std::endl;
+		std::cout << "cropHogMinArea " << cropHogMinArea << std::endl;
+		std::cout << "fhogMinArea " << fhogMinArea << std::endl;
+		std::cout << "fhogAdjustTreshold " << fhogAdjustTreshold << std::endl;
+		std::cout << "cropFhogMinArea " << cropFhogMinArea << std::endl;
+		std::cout << "cropFhogAdjustTreshold " << cropFhogAdjustTreshold << std::endl;
+	}
 };
 
 #endif // SETTINGS_H

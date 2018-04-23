@@ -10,7 +10,8 @@
 #include "source/utils/utils.h"
 #include "source/test/testClass.h"
 #include "source/train/trainCascade.h"
-
+#include <fenv.h>
+#pragma STDC FENV_ACCESS ON
 
 ///////////////////////
 //					//
@@ -47,6 +48,8 @@ bool Settings::showVideoFrames = false;
 
 int main(int argc, char *argv[])
 {
+	const int originalRounding = fegetround();
+	fesetround(FE_TOWARDZERO);
 	if(argc < 2)	{
 		std::cout << "\tType -help for help" << std::endl;
 		return 0;
@@ -97,6 +100,7 @@ int main(int argc, char *argv[])
 	else if (parser.has("createSample")) {
 		mainFun::createSample(parser);
 	}
+	fesetround(originalRounding);
 	 	return 0;
 }
 
@@ -238,8 +242,9 @@ void mainFun::image(cv::CommandLineParser parser)
 void mainFun::video(cv::CommandLineParser parser)
 {
 
+			Settings::printSettings();
 	TestingPipeline("testing/testing.txt").execute();
-	return;
+
 	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {

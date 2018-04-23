@@ -427,8 +427,8 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 {
 	for (uint j = 0; j < rects.size(); j++) {
 		for (uint i = 0; i < rects[j].size(); i++) {
-			rects[j][i].x += cvRound(croppedImages[j].offsetX);
-			rects[j][i].y += cvRound(croppedImages[j].offsetY);
+			rects[j][i].x += croppedImages[j].offsetX;
+			rects[j][i].y += croppedImages[j].offsetY;
 		}
 		rects2Save.push_back(rects[j]);
 	}
