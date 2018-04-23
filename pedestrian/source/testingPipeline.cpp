@@ -29,7 +29,7 @@ void TestingPipeline::execute()
 	std::time_t currTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
 	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
-	std::string algNames[] = { "HOG", "MOG + HOG", "HOG", "MOG + HOG","HOG", "MOG + HOG", "default", "default + mog", "default", "default + mog", "default", "default + mog" };
+	std::string algNames[] = { "", "HOG", "MOG + HOG", "FHOG", "FHOG + MOG" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 	for (int i = 0; i < _videos2Test.size(); i++) {
 				std::map<std::string, int> results;
@@ -38,14 +38,14 @@ void TestingPipeline::execute()
 				Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 
 				Utils::setEvaluationFiles(_videos2Test[i]);
-				std::cout << algNames[i] << std::endl;
+				std::cout << algNames[_typeAlg[i]] << " " <<  _svms2Test[i] <<  std::endl;
 				auto startTime = std::chrono::high_resolution_clock::now();
 				pip.execute(_videos2Test[i]);
 				auto endTime = std::chrono::high_resolution_clock::now();
 				double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 				
 				pip.evaluate(results);
-				fs << algNames[i] << " & ";
+				fs << algNames[_typeAlg[i]] << " & " << _svms2Test[i] << " & ";
 				saveResults(fs, results, time, true);
 
 	}
