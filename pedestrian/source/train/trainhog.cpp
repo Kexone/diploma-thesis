@@ -414,27 +414,6 @@ void TrainHog::convertSamples2Mat(const std::vector<cv::Mat> &trainSamples, cv::
 			trainSamples[i].copyTo(trainData.row((int)i));
 		}
 	}
-	//cv::FileStorage fs("neg.yml", cv::FileStorage::WRITE);
-	//fs << "negSamples" << trainData;
-	//fs.release();
-
-    //const int rows = trainSamples.size();
-    //const int cols = std::max( trainSamples[0].cols, trainSamples[0].rows);
-    //cv::Mat tmp(1,cols,CV_32FC1);
-    //trainData = cv::Mat(rows,cols, CV_32FC1);
-    //int i = 0;
-    //for(auto sample : trainSamples) {
-    //    assert(sample.cols == 1 || sample.rows == 1);
-    //    if(sample.cols == 1) {
-    //        cv::transpose(sample,tmp);
-    //        tmp.copyTo( trainData.row( i ));
-    //    }
-    //    else if(sample.rows == 1) {
-    //        sample.copyTo(trainData.row( i ));
-    //    }
-    //    i++;
-    //}
-	
 }
 
 void TrainHog::saveLabeledMat(cv::Mat data, std::vector< int > labels)

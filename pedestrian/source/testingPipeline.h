@@ -5,11 +5,19 @@
 #include "utils/utils.h"
 #include <chrono>
 #include <ctime> 
+
+/**
+* class TestingPipeline
+*/
 class TestingPipeline
 {
 public:
 	TestingPipeline() {};
 	TestingPipeline(std::string testingFile);
+
+	/**
+	* @brief Execute testing
+	*/
 	void execute();
 
 private:

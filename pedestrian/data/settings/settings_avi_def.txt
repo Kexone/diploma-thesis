@@ -8,7 +8,7 @@ mogDetectShadows=1
 
 //convex hull settings
 cvxHullExtSize=10
-cvxHullExtTimes=3
+cvxHullExtTimes=4
 cvxHullThresh=180 //180
 cvxHullMaxValue=1 //255
 
@@ -37,7 +37,7 @@ cropHogBlurFilter=(0,0)
 cropHogHitTreshold=0
 cropHogWinStride=(4,4)
 cropHogPadding=(16,16)
-cropHogScale=1.02
+cropHogScale=1.04
 cropHogFinalTreshold=0.8
 cropHogMeanshiftGrouping=0
 cropHogGroupTreshold=1

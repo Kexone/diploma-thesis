@@ -162,7 +162,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="source\alg\cascadeClass.cpp" />
     <ClCompile Include="source\alg\convexhull.cpp" />
     <ClCompile Include="source\alg\fhog.cpp" />
     <ClCompile Include="source\alg\hog.cpp" />
@@ -177,9 +176,6 @@
     <ClCompile Include="source\train\combinedTrainHog.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\train\trainCascade.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="source\train\trainfhog.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -190,7 +186,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\3dparty\de\DifferentialEvolution.h" />
-    <ClInclude Include="source\alg\cascadeClass.h" />
     <ClInclude Include="source\alg\convexhull.h" />
     <ClInclude Include="source\alg\fhog.h" />
     <ClInclude Include="source\alg\hog.h" />
@@ -205,7 +200,6 @@
     <ClInclude Include="source\test\svmTest.h" />
     <ClInclude Include="source\test\testClass.h" />
     <ClInclude Include="source\train\combinedTrainHog.h" />
-    <ClInclude Include="source\train\trainCascade.h" />
     <ClInclude Include="source\train\trainfhog.h" />
     <ClInclude Include="source\train\trainhog.h" />
     <ClInclude Include="source\utils\extractorROI.h" />

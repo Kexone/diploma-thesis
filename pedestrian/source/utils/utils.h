@@ -59,6 +59,7 @@ public:
 	* @brief Converts dlib list of rectangles to openCV rectangles
 	*
 	* @param r list of dlib rectangles
+	* @param minRectSize param to filter minimal size of rect (default is 0)
 	*/
 	static std::vector < cv::Rect > vecDlibRectangle2VecOpenCV(std::vector< dlib::rectangle > r, int minRectSize = 0)
 	{

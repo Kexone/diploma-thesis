@@ -46,9 +46,6 @@
     <Filter Include="Source Files\utils">
       <UniqueIdentifier>{4806f9f6-5432-463c-af77-30c4fbeae7ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\3dparty">
-      <UniqueIdentifier>{2492c6f4-6ecb-4a5b-9626-2d3236b73b22}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +69,6 @@
     <ClCompile Include="source\pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\alg\cascadeClass.cpp">
-      <Filter>Source Files\alg</Filter>
-    </ClCompile>
     <ClCompile Include="source\test\svmTest.cpp">
       <Filter>Source Files\test</Filter>
     </ClCompile>
@@ -92,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="source\utils\extractorROI.cpp">
       <Filter>Source Files\utils</Filter>
-    </ClCompile>
-    <ClCompile Include="source\train\trainCascade.cpp">
-      <Filter>Source Files\train</Filter>
     </ClCompile>
     <ClCompile Include="source\test\dlibSvmTest.cpp">
       <Filter>Source Files\test</Filter>
@@ -131,9 +122,6 @@
     <ClInclude Include="source\pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\alg\cascadeClass.h">
-      <Filter>Header Files\alg</Filter>
-    </ClInclude>
     <ClInclude Include="source\test\svmTest.h">
       <Filter>Header Files\test</Filter>
     </ClInclude>
@@ -154,9 +142,6 @@
     </ClInclude>
     <ClInclude Include="source\utils\extractorROI.h">
       <Filter>Header Files\utils</Filter>
-    </ClInclude>
-    <ClInclude Include="source\train\trainCascade.h">
-      <Filter>Header Files\train</Filter>
     </ClInclude>
     <ClInclude Include="source\test\dlibSvmTest.h">
       <Filter>Header Files\test</Filter>

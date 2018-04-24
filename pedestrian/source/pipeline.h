@@ -10,7 +10,6 @@
 #include "alg/convexhull.h"
 #include "media/croppedimage.h"
 #include "media/videostream.h"
-#include "alg/cascadeClass.h"
 
 /**
  * class Pipeline
@@ -20,7 +19,6 @@ class Pipeline
 public:
 	Pipeline() : Pipeline("default", 2) {};
 	Pipeline(std::string svmPath, int typeAlg);
-
 	/**
 	* @brief Executed for images. Function for ran detection on images.
 	*
@@ -52,7 +50,6 @@ private:
     Mog _mog;
 	Hog _hog;
 	Fhog _fhog;
-	CascadeClass _cc;
     ConvexHull _ch;
     VideoStream *_vs;
 
@@ -95,23 +92,6 @@ private:
 	* @param cFrame count frame for saving location of detection
 	*/
 	void mogAndFHog(cv::Mat &frame, int cFrame);
-
-	/**
-	* @brief This testing function uses only cascade classifier from openCV
-	Histograms of Oriented Gradients for Human Detection.
-	*
-	* @param frame actual frame
-	* @param cFrame count frame for saving location of detection
-	*/
-	void pureCascade(cv::Mat &frame, int cFrame);
-
-	/**
-	* @brief This testing function uses Gaussian mixture to analyzes and substraction of motion segments and thereafter uses cascade classifier from openCV
-	*
-	* @param frame actual frame
-	* @param cFrame count frame for saving location of detection
-	*/
-	void mogAndCascade(cv::Mat &frame, int cFrame);
 
 	/**
 	* @brief Method for processing one image where used classic HoG to detection pedestrian

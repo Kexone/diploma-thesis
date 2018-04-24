@@ -6,7 +6,7 @@
 /**
  * Struct CroppedImage
  * 
- * This struct serves for save clipping from frame and his offsets
+ * @brief This struct serves for save clipping from frame and his offsets
  */
 struct CroppedImage
 {

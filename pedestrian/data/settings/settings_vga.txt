@@ -46,10 +46,10 @@ cropHogMinArea=4999
 
 //FHOG classic
 fhogMinArea=4999
-fhogAdjustTreshold=0.0
+fhogAdjustTreshold=0.25
 
 //FHOG on cropped images
-cropFhogMinArea=6000
+cropFhogMinArea=4000
 cropFhogAdjustTreshold=0
 
 //TRAIN PARAMS

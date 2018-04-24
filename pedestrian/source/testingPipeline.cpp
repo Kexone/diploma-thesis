@@ -28,10 +28,9 @@ void TestingPipeline::execute()
 	fs.open("armTestingResult.txt");
 	std::time_t currTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	fs << "TESTING RESULT AT  " << std::ctime(&currTime) << std::endl;
-	std::string showFrames = Settings::showVideoFrames ? "true" : "false";
 	std::string algNames[] = { "", "HOG", "MOG + HOG", "FHOG", "FHOG + MOG" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
-	for (int i = 0; i < _videos2Test.size(); i++) {
+		for (int i = 0; i < _videos2Test.size(); i++) {
 				std::map<std::string, int> results;
 				std::cout << _videos2Test[i] << std::endl;
 				Settings::getSettings(_settings[i]);
@@ -47,14 +46,13 @@ void TestingPipeline::execute()
 				pip.evaluate(results);
 				fs << algNames[_typeAlg[i]] << " & " << _svms2Test[i] << " & ";
 				saveResults(fs, results, time, true);
-
+				results.clear();
 	}
 }
 
 void TestingPipeline::saveResults(std::ofstream &file, std::map<std::string, int> results, double time, bool print)
 {
-	if (print)
-	{
+	if (print)	{
 		std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
 		std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(time)) << "." << std::endl;
 		std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;

@@ -17,7 +17,6 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
 	_convexHullImage = srcGray.clone();
 
 	cv::threshold(srcGray, _convexHullImage, _threshold, _maxValue, cv::THRESH_BINARY);
-	//cv::threshold(srcGray, convexHullImage, 180, 255, cv::THRESH_BINARY);
     cv::findContours(_convexHullImage, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
 
     /// Find the convex hull object for each contour
@@ -29,9 +28,6 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
     std::vector <std::vector< cv::Point > > filteredHulls;
 	filterByArea(hulls, filteredHulls);
 	hulls.clear();
-
-	rects = std::vector< cv::Rect > (filteredHulls.size());
-	rects.clear();
 
     for (uint i = 0; i < filteredHulls.size(); i++)
     {

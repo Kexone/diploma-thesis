@@ -79,7 +79,11 @@ struct Settings
 	static int cropFhogMinArea;
 	static double cropFhogAdjustTreshold;
 
-
+	/**
+	* @brief Gets data from settings file.
+	*
+	* @param pathFile path to file with settings
+	*/
 	static void getSettings(std::string pathFile)
 	{
 		std::fstream file;
@@ -246,6 +250,10 @@ struct Settings
 		file.close();
 	}
 
+	/**
+	* @brief Print all settings
+	*
+	*/
 	static void printSettings()
 	{
 		std::cout << "mogHistory " << mogHistory << std::endl;

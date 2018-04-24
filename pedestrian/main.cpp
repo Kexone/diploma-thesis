@@ -9,7 +9,6 @@
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
 #include "source/test/testClass.h"
-#include "source/train/trainCascade.h"
 #include <fenv.h>
 #pragma STDC FENV_ACCESS ON
 
@@ -116,7 +115,7 @@ void mainFun::type(cv::CommandLineParser parser)
 	if (!type.compare("train"))	{
 
 		std::cout << "\n 1) openCV SVM train \n 2) combined train (extract features by opencv HOG and train by dlib SVM) \n";
-		std::cout << " 3) dlib SVM train \n 4) cascade classificator train \nType of train : ";
+		std::cout << " 3) dlib SVM train \nType of train : ";
 		std::cin >> chosenType;
 
 		if (chosenType == 1 )	{
@@ -132,10 +131,6 @@ void mainFun::type(cv::CommandLineParser parser)
 		else if(chosenType == 3)  {
 			TrainFHog tfh;
 			tfh.train();
-		}
-		else if (chosenType == 4) {
-			TrainCascade tc;
-			tc.execute();
 		}
 		else
 			std::cout << "Bad selection.\n";
@@ -154,13 +149,12 @@ void mainFun::camera(cv::CommandLineParser parser)
 				std::cout << "Bad selection.\n";
 				return;
 	}
-	Pipeline *pl;
+	Pipeline pl;
 
-	pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
+	pl =  Pipeline(parser.get<std::string>("class"), typeAlg);
 	std::cout << "camera" << std::endl;
-	pl->execute(std::stoi(parser.get<std::string>("camera")));
+	pl.execute(std::stoi(parser.get<std::string>("camera")));
 
-	delete pl;
 }
 
 //void mainFun::image(cv::CommandLineParser parser)
@@ -189,14 +183,13 @@ void mainFun::image(cv::CommandLineParser parser)
 {
 		while(true){
 			Settings::getSettings("data/settings/settings_img.txt");
-			Pipeline *pl = new Pipeline(parser.get<std::string>("class"), 1);
+			Pipeline pl =  Pipeline(parser.get<std::string>("class"), 1);
 			Utils::setEvaluationFiles(parser.get<std::string>("image"));
 
-			pl->executeImages(parser.get<std::string>("image"));
+			pl.executeImages(parser.get<std::string>("image"));
 			std::map<std::string, int> maps;
-			pl->evaluate(maps);
+			pl.evaluate(maps);
 
-			delete pl;
 			cv::waitKey(0);
 	}
 
@@ -208,7 +201,6 @@ void mainFun::image(cv::CommandLineParser parser)
 //
 //	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
 //	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
-//	std::cout << " 5) cascade classificator \n";
 //	std::cout << " 7) TEST MODE \n" << std::endl;
 //	std::cin >> typeAlg;
 //
@@ -241,36 +233,33 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
+	//Settings::getSettings("data/settings/settings_vga.txt");
 
-			Settings::printSettings();
-	TestingPipeline("testing/testing.txt").execute();
-
-	std::string videos[] = {"video/cctv4.mp4", "video/cctv4.avi", "video/cctv4.mov" };
+//	TestingPipeline("testing/testing.txt").execute();
+//	return;
+	std::string videos[] = {"video/cctv4.avi", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)
 			{
-			Settings::getSettings("data/settings/settings_vga.txt");
-			std::string path = "E:/USE_SVM/sudi/";
-			std::string pathB = "E:/USE_SVM/bigUse/";
-			Pipeline *pl = new Pipeline("pedDet.svm", 3);
+			Settings::getSettings("data/settings/settings_avi_def.txt");
+			Pipeline pl = Pipeline("default", 2);
+			//Pipeline pl =  Pipeline("pedDet1_5.svm", 4);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
 			//Settings::nameFile = vid;// parser.get<std::string>("video");
 
 				auto startTime = std::chrono::high_resolution_clock::now();
 			//pl->execute(parser.get<std::string>("video"));
-			pl->execute(vid);
+			pl.execute(vid);
 			auto endTime = std::chrono::high_resolution_clock::now();
 			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
 
 			printResults(time);
 			std::map<std::string, int> maps;
-			pl->evaluate(maps);
+			pl.evaluate(maps);
 			cv::waitKey(0);			
-			
- 			delete pl;
 		}
 	}
 		std::cout << "END";

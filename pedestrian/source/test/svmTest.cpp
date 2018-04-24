@@ -23,9 +23,6 @@ SvmTest::SvmTest()
 	this->degree = 3;
 	this->gamma = 0.1;
 	this->classifierName = "test.yml";
-	
-
-
 }
 
 void SvmTest::setParams(int maxIter, double nu, double c, double p)
@@ -73,7 +70,6 @@ void SvmTest::initResultFile(std::stringstream &ss)
 float SvmTest::process()
 {
 	int valuation[] = { 0, 0, 0, 0 };	//nTruePos , nFalsePos, nTrueNeg, nFalseNeg
-
 
 //	std::cout << std::endl << counterTest << ". ITERATION OF TESTING" << std::endl;
 
