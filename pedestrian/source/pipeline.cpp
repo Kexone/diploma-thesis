@@ -57,6 +57,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
        processStandaloneImage(frame,i++);
 	   if (Settings::showVideoFrames)
 		   cv::imshow("Result", _localFrame);
+	   cv::waitKey(0);
     }
 	saveResults();
 //    cv::destroyWindow("Result");
@@ -138,7 +139,11 @@ void Pipeline::execute(std::string cameraFeed)
 			cv::imshow("Result", _localFrame);
 		cv::waitKey(5);
 
-
+		std::stringstream ss;
+		ss << "img/mat_" << i << ".jpg";
+		cv::imwrite(ss.str(), _localFrame);
+		ss.str("");
+		ss.clear();
 #if SAVE_MAT
 		std::stringstream ss;
 		ss << "img/mat_" << i << ".jpg";
@@ -146,7 +151,7 @@ void Pipeline::execute(std::string cameraFeed)
 		ss.str("");
 		ss.clear();
 #endif
-	//	_localFrame.release();
+		_localFrame.release();
 	}
 }
 
@@ -310,15 +315,11 @@ void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
 
 void Pipeline::saveResults()
 {
-	int ii = 0, jj = 0;
 	std::ofstream fs;
 	fs.open(Settings::nameFile);
 	fs << _rects2Eval.size() << " ";
 	for (uint i = 0; i < _rects2Eval.size(); i++)	{
-		ii += _rects2Eval[i].size();
-
 		for (uint j = 0; j < _rects2Eval[i].size(); j++)	{
-			jj+=  _rects2Eval[i][j].size();
 			for (uint k = 0; k < _rects2Eval[i][j].size(); k++)	{
 				if (_rects2Eval[i][j][k].area() == 0) continue;
 				fs << i << " " << _rects2Eval[i][j][k].tl().x << " " << _rects2Eval[i][j][k].tl().y << " " 
@@ -327,7 +328,6 @@ void Pipeline::saveResults()
 		}
 	}
 	fs.close();
-	std::cout << ii << " " << jj << std::endl;
 }
 
 void Pipeline::loadRects(std::string filePath, std::vector< std::vector<cv::Rect> > & rects)

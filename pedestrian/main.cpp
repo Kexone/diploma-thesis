@@ -235,17 +235,17 @@ void mainFun::video(cv::CommandLineParser parser)
 {
 //	Settings::getSettings("data/settings/settings_vga.txt");
 
-	TestingPipeline("testing/testing.txt").execute();
-	return;
-	std::string videos[] = {"video/cctv4.avi", "video/cctv4.avi", "video/cctv4.mov" };
+	//TestingPipeline("testing/testing.txt").execute();
+	//return;
+	std::string videos[] = {"video/cctv4.mov", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)
 			{
-			Settings::getSettings("data/settings/settings_avi_def.txt");
-			Pipeline pl = Pipeline("default", 2);
-			//Pipeline pl =  Pipeline("pedDet1_5.svm", 4);
+			Settings::getSettings("data/settings/settings_mov.txt");
+			//Pipeline pl = Pipeline("default", 2);
+			Pipeline pl =  Pipeline("pedDet.svm", 3);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
 			//Settings::nameFile = vid;// parser.get<std::string>("video");

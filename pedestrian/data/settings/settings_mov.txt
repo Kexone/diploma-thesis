@@ -45,7 +45,7 @@ cropHogMinArea=7599
 
 //FHOG classic
 fhogMinArea=4999
-fhogAdjustTreshold=0.2222
+fhogAdjustTreshold=0.6
 
 //FHOG on cropped images
 cropFhogMinArea=6000
