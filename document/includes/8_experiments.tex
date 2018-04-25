@@ -2,8 +2,8 @@
 
 Experimenty této práce probíhaly především na počítačích uvedených v~předchozí kapitole. Nejprve je však vhodné zmínit konfiguraci daných počítačů:
 \begin{itemize}
-\item\textbf{HummingBoard Pro} - na tomto počítači je nainstalován Linux Debian 8.1 s~označením ``jessie'' s~grafickým rozhraním MATE 8.
-\item\textbf{Banana PI} - na tomto počítači je nainstalován Linux Debian 8.1 s~označením ``jessie'' s~grafickým rozhraním Xfce 4.10. 
+\item\textbf{HummingBoard Pro} - na tomto počítači je nainstalován Linux Debian 8.1 s~označením \uv{jessie} s~grafickým rozhraním MATE 8.
+\item\textbf{Banana PI} - na tomto počítači je nainstalován Linux Debian 8.1 s~označením \uv{jessie} s~grafickým rozhraním Xfce 4.10. 
 \item\textbf{Raspberry PI} - na tomto počítači je nainstalován Linux Raspbian. 
 \end{itemize}
 Dále pro srovnání výkonu těchto počítačů byl program otestován i~na desktopovém počítači, na kterém byl zároveň vyvíjen a~odladěn. Jeho parametry jsou následující: 
@@ -18,7 +18,7 @@ Nalezení optimálního a~spolehlivého klasifikátoru je klíčovou částí ce
 
 Nejlepších výsledků jsem dosáhl s~pozitivní trénovací sadou Dase \cite{sudipdas}, CUHK01 campus \cite{cuhk} a~jako negativní sadu jsem použil Daimler--Mono\cite{daimler}, kterou jsem nastříhal na vzorky. Tyto sady jsou přiloženy v~příloze této práce. Následujícím krokem je zvolení správných parametrů trénování klasifikátoru. 
 
-Trénování klasifikátoru je velmi citlivé na tyto parametry, při změně některého z~nich jen o~tisícinu, můžeme získat úplně jiný výsledek. Trénování probíhalo dvakrát za sebou. Při druhém trénování se klasifikátor učil ze svých špatných detekcí, čemuž se říká ``Bootstrapping''. To znamená, že detekce se spustila na negativních vzorcích s~tímto klasifikátorem a~pokud detektor vrátil nějaký výsledek, byl zpět uložen do negativní sady a~znovu natrénován, tento postup je ilustrován ve zdrojovém kódu \ref{src:double_train}.
+Trénování klasifikátoru je velmi citlivé na tyto parametry, při změně některého z~nich jen o~tisícinu, můžeme získat úplně jiný výsledek. Trénování probíhalo dvakrát za sebou. Při druhém trénování se klasifikátor učil ze svých špatných detekcí, čemuž se říká \uv{Bootstrapping}. To znamená, že detekce se spustila na negativních vzorcích s~tímto klasifikátorem a~pokud detektor vrátil nějaký výsledek, byl zpět uložen do negativní sady a~znovu natrénován, tento postup je ilustrován ve zdrojovém kódu \ref{src:double_train}.
 \newpage
 
 \begin{lstlisting}[label=src:double_train, language=cpp, caption=Bootstrapping]
@@ -94,7 +94,6 @@ Vybral jsem konfiguraci 15, protože oblast pod křivkou byla největší ze vš
 	\item{False Positive (\textbf{FP}) - detektor označil tuto oblast za chodce, ovšem se zde nenachází.}
 	\item{False Negative (\textbf{FN}) - v~oblasti se vyskytuje chodec avšak byl ignorován.}
 \end{itemize}
-
 Díky těmto stavům můžeme vypočítat přesnost detekce:
 \begin{equation*}
 \centering
@@ -145,7 +144,7 @@ F1-score = \frac{ 2TP}{2TP + FP + FN}
 
 Také jsem stanovil pravidlo pro pozitivní detekci a~to takové, že výstup z~detektoru je považován za pozitivní právě tehdy, když jeho plocha je větší než polovina anotované plochy. 
 
-Navzdory tomu, že tyto počítače podporují rozšíření NEON a~obě knihovny byly kompilovány s~tímto rozšířením, výsledky nebyly až tak časově uspokojivé, jak jsem očekával. V~následujících tabulkách jsou uvedeny výsledky detekce mého vytrénovaného detektoru. Také jsou zde uvedeny výsledky detektoru z~knihovny Dlib včetně původního detektoru lidí, který je obsažen v~OpenCV (v~tabulkách je zaznamenán jako ``default'') a~slouží k~porovnání k~detektoru s~vytrénovaným SVM klasifikátorem. 
+Navzdory tomu, že tyto počítače podporují rozšíření NEON a~obě knihovny byly kompilovány s~tímto rozšířením, výsledky nebyly až tak časově uspokojivé, jak jsem očekával. V~následujících tabulkách jsou uvedeny výsledky detekce vytrénovaného detektoru. Také jsou zde uvedeny výsledky detektoru z~knihovny Dlib včetně původního detektoru lidí, který je obsažen v~OpenCV (v~tabulkách je zaznamenán jako \uv{default}) a~slouží k~porovnání k~detektoru s~vytrénovaným SVM klasifikátorem. Dlib klasifikátor byl vytrénován podle příkladu uvedený na webu knihovny a~jde čistě jen o~porovnání rychlostí detektoru. 
 
 V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou uvedeny výsledky detekce z~každého videa na jednotlivém zařízení. Tabulka \ref{resultTabDesktop} jsou výsledky z~desktopového počítače, které slouží jako referenční model k~výsledkům z~výše zmíněných tabulkách.  
 \begin{table}[H]
@@ -156,24 +155,24 @@ V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou u
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
                          & Typ algoritmu   	& ALG FPS & Délka detekce [s] & TP  & FN  & FP  & F1--skóre [\%] \\ \hline
-\multirow{6}{*}{cctv4.mp4} & HOG        	&   0,9   &      832,2        & 447 & 307 & 164 &    65          \\ \cline{2-8} 
-                         & HOG + MOG  		&   4,5   &      172,5        & 550 & 204 & 17  &    83          \\ \cline{2-8}  
+\multirow{6}{*}{cctv4.mp4} & HOG        	&   0,9   &      832,2        & 447 & 307 & 171 &    65          \\ \cline{2-8} 
+                         & HOG + MOG  		&   4,4   &      175,8        & 578 & 176 & 15  &    86          \\ \cline{2-8}  
                          & FHOG       		&         &                   &     &     &     &                \\ \cline{2-8}  
                          & FHOG + MOG 		&         &                   &     &     &     &                \\ \cline{2-8}  
                          & default	 		&   0,7   &      856,9        & 297 & 457 & 27  &    55          \\ \cline{2-8}  
                          & default + MOG	&   2,1   &      303,1        & 558 & 39  & 73  &    91          \\ \hline\hline 
-\multirow{6}{*}{cctv4.avi} & HOG        	&   0,6   &     1010,9        & 416 & 181 &  15 &    81          \\ \cline{2-8} 
-                         & HOG + MOG  		&   1,1   &      527,3        & 477 & 120 & 15  &    87          \\ \cline{2-8}  
+\multirow{6}{*}{cctv4.avi} & HOG        	&   0,6   &    1 010,9        & 417 & 180 & 12  &    81          \\ \cline{2-8} 
+                         & HOG + MOG  		&   1,1   &      527,3        & 471 & 126 & 19  &    87          \\ \cline{2-8}  
                          & FHOG       		&      &              &  &  &   &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &                   &     &     &     &          \\ \cline{2-8} 
-                         &  default 		&         &                   &     &     &     &          \\ \cline{2-8}  
+                         &  default 		&   0,2   &      3 445,4      & 557 & 40  & 103 &    89    \\ \cline{2-8}  
                          & default + MOG	&         &                   &     &     &     &          \\ \hline \hline
-\multirow{6}{*}{cctv4.mov} & HOG        	&         &                   &     &     &     &          \\ \cline{2-8} 
-                         & HOG + MOG  		&         &                   &     &     &     &          \\ \cline{2-8} 
+\multirow{6}{*}{cctv4.mov} & HOG        	&   0,3   &      2 973,4      & 573 & 176 & 125 &    79    \\ \cline{2-8} 
+                         & HOG + MOG  		&   0,3   &      2 331,7      & 542 & 207 &  66 &    80    \\ \cline{2-8} 
                          & FHOG       		&         &                   &     &     &     &          \\ \cline{2-8}  
                          & FHOG + MOG 		&         &                   &     &     &     &          \\ \cline{2-8} 
-                         & default 		&         &                   &     &     &     &          \\ \cline{2-8} 
-                         & default + MOG 	&         &                   &     &     &     &          \\ \hline
+                         & default 		&   0,1   &      7 450,9      & 710 & 39  & 670 &    67    \\ \cline{2-8} 
+                         & default + MOG 	&   0,5   &       1 611,5     & 380 & 369 & 95  &    62      \\ \hline
 \end{tabular}
 \end{table}
 
@@ -186,24 +185,24 @@ V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou u
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
                          & Typ algoritmu 	& ALG FPS & Délka detekce [s] & TP 		& FN 	& FP 	& F1--skóre [\%]  \\ \hline
-\multirow{6}{*}{cctv4.mp4} & HOG         	&   1,2   &   661,6       	  & 441   	& 313     & 158     &    65           \\ \cline{2-8} 
-                         & HOG + MOG  		&   4,8   &   164,7       	  & 579		& 175  	& 18   	& 	86	        \\ \cline{2-8} 
+\multirow{6}{*}{cctv4.mp4} & HOG         	&   0,9   &   903,1       	  & 450   	& 304     & 170     &    66           \\ \cline{2-8} 
+                         & HOG + MOG  		&   3,8   &   203,5       	  & 578		& 176  	& 16   	& 	86	        \\ \cline{2-8} 
                          & FHOG       		&         &   			  &    		&    	&    	& 		        \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & default	 		&   1,1   &   722,2             & 297   	& 457   	& 26    	&    55 		   \\ \cline{2-8} 
-                         & default + MOG 	&   2,9   &   273,9 		  & 365   	& 389    	&  1		&    65           \\ \hline\hline 
-\multirow{6}{*}{cctv4.avi} & HOG      		&   0,8   &   799,7        	  & 417   	& 183 	& 15      & 	81	        \\ \cline{2-8} 
-                         & HOG + MOG  		&   1,2   &   508,4       	  & 475		& 122 	& 15   	& 	87	        \\ \cline{2-8} 
+                         & default	 		&   0,9   &   840,9             & 299   	& 455   	& 24    	&    56 		   \\ \cline{2-8} 
+                         & default + MOG 	&   2,3   &   344,9 		  & 362   	& 392    	&  3		&    65           \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG      		&   0,8   &   770,5        	  & 416   	& 181 	& 13      & 	81	        \\ \cline{2-8} 
+                         & HOG + MOG  		&   1,2   &   509,5       	  & 470		& 127 	& 20   	& 	86	        \\ \cline{2-8} 
+                         & FHOG       		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
+                         & FHOG + MOG 		&         &               	  &   		&    	&    	& 		        \\ \cline{2-8} 
+                         & default	 		&   0,3   &    2 381,3       	  & 558  		& 39    	& 105   	& 	89	        \\ \cline{2-8} 
+                         & default + MOG 	&   0,9   &     696,1       	  & 473  		& 124   	& 18   	& 	87	        \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG      		&   0,4   &   2 091,1      	  & 572 	     & 177 	& 127  	& 	79	        \\ \cline{2-8} 
+                         & HOG + MOG  		&   0,4   &   2 001,5      	  & 545		& 204  	& 66	     & 	80	        \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & default	 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & default + MOG 	&         &               	  &    		&    	&    	& 		        \\ \hline \hline
-\multirow{6}{*}{cctv4.mov} & HOG      		&   0,4   &   2 091,1      	  & 556 	     & 193 	& 156  	& 	76	        \\ \cline{2-8} 
-                         & HOG + MOG  		&   0,4   &   1 944,8      	  & 547		& 202  	& 56	     & 	81	        \\ \cline{2-8} 
-                         & FHOG       		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & FHOG + MOG 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & default	 		&         &               	  &    		&    	&    	& 		        \\ \cline{2-8} 
-                         & default + MOG 	&         &               	  &    		&    	&    	& 		        \\ \hline
+                         & default	 		&   0,1   &   6 975,2        	  &   710 	& 39   	& 666    	& 	67	        \\ \cline{2-8} 
+                         & default + MOG 	&   0,6   &   1 382,6        	  &   380		& 369   	& 95   	&    62	        \\ \hline
 \end{tabular}
 \end{table}
 
@@ -216,23 +215,23 @@ V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou u
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
                          & Typ algoritmu	& ALG FPS & Délka detekce [s] & TP 	  & FN 	& FP 	& F1--skóre [\%] \\ \hline
-\multirow{6}{*}{cctv4.mp4} & HOG      		&  0,4    &   1 795,5    	  & 437   & 317 & 157  	&   65     	 	  \\ \cline{2-8} 
-                         & HOG + MOG  		&  2,9    &     267,5     	  & 577   & 177 & 15  	&   86     		  \\ \cline{2-8} 
+\multirow{6}{*}{cctv4.mp4} & HOG      		&  0,4    &   1 795,5    	  & 446     & 308 & 169  	&   65     	 	  \\ \cline{2-8} 
+                         & HOG + MOG  		&  2,9    &     267,5     	  & 577     & 177 & 15  	     &   86     		  \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8}  
-                         & default	 		&  0,4    &    1760,3           & 299   & 455 & 24     &   55                \\ \cline{2-8}  
-                         & default + MOG 	&  1,4    &     548,5           & 364   & 390 & 3      &   65                \\ \hline\hline 
-\multirow{6}{*}{cctv4.avi} & HOG        	&  0,3    &   1 909,3     	  & 416	& 181 & 13   &   81     		       \\ \cline{2-8} 
-                         & HOG + MOG  		&  0,8    &     739,4      	  & 470   & 127 & 20   &   86                  \\ \cline{2-8} 
+                         & default	 		&  0,4    &    1753,4           & 299     & 455 & 24     &   56                \\ \cline{2-8}  
+                         & default + MOG 	&  1,4    &     546,6           & 364     & 390 & 3      &   65                \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG        	&  0,4    &   1 753,4     	  & 299	  & 466 & 13   &   81     		       \\ \cline{2-8} 
+                         & HOG + MOG  		&  0,8    &     739,4      	  & 470     & 127 & 20   &   86                  \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & default	 		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & default + MOG 	&         &               	  &    &    &    &          \\ \hline \hline
-\multirow{6}{*}{cctv4.mov} & HOG        	&  0,14   &   5 718,8     	  & 572	  & 177  & 114  &   80		    \\ \cline{2-8} 
-                         & HOG + MOG  		&  0,21   &   3 709,5      	  & 544   & 205  & 66   &   80          \\ \cline{2-8} 
+                         & default	 		&  0,09   &   7 079,8      	  & 558     & 39 & 105    &   89                  \\ \cline{2-8} 
+                         & default + MOG 	&  0,5    &   1 229,4           & 472     & 125& 16   &     87                   \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG        	&  0,1    &   5 718,8     	  & 572     & 177  & 127  &   79		    \\ \cline{2-8} 
+                         & HOG + MOG  		&  0,2    &   3 709,5      	  & 543     & 206  & 66   &   80          \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    &    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    &    &    &          \\ \cline{2-8} 
-                         & default	 		&         &               	  &    &    &    &          \\ \cline{2-8} 
+                         & default	 		&         &               	  &      &  &       &          \\ \cline{2-8} 
                          & default + MOG 	&         &               	  &    &    &    &          \\ \hline
 \end{tabular}
 \end{table}
@@ -244,29 +243,29 @@ V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou u
 \label{resultTabDesktop}
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-                         & Typ algoritmu   	& ALG FPS & Délka detekce [s] & TP 	& FN & FP & F1--skóre [\%]\\ \hline
-\multirow{6}{*}{cctv4.mp4} & HOG        	&  20,8   & 37,5       		  & 463 & 291   & 135   &  68        \\ \cline{2-8} 
-                         & HOG + MOG  		& 128,03  &  6,1       		  & 584 & 170    & 12    & 87          \\ \cline{2-8} 
+                         & Typ algoritmu   	& ALG FPS & Délka detekce [s] & TP 	& FN   & FP & F1--skóre [\%]\\ \hline
+\multirow{6}{*}{cctv4.mp4} & HOG        	&  19,8   & 39,5       		  & 463 & 291    & 136   &  68        \\ \cline{2-8} 
+                         & HOG + MOG  		& 104,1   &  7,5       		  & 584 & 170    & 12    & 87          \\ \cline{2-8} 
                          & FHOG       		&         &            		  &     &    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &            		  &     &    &    &          \\ \cline{2-8}  
-                         & default	 		&  21,1   & 37,07               & 304 & 450    & 27    & 56          \\ \cline{2-8} 
-                         & default + MOG 	&  48,9   & 12,8                & 374 & 380    & 4    & 66          \\ \hline\hline 
-\multirow{6}{*}{cctv4.avi} & HOG        	& 13,1    & 47,6           	  &  410& 187   & 18    & 80          \\ \cline{2-8} 
-                         & HOG + MOG  		&   34,4  & 18,2          	  & 484 & 113    & 14    & 88          \\ \cline{2-8} 
+                         & default	 		&  20,7   & 37,6                & 304 & 450    & 27    & 56          \\ \cline{2-8} 
+                         & default + MOG 	&  60,5   & 12,9                & 373 & 381    & 5     & 66          \\ \hline\hline 
+\multirow{6}{*}{cctv4.avi} & HOG        	&  12,9   & 48,6           	  &  410& 187    & 18    & 80          \\ \cline{2-8} 
+                         & HOG + MOG  		&  32,4   & 19,3          	  & 484 & 113    & 14    & 88          \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    	&    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &               	  &    	&    &    &          \\ \cline{2-8} 
-                         & default  		& 4,3     & 144,8               & 554 & 43     & 60    & 91          \\ \cline{2-8} 
-                         & default + MOG 	& 30,8    & 20,3                & 344 & 253    & 14    & 72          \\ \hline \hline
-\multirow{6}{*}{cctv4.mov} & HOG        	& 5,6     & 138,7               &  560& 189    & 133    & 78          \\ \cline{2-8} 
-                         & HOG + MOG  		& 8,4     & 92,6                & 568& 181    & 47    & 83          \\ \cline{2-8} 
+                         & default  		& 4,1     & 151,1               & 554 & 43     & 73    & 91          \\ \cline{2-8} 
+                         & default + MOG 	& 21,8    & 28,7                & 476 & 121    & 17    & 87          \\ \hline \hline
+\multirow{6}{*}{cctv4.mov} & HOG        	& 5,7     & 136,4               & 560 & 189    & 141   & 77          \\ \cline{2-8} 
+                         & HOG + MOG  		& 8,5     &  92,1               & 565 & 184    & 47    & 83          \\ \cline{2-8} 
                          & FHOG       		&         &               	  &    	&    &    &          \\ \cline{2-8} 
                          & FHOG + MOG 		&         &                     &    	&    &    &          \\ \cline{2-8} 
-                         & default  		& 1,7     & 451,6               & 706   & 43    & 507    & 72          \\ \cline{2-8} 
-                         & default + MOG 	& 13,7    &  56,9               & 386   & 363    & 86    & 63          \\ \hline
+                         & default  		& 1,7     & 449,2               & 706   & 43    & 536    & 71          \\ \cline{2-8} 
+                         & default + MOG 	& 13,1    &  59,5               & 386   & 362    & 85    & 63          \\ \hline
 \end{tabular}
 \end{table}
-
-V~obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech tří videí za použití kombinace metod MOG a~HOG. Tyto křivky byly vygenerovány obdobně jako při testování klasifikátoru. SVM klasifikátor na každé detekci provedl pravděpodobnostní zařazení do konkrétní třídy, jinými slovy, jestli se na obrázku nachází chodec nebo nikoliv. V~posledním kroku se vygeneroval Ground truth soubor k~tomuto pravděpodobnostnímu ohodnocení za pomocí anotačního souboru. Jak může být zřejmé, klasifikátor není až tak spolehlivý na obsah s~vysokým rozlišením, na druhou stranu detekci na průměrném rozlišení (720p) je spolehlivější. Natrénoval jsem klasifikátor na vzorcích o~velikosti $48x96$ pixelů proto, aby bylo možné detektor použít i~na menších obrázcích bez nutnosti zvětšování obsahu.   
+Z výše umístěných tabulek můžeme pozorovat, jak se program jinak choval na každém zařízení. Tohle mohlo být způsobeno různými faktory, například jiným kompilátorem nebo jiným druhem zaokrouhlení. 
+Na obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech tří videí za použití kombinace metod MOG a~HOG. Tyto křivky byly vygenerovány obdobně jako při testování klasifikátoru. SVM klasifikátor na každé detekci provedl pravděpodobnostní zařazení do konkrétní třídy, jinými slovy, jestli se na obrázku nachází chodec nebo nikoliv. V~posledním kroku se vygeneroval ground truth soubor k~tomuto pravděpodobnostnímu ohodnocení za pomocí anotačního souboru. Jak může být zřejmé, klasifikátor není až tak spolehlivý na obsah s~vysokým rozlišením, na druhou stranu pro detekci na průměrném rozlišení (720p) je spolehlivější. Natrénoval jsem klasifikátor na vzorcích o~velikosti $48x96$ pixelů proto, aby bylo možné detektor použít i~na menších obrázcích bez nutnosti zvětšování obsahu.   
 
 \begin{figure}[H]
 \centering
