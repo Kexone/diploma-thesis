@@ -31,10 +31,12 @@ void TestingPipeline::execute()
 	std::string algNames[] = { "", "HOG", "MOG + HOG", "FHOG", "FHOG + MOG" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 		for (int i = 0; i < _videos2Test.size(); i++) {
-				std::map<std::string, int> results;
-				std::cout << _videos2Test[i] << std::endl;
-				Settings::getSettings(_settings[i]);
-				Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
+		//	cv::theRNG().state = 0;
+			std::map<std::string, int> results;
+			std::cout << _videos2Test[i] << std::endl;
+			Settings::getSettings(_settings[i]);
+		//	Settings::printSettings();
+			Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 
 				Utils::setEvaluationFiles(_videos2Test[i]);
 				std::cout << algNames[_typeAlg[i]] << " " <<  _svms2Test[i] <<  std::endl;

@@ -146,7 +146,7 @@ void Pipeline::execute(std::string cameraFeed)
 		ss.str("");
 		ss.clear();
 #endif
-		_localFrame.release();
+	//	_localFrame.release();
 	}
 }
 

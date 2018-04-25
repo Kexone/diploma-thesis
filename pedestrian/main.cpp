@@ -9,8 +9,8 @@
 #include "source/utils/extractorROI.h"
 #include "source/utils/utils.h"
 #include "source/test/testClass.h"
-#include <fenv.h>
-#pragma STDC FENV_ACCESS ON
+//#include <fenv.h>
+//#pragma STDC FENV_ACCESS ON
 
 ///////////////////////
 //					//
@@ -47,8 +47,8 @@ bool Settings::showVideoFrames = false;
 
 int main(int argc, char *argv[])
 {
-	const int originalRounding = fegetround();
-	fesetround(FE_TOWARDZERO);
+	//const int originalRounding = fegetround();
+	//fesetround(FE_TOWARDZERO);
 	if(argc < 2)	{
 		std::cout << "\tType -help for help" << std::endl;
 		return 0;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 	else if (parser.has("createSample")) {
 		mainFun::createSample(parser);
 	}
-	fesetround(originalRounding);
+	//fesetround(originalRounding);
 	 	return 0;
 }
 
@@ -233,10 +233,10 @@ void mainFun::image(cv::CommandLineParser parser)
 
 void mainFun::video(cv::CommandLineParser parser)
 {
-	//Settings::getSettings("data/settings/settings_vga.txt");
+//	Settings::getSettings("data/settings/settings_vga.txt");
 
-//	TestingPipeline("testing/testing.txt").execute();
-//	return;
+	TestingPipeline("testing/testing.txt").execute();
+	return;
 	std::string videos[] = {"video/cctv4.avi", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {

@@ -11,12 +11,12 @@ Hog::Hog()
 
 Hog::Hog(std::string svmPath)
 {
-	if (svmPath.compare("default")) {
+	if (svmPath != "default") {
 		_hog = cv::HOGDescriptor(
-			Settings::pedSize, //winSize  //def
-			cv::Size(Settings::blockSize, Settings::blockSize), //,blocksize //def
-			cv::Size(Settings::strideSize, Settings::strideSize), //blockStride // def
-			cv::Size(Settings::cellSize, Settings::cellSize), //cellSize, //def
+			Settings::pedSize, //winSize
+			cv::Size(Settings::blockSize, Settings::blockSize), //blocksize
+			cv::Size(Settings::strideSize, Settings::strideSize), //blockStride
+			cv::Size(Settings::cellSize, Settings::cellSize), //cellSize, //
 			9,		//nbins,
 			0,		//derivAper,
 			-1,		//winSigma,
