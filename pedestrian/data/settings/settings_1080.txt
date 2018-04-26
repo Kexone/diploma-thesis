@@ -1,15 +1,16 @@
-// this file is setted for cctv4.mp4 (VGA)
+// this file is setted for cctv4.mov (1080p)
+
 
 //mog settings
-mogHistory=90 //115
-mogThresh=9
+mogHistory=80 //115
+mogThresh=25
 mogDetectShadows=1
 
 //convex hull settings
-cvxHullExtSize=8
-cvxHullExtTimes=4
+cvxHullExtSize=20
+cvxHullExtTimes=5
 cvxHullThresh=180 //180
-cvxHullMaxValue=25 //255
+cvxHullMaxValue=20 //255
 
 //global size settings (test, train, detection) 
 pedSize=(48,96)
@@ -19,36 +20,36 @@ cellSize=8
 strideSize=8
 
 // HOG detectMultiScale on full frame
-hogBlurFilter=(0,0)
-hogHitTreshold=0.8559
+hogBlurFilter=(4,4)
+hogHitTreshold=0.82
 hogWinStride=(8,8)
-hogPadding=(2,2)
-hogScale=1.067
-hogFinalTreshold=0.99
+hogPadding=(0,0)
+hogScale=1.1
+hogFinalTreshold=0.45
 hogMeanshiftGrouping=0
-hogGroupTreshold=4
-hogEps=0.685
-hogMinArea=0
+hogGroupTreshold=5
+hogEps=0.8
+hogMinArea=4999
 
 // HOG detectMultiScale on cropped images
 cropHogBlurFilter=(0,0)
-cropHogHitTreshold=0.6
-cropHogWinStride=(16,16)
+cropHogHitTreshold=0.81
+cropHogWinStride=(4,4)
 cropHogPadding=(4,4)
-cropHogScale=1.014
-cropHogFinalTreshold=0.999
+cropHogScale=1.1
+cropHogFinalTreshold=0.7
 cropHogMeanshiftGrouping=0
-cropHogGroupTreshold=11
-cropHogEps=0.65
-cropHogMinArea=7000
+cropHogGroupTreshold=8
+cropHogEps=0.39999999
+cropHogMinArea=7599
 
 //FHOG classic
 fhogMinArea=4999
-fhogAdjustTreshold=0.2222
+fhogAdjustTreshold=0.60 //60%
 
 //FHOG on cropped images
 cropFhogMinArea=6000
-cropFhogAdjustTreshold=0
+cropFhogAdjustTreshold=0.5
 
 //TRAIN PARAMS
 maxIterations=1000
@@ -68,8 +69,8 @@ paramC=0.05
 samplesPos=samples/new/daimlerM3.txt
 samplesNeg=samples/negative/neg3000.txt
 
-samplesPosTest=mySamples/pos3k.txt
-samplesNegTest=mySamples/neg4000.txt
+samplesPosTest=mySamples/testingImg/pos.txt
+samplesNegTest=mySamples/testingImg/neg.txt
 classifierName2Train=KONFIGURACE_
 
 

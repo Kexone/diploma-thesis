@@ -139,11 +139,6 @@ void Pipeline::execute(std::string cameraFeed)
 			cv::imshow("Result", _localFrame);
 		cv::waitKey(5);
 
-		std::stringstream ss;
-		ss << "img/mat_" << i << ".jpg";
-		cv::imwrite(ss.str(), _localFrame);
-		ss.str("");
-		ss.clear();
 #if SAVE_MAT
 		std::stringstream ss;
 		ss << "img/mat_" << i << ".jpg";
@@ -405,8 +400,8 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	// ??% of the retrieved results were pedestrians, and ??% of the pedestrians were retrieved.
 
 	std::cout << "True Positive: " << truePos << std::endl;
-	std::cout << "False Positive: " << falsePos << std::endl;
 	std::cout << "False Negative: " << falseNeg << std::endl;
+	std::cout << "False Positive: " << falsePos << std::endl;
 	std::cout << "F1 score : " << f1score << " / " << f1score*100 << " %" << std::endl;
 	//std::cout << "Precision : " << precision << std::endl;
 	//std::cout << "Recall: " << recall << std::endl;

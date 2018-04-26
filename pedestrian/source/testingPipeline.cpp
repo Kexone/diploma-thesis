@@ -31,20 +31,17 @@ void TestingPipeline::execute()
 	std::string algNames[] = { "", "HOG", "MOG + HOG", "FHOG", "FHOG + MOG" };
 		fs << "\nTYPE & ALG FPS & Detection took & TP & FN & FP & F1-score \\\\ " << std::endl;
 		for (int i = 0; i < _videos2Test.size(); i++) {
-		//	cv::theRNG().state = 0;
 			std::map<std::string, int> results;
-			std::cout << _videos2Test[i] << std::endl;
-			Settings::getSettings(_settings[i]);
-		//	Settings::printSettings();
-			Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 
+			Settings::getSettings(_settings[i]);
+			Pipeline pip = Pipeline(_svms2Test[i], _typeAlg[i]);
 				Utils::setEvaluationFiles(_videos2Test[i]);
-				std::cout << algNames[_typeAlg[i]] << " " <<  _svms2Test[i] <<  std::endl;
+				std::cout << algNames[_typeAlg[i]] << " on " << _videos2Test[i] << " with " <<  _svms2Test[i] <<  std::endl;
 				auto startTime = std::chrono::high_resolution_clock::now();
 				pip.execute(_videos2Test[i]);
 				auto endTime = std::chrono::high_resolution_clock::now();
 				double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-				
+	
 				pip.evaluate(results);
 				fs << algNames[_typeAlg[i]] << " & " << _svms2Test[i] << " & ";
 				saveResults(fs, results, time, true);
@@ -55,10 +52,10 @@ void TestingPipeline::execute()
 void TestingPipeline::saveResults(std::ofstream &file, std::map<std::string, int> results, double time, bool print)
 {
 	if (print)	{
-		std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
-		std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(time)) << "." << std::endl;
-		std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
-		std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s." << std::endl;
+	//	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
+		std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(time/1000)) << "." << std::endl;
+	//	std::cout << "Total frames: " << VideoStream::totalFrames << "." << std::endl;
+	//	std::cout << "Video duration: " << VideoStream::totalFrames / static_cast<float>(VideoStream::fps) << "s." << std::endl;
 		std::cout << "Detection took " << static_cast<float>(time) << "ms." << std::endl;
 	}
 	// name & ALG FPS & Detection took & TP & FN & FP & F1

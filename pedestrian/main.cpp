@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	Settings::getSettings(parser.get<std::string>("settings"));
 	Settings::showVideoFrames =  parser.get<int>("vizualize")  == 1 ? true : false;
 
-	parser.about("DIPLOMA THESIS - Pedestrian Detection v0.6");
+	parser.about("DIPLOMA THESIS - Pedestrian Detection v1.0");
 
 
 	if (parser.has("help"))	{
@@ -157,43 +157,41 @@ void mainFun::camera(cv::CommandLineParser parser)
 
 }
 
-//void mainFun::image(cv::CommandLineParser parser)
-//{
-//	int typeAlg;
-//
-//	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) only FHoG (dlib) \n";
-//	std::cin >> typeAlg;
-//	if (typeAlg == 1 || typeAlg == 2) {
-//		if (typeAlg == 2) typeAlg = 3;
-//
-//		Pipeline *pl = new Pipeline(parser.get<std::string>("class"), algType);
-//		Utils::setEvaluationFiles(parser.get<std::string>("image"));
-//
-//		pl->executeImages(parser.get<std::string>("image"));
-//		std::map<std::string, int> maps;
-//		pl->evaluate(maps);
-//
-//		delete pl;
-//	}
-//	else { std::cout << "Bad selection.\n"; }
-//
-//}
-
 void mainFun::image(cv::CommandLineParser parser)
 {
-		while(true){
-			Settings::getSettings("data/settings/settings_img.txt");
-			Pipeline pl =  Pipeline(parser.get<std::string>("class"), 1);
-			Utils::setEvaluationFiles(parser.get<std::string>("image"));
+	int typeAlg;
 
-			pl.executeImages(parser.get<std::string>("image"));
-			std::map<std::string, int> maps;
-			pl.evaluate(maps);
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) only FHoG (dlib) \n";
+	std::cin >> typeAlg;
+	if (typeAlg == 1 || typeAlg == 2) {
+		if (typeAlg == 2) typeAlg = 3;
 
-			cv::waitKey(0);
+		Pipeline pl = Pipeline(parser.get<std::string>("class"), typeAlg);
+		Utils::setEvaluationFiles(parser.get<std::string>("image"));
+
+		pl.executeImages(parser.get<std::string>("image"));
+		std::map<std::string, int> maps;
+		pl.evaluate(maps);
 	}
+	else { std::cout << "Bad selection.\n"; }
 
 }
+
+//void mainFun::image(cv::CommandLineParser parser)
+//{
+//		while(true){
+//			Settings::getSettings("data/settings/settings_img.txt");
+//			Pipeline pl =  Pipeline(parser.get<std::string>("class"), 1);
+//			Utils::setEvaluationFiles(parser.get<std::string>("image"));
+//
+//			pl.executeImages(parser.get<std::string>("image"));
+//			std::map<std::string, int> maps;
+//			pl.evaluate(maps);
+//
+//			cv::waitKey(0);
+//	}
+//
+//}
 
 //void mainFun::video(cv::CommandLineParser parser)
 //{
@@ -208,44 +206,37 @@ void mainFun::image(cv::CommandLineParser parser)
 //		std::cout << "Bad selection.\n";
 //		return;
 //	}
-//	if( typeAlg == 7) { TestingPipeline("testingSVM.txt", "testingVideos.txt").execute(); return; }
-//	Pipeline *pl = new Pipeline(parser.get<std::string>("class"), typeAlg);
+//	if( typeAlg == 7) { TestingPipeline("testing/testing.txt").execute(); return; }
+//	Pipeline pl = Pipeline(parser.get<std::string>("class"), typeAlg);
 //	Settings::nameFile = parser.get<std::string>("video");
-//
-//	replace(Settings::nameFile.begin(), Settings::nameFile.end(), '/', '-');
-//	replace(Settings::nameFile.begin(), Settings::nameFile.end(), '.', '-');
-//	Settings::nameTrainedFile = "data//trained//" + Settings::nameFile;
-//	Settings::nameFile = "data//tested//" + Settings::nameFile;
-//	Settings::nameTrainedFile.append("_trained.txt");
-//	Settings::nameFile.append(".txt");
+//	Utils::setEvaluationFiles(parser.get<std::string>("video"));
 //
 //	auto startTime = std::chrono::high_resolution_clock::now();
-//	pl->execute(parser.get<std::string>("video"));
+//	pl.execute(parser.get<std::string>("video"));
 //	auto endTime = std::chrono::high_resolution_clock::now();
 //	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
 //
 //	printResults(time);
-//	pl->evaluate();
+//	std::map<std::string, int> results;
+//	pl.evaluate(results);
 //	cv::waitKey(0);
-//
-//	delete pl;
 //}
 
 void mainFun::video(cv::CommandLineParser parser)
 {
 //	Settings::getSettings("data/settings/settings_vga.txt");
 
-	//TestingPipeline("testing/testing.txt").execute();
-	//return;
-	std::string videos[] = {"video/cctv4.mov", "video/cctv4.avi", "video/cctv4.mov" };
+	TestingPipeline("testing/testing.txt").execute();
+	return;
+	std::string videos[] = {"video/cctv4_1080.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)
 			{
-			Settings::getSettings("data/settings/settings_mov.txt");
-			//Pipeline pl = Pipeline("default", 2);
-			Pipeline pl =  Pipeline("pedDet.svm", 3);
+			Settings::getSettings("data/settings/settings_1080.txt");
+			Pipeline pl = Pipeline("KONF_15.yml", 2);
+			//Pipeline pl =  Pipeline("pedDet.svm", 4);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
 			//Settings::nameFile = vid;// parser.get<std::string>("video");
@@ -259,7 +250,7 @@ void mainFun::video(cv::CommandLineParser parser)
 			printResults(time);
 			std::map<std::string, int> maps;
 			pl.evaluate(maps);
-			cv::waitKey(0);			
+		cv::waitKey(0);			
 		}
 	}
 		std::cout << "END";
