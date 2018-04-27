@@ -170,8 +170,7 @@ void mainFun::image(cv::CommandLineParser parser)
 		Utils::setEvaluationFiles(parser.get<std::string>("image"));
 
 		pl.executeImages(parser.get<std::string>("image"));
-		std::map<std::string, int> maps;
-		pl.evaluate(maps);
+		pl.evaluate();
 	}
 	else { std::cout << "Bad selection.\n"; }
 
@@ -228,14 +227,14 @@ void mainFun::video(cv::CommandLineParser parser)
 
 	TestingPipeline("testing/testing.txt").execute();
 	return;
-	std::string videos[] = {"video/cctv4_1080.mp4", "video/cctv4.avi", "video/cctv4.mov" };
+	std::string videos[] = {"video/cctv4_1080.mp4", "video/cctv4_1080.mp4", "video/cctv4.avi", "video/cctv4.mov" };
 
 	for (auto vid : videos) {
 		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
 			while (true)
 			{
 			Settings::getSettings("data/settings/settings_1080.txt");
-			Pipeline pl = Pipeline("KONF_15.yml", 2);
+			Pipeline pl = Pipeline("KONF_15.yml", 1);
 			//Pipeline pl =  Pipeline("pedDet.svm", 4);
 			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
 			Utils::setEvaluationFiles(vid);
@@ -248,8 +247,7 @@ void mainFun::video(cv::CommandLineParser parser)
 			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
 
 			printResults(time);
-			std::map<std::string, int> maps;
-			pl.evaluate(maps);
+			pl.evaluate();
 		cv::waitKey(0);			
 		}
 	}

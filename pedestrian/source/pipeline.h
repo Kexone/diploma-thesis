@@ -43,7 +43,7 @@ public:
 	/**
 	* @brief Evalution function. Compares the position of rects with trained position of pedestrian in frame. It passes line by line for all frames.
 	*/
-	void evaluate(std::map<std::string, int> & results);
+	std::map<std::string, float> evaluate();
 
 		
 private:

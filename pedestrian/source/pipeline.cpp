@@ -50,6 +50,7 @@ void Pipeline::executeImages(std::string testSamplesPath)
 			sampleFile.close();
             break;
         }
+		
 		_rects2Eval.resize(i + 1);
 #if CALC_DIST
 		_distances.resize(i+1);
@@ -57,7 +58,12 @@ void Pipeline::executeImages(std::string testSamplesPath)
        processStandaloneImage(frame,i++);
 	   if (Settings::showVideoFrames)
 		   cv::imshow("Result", _localFrame);
-	   cv::waitKey(0);
+	   cv::waitKey(10);
+	   std::stringstream ss;
+	   ss << "pic/mat_" << i << ".jpg";
+	   cv::imwrite(ss.str(), _localFrame);
+	   ss.str("");
+	   ss.clear();
     }
 	saveResults();
 //    cv::destroyWindow("Result");
@@ -365,7 +371,7 @@ void Pipeline::rectOffset(std::vector<std::vector<cv::Rect>> &rects, std::vector
 }
 
 
-void Pipeline::evaluate(std::map<std::string, int> & results)
+std::map<std::string, float> Pipeline::evaluate()
 {
 	std::vector< std::vector<cv::Rect> > trained;
 	std::vector< std::vector<cv::Rect> > test;
@@ -406,11 +412,11 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	//std::cout << "Precision : " << precision << std::endl;
 	//std::cout << "Recall: " << recall << std::endl;
 	std::cout << "END" << std::endl;
-	
+	std::map<std::string, float> results;
 	results["tp"] = truePos;
 	results["fp"] = falsePos;
 	results["fn"] = falseNeg;
-	results["f1"] = cvRound(f1score*100);
+	results["f1"] = f1score*100;
 
 #if CALC_DIST
 	std::vector< double > distances(test.size());
@@ -440,6 +446,7 @@ void Pipeline::evaluate(std::map<std::string, int> & results)
 	fs.close();
 	fs2.close();
 #endif
+	return results;
 }
 
 
