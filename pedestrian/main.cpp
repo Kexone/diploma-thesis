@@ -28,7 +28,7 @@ namespace mainFun {
 	* Print the results on screen
 	* @param timer represent time of the duration of the algorithm
 	*/
-	void printResults(clock_t timer);
+	void printResults(double timer);
 }
 
 
@@ -38,9 +38,6 @@ namespace mainFun {
 //		 MAIN		 //
 //////////////////////
 
-/*
-* @TODO train HAAR, LBP cascade classificator
-*/
 std::string Settings::nameFile = "";
 std::string Settings::nameTrainedFile = "";
 bool Settings::showVideoFrames = false;
@@ -64,6 +61,7 @@ int main(int argc, char *argv[])
 		"{ type  t            |                                |  type of alg (train, test)                }"
 		"{ extract e          |                                |  extract ROI from videostream             }"
 		"{ vizualize viz      |               0                |  show result in window                    }"
+
 		"{ verbose            |               0                |  print information about train etc.       }"
 		"{ createSample cs    |               0                |  creating samples from image              }"
 		;
@@ -185,74 +183,73 @@ void mainFun::image(cv::CommandLineParser parser)
 //
 //			pl.executeImages(parser.get<std::string>("image"));
 //			std::map<std::string, int> maps;
-//			pl.evaluate(maps);
+//			pl.evaluate();
 //
 //			cv::waitKey(0);
 //	}
 //
 //}
 
-//void mainFun::video(cv::CommandLineParser parser)
-//{
-//	int typeAlg;
-//
-//	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
-//	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
-//	std::cout << " 7) TEST MODE \n" << std::endl;
-//	std::cin >> typeAlg;
-//
-//	if (typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6) {
-//		std::cout << "Bad selection.\n";
-//		return;
-//	}
-//	if( typeAlg == 7) { TestingPipeline("testing/testing.txt").execute(); return; }
-//	Pipeline pl = Pipeline(parser.get<std::string>("class"), typeAlg);
-//	Settings::nameFile = parser.get<std::string>("video");
-//	Utils::setEvaluationFiles(parser.get<std::string>("video"));
-//
-//	auto startTime = std::chrono::high_resolution_clock::now();
-//	pl.execute(parser.get<std::string>("video"));
-//	auto endTime = std::chrono::high_resolution_clock::now();
-//	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
-//
-//	printResults(time);
-//	std::map<std::string, int> results;
-//	pl.evaluate(results);
-//	cv::waitKey(0);
-//}
-
 void mainFun::video(cv::CommandLineParser parser)
 {
-//	Settings::getSettings("data/settings/settings_vga.txt");
+	int typeAlg;
 
-	TestingPipeline("testing/testing.txt").execute();
-	return;
-	std::string videos[] = {"video/cctv4_1080.mp4", "video/cctv4_1080.mp4", "video/cctv4.avi", "video/cctv4.mov" };
+	std::cout << "\nSelect detection algorithm: \n 1) Only HoG (openCV) \n 2) MOG + HoG (openCV) \n";
+	std::cout << " 3) only FHoG (dlib) \n 4) MOG + FHoG(dlib)  \n";
+	std::cout << " 7) TEST MODE \n" << std::endl;
+	std::cin >> typeAlg;
 
-	for (auto vid : videos) {
-		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
-			while (true)
-			{
-			Settings::getSettings("data/settings/settings_1080.txt");
-			Pipeline pl = Pipeline("KONF_15.yml", 1);
-			//Pipeline pl =  Pipeline("pedDet.svm", 4);
-			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
-			Utils::setEvaluationFiles(vid);
-			//Settings::nameFile = vid;// parser.get<std::string>("video");
-
-				auto startTime = std::chrono::high_resolution_clock::now();
-			//pl->execute(parser.get<std::string>("video"));
-			pl.execute(vid);
-			auto endTime = std::chrono::high_resolution_clock::now();
-			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
-
-			printResults(time);
-			pl.evaluate();
-		cv::waitKey(0);			
-		}
+	if (typeAlg == 0 || static_cast<unsigned>(typeAlg) > 6) {
+		std::cout << "Bad selection.\n";
+		return;
 	}
-		std::cout << "END";
+	if( typeAlg == 7) { TestingPipeline("testing/testing.txt").execute(); return; }
+	Pipeline pl = Pipeline(parser.get<std::string>("class"), typeAlg);
+	Settings::nameFile = parser.get<std::string>("video");
+	Utils::setEvaluationFiles(parser.get<std::string>("video"));
+
+	auto startTime = std::chrono::high_resolution_clock::now();
+	pl.execute(parser.get<std::string>("video"));
+	auto endTime = std::chrono::high_resolution_clock::now();
+	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+
+	printResults(time);
+	pl.evaluate();
+	cv::waitKey(0);
 }
+
+//void mainFun::video(cv::CommandLineParser parser)
+//{
+////	Settings::getSettings("data/settings/settings_vga.txt");
+//
+//	TestingPipeline("testing/testing.txt").execute();
+//	return;
+//	std::string videos[] = {"video/cctv4_640.mp4", "video/cctv4_1080.mp4", "video/cctv4.avi", "video/cctv4.mov" };
+//
+//	for (auto vid : videos) {
+//		std::cout << "\t\t VIDEO " << vid << " ______________" << std::endl;
+//			while (true)
+//			{
+//			Settings::getSettings("data/settings/settings_640.txt");
+//			Pipeline pl = Pipeline("KONF_15.yml", 2);
+//			//Pipeline pl =  Pipeline("pedDet.svm", 4);
+//			//Utils::setEvaluationFiles(parser.get<std::string>("video"));
+//			Utils::setEvaluationFiles(vid);
+//			//Settings::nameFile = vid;// parser.get<std::string>("video");
+//
+//				auto startTime = std::chrono::high_resolution_clock::now();
+//			//pl->execute(parser.get<std::string>("video"));
+//			pl.execute(vid);
+//			auto endTime = std::chrono::high_resolution_clock::now();
+//			double time = std::chrono::duration<double, std::milli>(endTime - startTime ).count();
+//
+//			printResults(time);
+//			pl.evaluate();
+//		cv::waitKey(0);			
+//		}
+//	}
+//		std::cout << "END";
+//}
 
 void mainFun::extract(cv::CommandLineParser parser)
 {
@@ -271,13 +268,14 @@ void mainFun::extract(cv::CommandLineParser parser)
 void mainFun::createSample(cv::CommandLineParser parser)
 {
 	std::cout << "Creating samples from img...";
-	clock_t timer = clock();
+	auto startTime = std::chrono::high_resolution_clock::now();
 	Utils::createSamplesFromImage(parser.get<std::string>("createSample"), "makedSamples");
-	timer = clock() - timer;
-	std::cout << "DONE!\nParsing took " << static_cast<float>(timer) / CLOCKS_PER_SEC << "s." << std::endl;
+	auto endTime = std::chrono::high_resolution_clock::now();
+	double time = std::chrono::duration<double, std::milli>(endTime - startTime).count();
+	std::cout << "DONE!\nParsing took " << static_cast<float>(time) / CLOCKS_PER_SEC << "s." << std::endl;
 }
 
-void mainFun::printResults(clock_t timer)
+void mainFun::printResults(double timer)
 {
 	std::cout << "FPS: " << VideoStream::fps << "." << std::endl;
 	std::cout << "ALG FPS: " << VideoStream::totalFrames / (static_cast<float>(timer) / CLOCKS_PER_SEC) << "." << std::endl;
