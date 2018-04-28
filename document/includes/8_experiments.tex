@@ -14,12 +14,12 @@ První sada experimentů byla detekce pomocí histogramů orientovaných gradien
 
 \subsection{Nalezení optimálního klasifikátoru}
 
-Nalezení optimálního a~spolehlivého klasifikátoru je klíčovou částí celého procesu, zároveň se jedná i~o~velmi komplikovaný a~zdlouhavý úkol. Je důležité zvolit ideální trénovací sadu vzorků a~k~vzhledem zvoleného typu SVM a~jejího jádra. Otestoval jsem varianty $C$, $\nu$, $\varepsilon$--SVR klasifikátorové typy s~lineárním a~Gaussovým jádrem, přičemž jsem zjistil, že nejlepší sestava pro detekování chodců je kombinace 
-typu $\varepsilon$--SVR s~lineárním jádrem, protože úspěšnost detekce byla značně vysoká. Po zvolení správného jádra a~typu klasifikátoru je dalším krokem vybrat, jak už bylo zmíněno, trénovací sadu. Vyzkoušel jsem nejrůznější trénovací sady dostupné na internetu i~jejich kombinace.
+Nalezení optimálního a~spolehlivého klasifikátoru je klíčovou částí celého procesu. Zároveň se jedná o~velmi komplikovaný a~zdlouhavý úkol. Je důležité zvolit ideální trénovací sadu vzorků a~k~vzhledem zvoleného typu SVM i~také jejího jádra. Otestoval jsem varianty $C$--SVC, $\nu$--SVC, $\varepsilon$--SVR klasifikátorové typy s~lineárním a~Gaussovým jádrem, přičemž jsem zjistil, že nejlepší sestava pro detekování chodců je kombinace 
+typu $\varepsilon$--SVR s~lineárním jádrem, protože úspěšnost detekce byla značně vysoká. Po zvolení správného jádra a~typu klasifikátoru je dalším krokem vybrat, jak už bylo zmíněno, trénovací sadu. Vyzkoušel jsem nejrůznější trénovací sady dostupné na internetu, a~také jejich kombinace.
 
-Nejlepších výsledků jsem dosáhl s~pozitivní trénovací sadou Dase \cite{sudipdas}, CUHK01 campus \cite{cuhk} a~jako negativní sadu jsem použil Daimler--Mono\cite{daimler}, kterou jsem nastříhal na vzorky. Tyto sady jsou přiloženy v~příloze této práce. Následujícím krokem je zvolení správných parametrů trénování klasifikátoru. 
+Nejlepších výsledků jsem dosáhl s~pozitivní trénovací sadou Dase \cite{sudipdas}, CUHK01 campus \cite{cuhk} a~jako negativní sadu jsem použil Daimler--Mono\cite{daimler}, kterou jsem nastříhal na vzorky. Tyto sady jsou součastí přílohy této práce. Následujícím krokem je zvolení správných parametrů trénování klasifikátoru. 
 
-Trénování klasifikátoru je velmi citlivé na tyto parametry, při změně některého z~nich jen o~tisícinu, můžeme získat úplně jiný výsledek. Trénování probíhalo dvakrát za sebou. Při druhém trénování se klasifikátor učil ze svých špatných detekcí, čemuž se říká \uv{Bootstrapping} \cite{bootstrap}. To znamená, že detekce se spustila na negativních vzorcích s~tímto klasifikátorem a~pokud detektor vrátil nějaký výsledek, byl uložen zpět do negativní sady a~znovu vytrénován, tento postup je ilustrován ve zdrojovém kódu \ref{src:double_train}.
+Trénování klasifikátoru je velmi citlivé na tyto parametry. Při změně některého z~nich, byť jen o~tisícinu, můžeme získat úplně jiný výsledek. Trénování probíhalo dvakrát za sebou. Při druhém trénování se klasifikátor učil ze svých špatných detekcí, čemuž se říká \uv{Bootstrapping} \cite{bootstrap} a tento postup je ilustrován ve zdrojovém kódu \ref{src:double_train}.
 \newpage
 
 \begin{lstlisting}[label=src:double_train, language=cpp, caption=Bootstrapping]
@@ -54,9 +54,9 @@ Trénování klasifikátoru je velmi citlivé na tyto parametry, při změně n�
 		trainSvm(trainMat, labels);
 \end{lstlisting}
 
-Natrénoval jsem klasifikátory s~různými parametry a~otestoval je na testovacích vzorcích. Tyto vzorky byly vyextrahované obrázky chodců a~"ne-chodců" z~testovacích videí pomocí jejich anotací a~přiloženého nástroje pro tvorbu vzorků a~také z~projektu PETA \cite{peta}, konkrétně se jednalo o~sady: \textit{3DPeS, CAVIAR4REID, CBLC, SARC3D a~VIPeR}. Tento krok je v~podstatě první filtrací klasifikátorů. Vybíráme takový klasifikátor, aby jeho detekce byla co nejvíc přesná a~detekoval, co nejméně špatných oblasti. Vytrénoval jsem 15 klasifikátorů s~různými parametry trénování. Tyto klasifikátory jsem nadále filtroval pomocí ROC křivky a~vybral ten nejlepší podle veličiny AUC z~grafu, který je na obrázku \ref{fig:rocCurve1}. Nastavení trénovacích parametrů jsou uvedeny v~tabulce \ref{classTab1}.
+Natrénoval jsem klasifikátory s~různými parametry a~otestoval je na testovacích vzorcích. Tyto vzorky byly vyextrahované obrázky chodců a~"ne-chodců" z~testovacího videa pomocí jejich anotací a~přiloženého nástroje pro tvorbu vzorků a~také z~projektu PETA \cite{peta}, konkrétně se jednalo o~sady: \textit{3DPeS, CAVIAR4REID, CBLC, SARC3D a~VIPeR}. Tento krok je v~podstatě první filtrací klasifikátorů. Vybíráme takový klasifikátor, aby jeho detekce byla co nejvíc přesná a~detekoval, co nejméně špatných oblasti. Vytrénoval jsem 15 klasifikátorů s~různými parametry trénování. Tyto klasifikátory jsem nadále filtroval pomocí ROC křivky a~vybral ten nejlepší podle veličiny AUC z~grafu, který je na obrázku \ref{fig:rocCurve1}. Nastavení trénovacích parametrů jsou uvedeny v~tabulce \ref{classTab1}. Parametry $\varepsilon$, kritéria ukončení a~počet pozitivních vzorků (5649) byly stejné.
 
-ROC křivka je takový graf, který ilustruje schopnost a~optimalizaci binárního klasifikátoru pro všechny přípustné hodnoty prahů. Křivka je vytvořena vynesením relativní četnost skutečně pozitivních případů (true positive rate - TPR) na svislé ose a~relativní četnosti falešně pozitivních případů (false positive rate - FPR) na ose vodorovné. Čím je plocha pod křivkou (AUC) větší, tím má klasifikátor menší chybovost. 
+ROC křivka je takový graf, který ilustruje schopnost a~optimalizaci binárního klasifikátoru pro všechny přípustné hodnoty prahů. Křivka je vytvořena vynesením relativní četnosti skutečně pozitivních případů (true positive rate - TPR) na svislé ose a~relativní četnosti falešně pozitivních případů (false positive rate - FPR) na ose vodorovné. Čím je plocha pod křivkou (AUC) větší, tím má klasifikátor menší chybovost. 
 
 \begin{figure}[H]
 \centering
@@ -67,7 +67,7 @@ ROC křivka je takový graf, který ilustruje schopnost a~optimalizaci binární
 
 \begin{table}[H]
 \centering
-\caption{Přehled vytrénovaných klasifikátorů a~jejich trénovacích parametrů. Parametry $\varepsilon$, kritéria ukončení a~počet pozitivních vzorků (5649) byly stejné.}
+\caption{Přehled vytrénovaných klasifikátorů a~jejich trénovacích parametrů.}
 \begin{tabular} { |c|c|c|c|c|c| }
 \hline
 {Název}        & {par. C}     & {par. P}      & {max iterací} & {počet neg. vzorků} & {Přesnost \%}  \\ \hline
@@ -90,7 +90,7 @@ KONF 15 	     & 	0.5		& 	  0.1	 &   2000   	  &		  9000   	    &        83	 \\ \
 \label{classTab1}
 \end{table}
 
-Vybral jsem konfiguraci 15, protože oblast pod křivkou byla největší ze všech vytrénovaných, přesnost tohoto klasifikátoru je v~tabulce \ref{classTab2}. Výsledky testování ostatních klasifikátorů jsou v~příloze této práce. Detekce může nabývat maximálně 4 stavů:
+Vybral jsem konfiguraci 15, protože oblast pod křivkou byla největší ze všech vytrénovaných. Přesnost tohoto klasifikátoru je v~tabulce \ref{classTab2}. Výsledky testování ostatních klasifikátorů jsou v~příloze této práce. Detekce může nabývat maximálně 4 stavů:
 \begin{itemize}
 	\item{True Positive (\textbf{TP}) - detektor správně rozpoznal chodce.}
 	\item{True Negative (\textbf{TN}) - detektor tuto oblast správně ignoroval.}
@@ -137,7 +137,7 @@ Na tento klasifikátor jsem se rozhodl aplikovat algoritmus substrakce pozadí, 
 \label{fig:detectionExample}
 \end{figure}
 
-Chodci se v obrázku mohou vyskytovat kdekoliv, proto se při takové detekci používá výpočet F1 skóre namísto přesnosti. Ke svému výpočtu totiž nepotřebuje true negative, které by bylo obtížné získat z~každého snímku. Výpočet F1 skóre je následující:
+Chodci se na obrázku mohou vyskytovat kdekoliv, proto se při takové detekci používá výpočet F1 skóre namísto přesnosti. Ke svému výpočtu totiž nepotřebuje true negative, které by bylo obtížné získat z~každého snímku. Výpočet F1 skóre je následující:
 \begin{equation*}
 \centering
  \label{eq:f1score}
@@ -161,7 +161,7 @@ Za správnou detekci je považována taková detekce, kdy výstup z~detektoru je
 
 \subsection{Aplikace algoritmu Mixtura Gaussiánů}
 V~předchozí kapitole jsem popsal, jak probíhalo zvolení optimálního klasifikátoru a~nyní jej použijeme v~kombinaci s metodou substrakce pozadí.
-Detektor nemusí procházet celý obraz, ale soustředí se jen na vyextrahované části z obrazu. Kombinace metod HOG a~MOG může mít významný vliv na výkon celé detekce. Metoda MOG extrahuje celé dynamické popředí, to znamená, že do detektoru se nemusí dostat jenom chodec. Příkladem tohoto případu zobrazuje výstupní obrázek \ref{fig:mogExample1} metody MOG, kde po extrahování popředí a aplikace eroze a dilatace zůstaly dvě významné oblasti. Tyto dvě oblasti jsou na obrázcích \ref{fig:mogExample2}. Na obrázku vlevo se nachází hledaný chodec, zatímco na pravém nikoliv. Detekce je spuštěna na obou oblastech, kde chodec byl úspěšně nalezen a druhý výřez byl ignorován, výsledek detekce je na obrázku \ref{fig:mogExample3}.
+Detektor nemusí procházet celý obraz, ale soustředí se pouze na vyextrahované části z obrazu. Kombinace metod HOG a~MOG může mít významný vliv na výkon celé detekce. Metoda MOG extrahuje celé dynamické popředí, to znamená, že do detektoru se nemusí dostat jenom chodec. Příklad tohoto případu zobrazuje výstupní obrázek \ref{fig:mogExample1} metody MOG, kde po extrahování popředí a aplikací eroze a dilatace zůstaly dvě významné oblasti. Tyto dvě oblasti jsou na obrázcích \ref{fig:mogExample2}. Na obrázku vlevo se nachází hledaný chodec, zatímco na pravém nikoliv. Detekce je spuštěna na obou oblastech, kde chodec byl úspěšně nalezen a druhý výřez byl ignorován. Výsledek detekce je na obrázku \ref{fig:mogExample3}.
 \begin{figure}[H]
 \centering
 \includegraphics[keepaspectratio, max height=7.6cm,]{figures/mog/mog}%
@@ -183,10 +183,8 @@ Detektor nemusí procházet celý obraz, ale soustředí se jen na vyextrahovan�
 \caption{Výsledná detekce, klasifikátor se rozhodnul správně.}
 \label{fig:mogExample3}
 \end{figure}
- Chodci jsou v~použitých videosekvencích a~obrázcích anotováni v~textových souborech každý zvlášť. První řádek tohoto textového souboru odpovídá počtu snímku videa a~další řádky jsou věnovány samotným anotacím, kde první číslo vyjadřuje číslo snímku a~následující 4 čísla jsou body dané anotace.
-
 Testovací video \cite{testvideo} je ve 3 různých rozlišeních, základní informace o~videosekvencích je uvedena v~tabulce \ref{videosTab}.
-
+Chodci v~použitých videosekvencích a~obrázcích jsou anotováni v~textových souborech.
 \begin{table}[H]
 \centering
 \caption{Přehled testovaných videozáznamů}
@@ -199,9 +197,10 @@ cctv4\_1920 	 & $1920\times1080$	     &      781	   & 29,97 & 	      749			    \
 \end{tabular}
 \label{videosTab}
 \end{table}
-Navzdory tomu, že tyto počítače podporují rozšíření NEON a~obě knihovny byly zkompilovány s~tímto rozšířením, výsledky nebyly až tak časově uspokojivé, jak jsem očekával. V~následujících tabulkách jsou uvedeny výsledky detekce vytrénovaného detektoru Jsou zde také uvedeny výsledky detektoru z~knihovny Dlib (v~tabulce jako \uv{FHOG}) včetně původního detektoru lidí, který je součástí knihovny OpenCV (v~tabulce jako \uv{default HOG}) a~slouží k~porovnání s~vytrénovaným SVM klasifikátorem. Dlib klasifikátor byl vytrénován podle příkladu uvedený na webové stránce knihovny. 
 
-V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou uvedeny výsledky detekce z~každého videa na jednotlivém zařízení. Tabulka \ref{resultTabDesktop} jsou výsledky detekce z~desktopového počítače, které slouží jako referenční model k~výsledkům z~výše zmíněných tabulek.  
+V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou uvedeny výsledky detekce z~každého videa na jednotlivém zařízení. Tabulka \ref{resultTabDesktop} znázorňuje výsledky detekce z~desktopového počítače, které slouží jako referenční model k~výsledkům výše zmíněných tabulek.  
+Jsou zde také uvedeny výsledky detektoru z~knihovny Dlib (v~tabulce jako \uv{FHOG}) včetně původního detektoru lidí, který je součástí knihovny OpenCV (v~tabulce jako \uv{default HOG}) a~slouží k~porovnání s~vytrénovaným SVM klasifikátorem. Dlib klasifikátor byl vytrénován podle příkladu uvedeného na webové stránce knihovny. 
+Navzdory tomu, že tyto počítače podporují rozšíření NEON a~obě knihovny byly zkompilovány s~tímto rozšířením, výsledky nebyly tak časově uspokojivé, jak jsem očekával. 
 \begin{table}[H]
 \catcode`\-=12
 \centering
@@ -230,7 +229,7 @@ V~tabulkách \ref{resultTabIMX}, \ref{resultTabRPI3} a~\ref{resultTabBPI} jsou u
       &  default HOG + MOG         &    0,5 & 1 620,12  & 381 &    368 &     94 &      62,25      \\ \hline
 \end{tabular}
 \end{table}
-Z~tabulky \ref{resultTabIMX} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre a~to 87,83\% v~čase 649 sekund. Bez aplikace metody MOG je délka detekce 1271 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times 360$ a~to 134 sekund s~5,8 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 520, respektive 1574 sekund.
+Z~tabulky \ref{resultTabIMX} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre, a~to 87,83\% v~čase 649 sekund. Bez aplikace metody MOG je délka detekce 1271 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times 360$, a~to 134 sekund s~5,8 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 520, respektive 1574 sekund.
 
 \begin{table}[H]
 \catcode`\-=12
@@ -260,7 +259,7 @@ Z~tabulky \ref{resultTabIMX} je vidět, že metoda HOG s~kombinací metodou MOG 
       &  default HOG + MOG           &  0,7            & 1 195,23     & 380 &  369 &     95 &      62,09      \\ \hline
 \end{tabular}
 \end{table}
-Z~tabulky \ref{resultTabRPI3} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre a~to 87,83\% v~čase 609 sekund. Bez aplikace metody MOG je délka detekce 980 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$ a~to 115 sekund s~6,7 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 389, respektive 1027 sekund.
+Z~tabulky \ref{resultTabRPI3} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre, a~to 87,83\% v~čase 609 sekund. Bez aplikace metody MOG je délka detekce 980 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$, a~to 115 sekund s~6,7 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 389, respektive 1027 sekund.
 
 \begin{table}[H]
 \catcode`\-=12
@@ -290,7 +289,7 @@ Z~tabulky \ref{resultTabRPI3} je vidět, že metoda HOG s~kombinací metodou MOG
                               &  default HOG + MOG &   0,3        & 2 390,96         & 380 &   369 &     95 &      62,09      \\ \hline  
 \end{tabular}
 \end{table}
-Z~tabulky \ref{resultTabBPI} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre a~to 87,47\% v~čase 887 sekund. Bez aplikace metody MOG je délka detekce 2485 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$ a~to 131 sekund s~6 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 503, respektive 1934 sekund.
+Z~tabulky \ref{resultTabBPI} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre, a~to 87,47\% v~čase 887 sekund. Bez aplikace metody MOG je délka detekce 2485 sekund a~F1 skóre 78,66\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$, a~to 131 sekund s~6 snímky za sekundu. Pro rozlišení $1280\times720$, respektive $1920\times1080$ je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 503, respektive 1934 sekund.
 \begin{table}[H]
 \catcode`\-=12
 \centering
@@ -320,7 +319,7 @@ Z~tabulky \ref{resultTabBPI} je vidět, že metoda HOG s~kombinací metodou MOG 
                               &  default HOG + MOG &   12,3      & \textbf{63,25}  & 387 &    362 &     85 &      63,39    \\ \hline
 \end{tabular}
 \end{table}
-Z~tabulky \ref{resultTabDesktop} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre a~to 86,79\% v~čase 25 sekund. Bez aplikace metody MOG je délka detekce 62 sekund a~F1 skóre 80,16\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$ a~to 6 sekund s~120,5 snímků za sekundu. Pro rozlišení $1280\times720$  je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 22 sekund. Pro rozlišení $1920\times1080$ je v~tomhle případě nejrychlejší varianta default HOG s~kombinací MOG v~čase 63 sekund.
+Z~tabulky \ref{resultTabDesktop} je vidět, že metoda HOG s~kombinací metodou MOG dosáhla nejvyššího F1 skóre, a~to 86,79\% v~čase 25 sekund. Bez aplikace metody MOG je délka detekce 62 sekund a~F1 skóre 80,16\%. V~tomhle případě tato kombinace nejen zvýšila rychlost detekce, ale i~její přesnost. Dále vidíme, že nejrychlejší metoda je FHOG s~kombinací MOG pro video s~rozlišením $640\times360$, a~to 6 sekund s~120,5 snímků za sekundu. Pro rozlišení $1280\times720$  je opět nejrychlejší metoda FHOG s~kombinací MOG, a~to časem vykonávání 22 sekund. Pro rozlišení $1920\times1080$ je v~tomhle případě nejrychlejší varianta default HOG s~kombinací MOG v~čase 63 sekund.
 
 
 Z~tabulek můžeme vidět, jak se program choval na každém zařízení jinak. To mohlo být způsobeno různými faktory, například jiným způsobem zaokrouhlování čísel s~plovoucí čárkou. 
@@ -368,7 +367,7 @@ V~tabulce \ref{sumSpeTab} vidíme shrnutí nejrychlejších metod pro jednotliv�
 \end{table}
 
 
-Na obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech videí za použití kombinace metod HOG a~MOG. Křivky byly vygenerovány obdobně jako při testování klasifikátoru. SVM klasifikátor na každé detekované oblasti provedl pravděpodobnostní zařazení do konkrétní třídy, jinými slovy, jestli se na obrázku nachází chodec nebo nikoliv. V~posledním kroku se vygeneroval \uv{ground truth} soubor k~tomuto pravděpodobnostnímu zařazení za pomocí anotačního souboru. Jak může být zřejmé, klasifikátor není až tak spolehlivý na obsah s~vysokým rozlišením(cctv4\_1920), na druhou stranu pro detekci na průměrném rozlišení (cctv4\_1280) je spolehlivější. Natrénoval jsem klasifikátor na vzorcích o~velikosti $48\times96$ proto, aby bylo možné detektor použít i~na menších obrázcích bez nutnosti jejich zvětšení. Klasifikátor z~knihovny Dlib se mi nepodařilo vytrénovat na spolehlivou míru přesnosti pro nejmenší testované rozlišení (cctv4\_640). Na druhou stranu, tento klasifikátor byl nejrychlejší na všech testovaných ARM zařízeních.
+Na obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech videí za použití kombinace metod HOG a~MOG. Křivky byly vygenerovány obdobně jako při testování klasifikátoru. SVM klasifikátor na každé detekované oblasti provedl pravděpodobnostní zařazení do konkrétní třídy, jinými slovy, jestli se na obrázku nachází chodec nebo nikoliv. V~posledním kroku se vygeneroval \uv{ground truth} soubor k~tomuto pravděpodobnostnímu zařazení, za pomocí anotačního souboru. Jak může být zřejmé, klasifikátor není až tak spolehlivý na obsah s~vysokým rozlišením(cctv4\_1920). Na druhou stranu pro detekci na průměrném rozlišení (cctv4\_1280) je spolehlivější. Natrénoval jsem klasifikátor na vzorcích o~velikosti $48\times96$ proto, aby bylo možné detektor použít i~na menších obrázcích bez nutnosti jejich zvětšení. Klasifikátor z~knihovny Dlib se mi nepodařilo vytrénovat na spolehlivou míru přesnosti pro nejmenší testované rozlišení (cctv4\_640). Na druhou stranu, tento klasifikátor byl nejrychlejší na všech testovaných ARM zařízeních.
 
 \begin{figure}[H]
 \centering
@@ -379,4 +378,4 @@ Na obrázku \ref{fig:rocCurve2} jsou vykresleny ROC křivky všech videí za pou
 
 Předfiltrování obrazu pomocí subtrakce pozadí se značně projevilo při detekci chodců. Nejen, že se zefektivnila detekce odfiltrováním většiny false positive detekcí, ale také rychlost samotného detektoru. Například na dvoujádrovém počítači Banana Pi je rychlost skoro až $7\times$ rychlejší než se samotnou metodou HOG při nízkém rozlišení videa (cctv04\_640).
 
-Nejvhodnějším zařízením pro detekování chodců při této implementaci se projevil jako Raspberry PI. Navzdory optimalizování algoritmu nelze hovořit o~úspěchu, protože touto implementací nelze detekovat chodce v~reálném čase.
+Nejvhodnějším zařízením pro detekování chodců při této implementaci se projevil Raspberry PI. Navzdory optimalizování algoritmu nelze hovořit o~úspěchu, protože touto implementací nelze detekovat chodce v~reálném čase.

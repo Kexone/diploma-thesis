@@ -1,5 +1,5 @@
 \section{Metody detekce chodců}
-V~této kapitole budou popsány nejpoužívanější a~nejznámější detekční metodiky. Všechny implementace těchto metodik jsou dostupné minimálně v~jedné knihovně použité v~této práci. Prvně budou uvedeny metody založené na příznacích, jmenovitě Histogram orientovaných gradientů, Haar vlnky, Lokální binární vzory a~některé jejich kombinace. Také jsou zde uvedeny klasifikátory Support vector machine a~AdaBoost. V~poslední části této sekce se budu věnovat neuronovým sítím. 
+V~této kapitole budou popsány nejpoužívanější a~nejznámější detekční metodiky. Všechny implementace těchto metodik jsou dostupné minimálně v~jedné knihovně použité v~této práci. Prvně budou uvedeny metody založené na příznacích, jmenovitě Histogram orientovaných gradientů, Haar vlnky, Lokální binární vzory a~některé jejich kombinace. Dále jsou zde uvedeny klasifikátory Support vector machine a~AdaBoost. V~poslední části této sekce se budu věnovat neuronovým sítím. 
 
 \subsection{Metody založené na příznacích}
 Navzdory všem výzvám a~problémům detekce chodců zůstává tato oblast výzkumu stále aktivní a~byla navržena řada technik.
@@ -7,7 +7,7 @@ Navzdory všem výzvám a~problémům detekce chodců zůstává tato oblast vý
 \subsubsection*{Histogram orientovaných gradientů}
 Tato metoda vznikla v~roce 2005 za účelem detekování chodců v~obrazech a~je založena na histogramech orientovaných gradientů (\textit{HOG - Histogram of Oriented Gradients}). Autoři této metodiky jsou N. Dalal a~B. Triggs \cite{hog:dalal}. Základní myšlenka spočívá v~tom, že okolní vzhled a~tvar objektu může být často charakterizován distribucí intenzity gradientů nebo směry hran, aniž by byly přesně známy odpovídající gradientové nebo hranové polohy.  
 
-Před samotným výpočtem příznaků by mělo dojít k~zajištění normalizaci barev a~gamy, v~případě černobílých obrázků k~normalizaci kontrastu. Tento krok může být vynechán, jak zdůrazňují autoři Dalal a~Triggs. Normalizace deskriptorů dosahují stejného výsledku, a~tedy předběžné zpracování obrázku má malý vliv na výkon. Místo toho je prvním krokem výpočet gradientních hodnot. Nejběžnější metodou je aplikování jednodimenzionální derivační masky v~jednom nebo obou směrech, jak horizontálním, tak vertikálním. Autoři také experimentovali s~komplexnějšími maskami, jako je například $3\times3$ Sobelova maska, nebo diagonální masky, avšak tyto masky se prokázaly jako méně účinné. Stejně tak neúčinné bylo použití jakéhokoliv vyhlazení obrazu před aplikací derivační masky. Autoři této metody přišli na to, že nejlepší kombinací je použití konvolucí Gaussovského filtrování $\sigma = 0$ na obraze $I$ s~maskou $[-1, 0, 1]$, $[-1,0,1]^\top$:
+Před samotným výpočtem příznaků by mělo dojít k~zajištění normalizaci barev a~gamy, v~případě černobílých obrázků k~normalizaci kontrastu. Tento krok může být však vynechán, jak zdůrazňují autoři Dalal a~Triggs. Normalizace deskriptorů dosahují stejného výsledku, a~tedy předběžné zpracování obrázku má malý vliv na výkon. Místo toho je prvním krokem výpočet gradientních hodnot. Nejběžnější metodou je aplikování jednodimenzionální derivační masky v~jednom nebo obou směrech, jak horizontálním, tak vertikálním. Autoři také experimentovali s~komplexnějšími maskami, jako je například $3\times3$ Sobelova maska, nebo diagonální masky, avšak tyto masky se prokázaly jako méně účinné. Stejně tak neúčinné bylo použití jakéhokoliv vyhlazení obrazu před aplikací derivační masky. Autoři této metody přišli na to, že nejlepší kombinací je použití konvolucí Gaussovského filtrování $\sigma = 0$ na obraze $I$ s~maskou $[-1, 0, 1]$, $[-1,0,1]^\top$:
 \begin{equation*}
 \centering
  \label{eq:hogMask}
@@ -22,8 +22,8 @@ kde:
   \item $I$: obraz.
 \end{itemize}
 
-V~druhém kroku dochází k~vytvoření histogramu v~každé buňce, která je standardně tvořena $8\times8$ pixely. Každý pixel v~buňce má svou váhu, kterou se podílí na vytvoření orientovaného histogramu, založeného na hodnotách nalezených ve výpočtu gradientu. Hodnoty buněk jsou rovnoměrně rozloženy do histogramu o~9 kanálech (binech) po \ang{20}. Pokud směr gradientu buňky vyjde na pomezí dvou binů, přičte se její magnituda do obou těchto binů.
-Tyto buňky spojíme do větších propojených bloků z~důvodu normalizace osvětlení a~kontrastu. Pro chodce se používá L2--norm normalizace, dle vztahu \eqref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R--HOG) a~kruhové bloky (C--HOG), tyto bloky jsou na obrázku \ref{variants_block}.  
+V~druhém kroku dochází k~vytvoření histogramu v~každé buňce, která je standardně tvořena $8\times8$ pixely. Každý pixel v~buňce má svou váhu, kterou se podílí na vytvoření orientovaného histogramu, založeného na hodnotách nalezených ve výpočtu gradientu. Hodnoty buněk jsou rovnoměrně rozloženy do histogramu o~9 kanálech (binech) po \ang{20}. Pokud směr gradientu buňky vyjde na pomezí dvou binů, přičte se jeho magnituda do obou těchto binů.
+Tyto buňky spojíme do větších propojených bloků z~důvodu normalizace osvětlení a~kontrastu. Pro chodce se používá L2--norm normalizace, dle vztahu \eqref{eq:normHog}. Tyto bloky se typicky překrývají, což znamená, že každá buňka přispívá více než jednou do finálního deskriptoru. Proces zpracování deskriptoru je ilustrován na obrázku \ref{hog_chain}. Existují dvě varianty spojení bloků, tzv. obdélníkové bloky (R--HOG) a~kruhové bloky (C--HOG). Tyto bloky jsou na obrázku \ref{variants_block}.  
 \begin{equation}
 \centering
  \label{eq:normHog}
@@ -42,14 +42,14 @@ Nechť $v$ je nenormalizovaný vektor obsahující všechny histogramy v~daném 
 
 \textbf{C--HOG} (Kruhové HOG bloky) - lze nalézt ve dvou variantách: \textit{s~jedinou, centrální buňkou} a~\textit{úhlově rozdělenou centrální buňkou}. Dají se popsat čtyřmi parametry: počtem úhlů a~radiálních kanálů (binů), poloměrem centrálního binu a~faktorem roztažení pro poloměr dalších radiálních binů.  Tyto bloky se podobají deskriptorům kontextu tvarů (shape context descriptors \cite{shapeContext}), ale C--HOG jsou buňky s~několika orientovanými kanály, zatímco shape context využívají přítomnost jediné hrany.
 
-\textbf{R--HOG} (Obdélníkové HOG bloky) - tyto bloky jsou v~praxi nejčastěji používané a~reprezentují se třemi parametry: \textit{počet buněk na blok}, \textit{počet pixelů na buňku} a~\textit{počet binů (kanálů) na jeden histogram}. Bloky se zdají podobné deskriptorům transformací příznaků invariantní vůči měřítku (SIFT, scale--invariant feature transform  \cite{siftPaper}), avšak liší se výpočtem bloků. R--HOG bloky jsou vypočteny v~hustých mřížkách v~libovolném měřítku bez zarovnání orientace, zatímco SIFT deskriptory obvykle v~mřížkách řídkých, obrazové body invariantní vůči měřítku jsou otočeny, aby přiléhaly orientaci. R--HOG bloky se také používají pro kódování informací. 
+\textbf{R--HOG} (Obdélníkové HOG bloky) - tyto bloky jsou v~praxi nejčastěji používané a~reprezentují se třemi parametry: \textit{počet buněk na blok}, \textit{počet pixelů na buňku} a~\textit{počet binů (kanálů) na jeden histogram}. Bloky se mohou zdát podobné deskriptorům transformací příznaků invariantní vůči měřítku (SIFT, scale--invariant feature transform  \cite{siftPaper}), avšak liší se výpočtem bloků. R--HOG bloky jsou vypočteny v~hustých mřížkách v~libovolném měřítku bez zarovnání orientace, zatímco SIFT deskriptory obvykle v~mřížkách řídkých, obrazové body invariantní vůči měřítku jsou otočeny, aby přiléhaly orientaci. R--HOG bloky se také používají pro kódování informací. 
 \begin{figure}[H]
   \centering
   \includegraphics[width=14cm]{figures/hog_variants.pdf}
   \caption{Varianty geometrie spojení bloků \cite{hog:dalal}}
   \label{variants_block}
 \end{figure}
-V~knihovně OpenCV existuje funkce \uv{detectMultiScale}, která pomocí posuvného okna (sliding window) projde celý obraz a~v~každém takovém okně se vypočítávají příznaky. Jeho velikost můžeme definovat pomocí parametru, standardní velikost je $64\times128$ pixelů a~následující popis a~výpočty budou odpovídat této velikosti posuvného okna.  
+V~knihovně OpenCV existuje funkce \uv{detectMultiScale}, která pomocí posuvného okna (sliding window) projde celý obraz a~v~každém takovém okně se vypočítávají příznaky. Jeho velikost můžeme definovat pomocí parametru. Standardní velikost je $64\times128$ pixelů a~následující popis a~výpočty budou odpovídat této velikosti posuvného okna.  
 
 V~tomto okně se obrázek rozdělí na $8\times8$ bloků a~v~každém bloku se vypočte histogram magnitud, které se podle směru gradientů rozdělují do 9~binů. Vyjde nám vektor o~velikosti 9 a~tyto vektory spojíme do bloků o~velikosti $16\times16$ a~normalizujeme je na velikost 1, aby byly nezávislé na osvětlení, dostaneme tedy vektor o~velikosti 36. Na konci tohoto procesu všechny vektory spojíme a~získáme vektor všech příznaků z~konkrétního vzorku nebo z~oblasti zájmu posuvného okna. Obrázek \ref{fig:hogCalc} zobrazuje vstup vzorku pro vypočítání jeho příznaků neboli histogramu orientovaných gradientů. Kde nejprve obrázek převedeme do stupňů šedi, provedeme normalizaci kontrastu a~gamy a~následně vypočítáme jeho vektor příznaků.
 Ukázka dělení obrazového okna je na obrázku \ref{hog_cells}.
@@ -126,7 +126,7 @@ Sada Haarových vlnek je na obrázku \ref{fig:basichaarfeatures}, jedná se pouz
 \label{fig:basichaarfeatures}
 \end{figure}
 
-Pro identifikaci lidských postav se používá rozšířená sada vlnek, tzv. Haar--like příznaky. Autoři v~publikaci \cite{haar:like} představili novou sadu Haar vlnek pro detekci lidí v~obrazech. Klasifikační systém založený na těchto příznacích dosahuje nižší false positive detekce než původní Haar--like příznaky.  Na obrázku \ref{fig:haarlike} je příklad detekce pomocí Haar--like vlnek ze zmíněné publikace. Hodnota příznaku je rozdíl mezi sumou hodnot pixelů v~bílé a~černé oblastí Haarových vlnek.
+Pro identifikaci lidských postav se používá rozšířená sada vlnek, tzv. Haar--like příznaky. Autoři v~publikaci \cite{haar:like} představili novou sadu Haar vlnek pro detekci lidí v~obrazech. Klasifikační systém založený na těchto příznacích dosahuje nižší falešně pozitivní detekce než původní Haar--like příznaky. Na obrázku \ref{fig:haarlike} je příklad detekce pomocí Haar--like vlnek ze zmíněné publikace. Hodnota příznaku je rozdíl mezi sumou hodnot pixelů v~bílé a~černé oblasti Haarových vlnek.
 \begin{figure}[H]
 \centering
 \includegraphics[width=.8\linewidth]{figures/haar-like}
@@ -137,7 +137,7 @@ Pro identifikaci lidských postav se používá rozšířená sada vlnek, tzv. H
 \subsubsection*{Lokální binární vzor}
 Metoda LBP (Local Binary Pattern) byla navržena pro klasifikaci textur v~obrazech v~roce 1990 \cite{lbp:texture}. Poprvé však byla popsána až v~roce 1994 \cite{lbp:first}. Hlavní myšlenkou LBP je, že struktury obrazu mohou být efektivně zakódovány porovnáním hodnot jednotlivých pixelů a~jejich okolí. Tato metoda je odolná vůči jasovým změnám obrazu.
 
-Prvním krokem této metody je převod obrazu do stupňů šedi a~jeho rozdělení do buněk. Okolní hodnoty pixelů jsou porovnávány se středovým pixelem, pokud je jejich hodnota rovna nebo větší zapíše se na tuto pozici jednička v~opačném případě nula. Tyto hodnoty seřadíme buď podle hodinových ručiček nebo naopak a~získáme osmimístné binární číslo, které převedeme do dekadické soustavy. V~následujícím kroku z~čísel, které jsme získali kombinací pixelů v~buňkách, vypočítáme histogram. V~posledním kroku zřetězíme všechny histogramy buněk a~získáme vektor příznaků pro celý obraz. Jedná se o~256--dimenzionální vektor příznaků. 
+Prvním krokem této metody je převod obrazu do stupňů šedi a~jeho rozdělení do buněk. Okolní hodnoty pixelů jsou porovnávány se středovým pixelem, pokud je jejich hodnota rovna nebo větší zapíše se na tuto pozici jednička v~opačném případě nula. Tyto hodnoty seřadíme dle hodinových ručiček nebo naopak a~získáme osmimístné binární číslo, které převedeme do dekadické soustavy. V~následujícím kroku z~čísel, které jsme získali kombinací pixelů v~buňkách, vypočítáme histogram. V~posledním kroku zřetězíme všechny histogramy buněk a~získáme vektor příznaků pro celý obraz. Jedná se o~256--dimenzionální vektor příznaků. 
 Matematicky lze LPB vyjádřit jako:
 \begin{equation*}
 LBP_{P,R} = \sum_{p=0}{P-1} s(g_p - g_c)2^P, \\
@@ -175,7 +175,7 @@ Následující příklad se vztahuje k~obrázku \ref{fig:lbpsum}. Po porovnání
 \label{fig:lbpsum}
 \end{figure}
 
-Výhoda této metody je její rychlý a~snadný výpočet a~odolnost vůči různým osvětlením. Na druhou stranu je těžší na trénování, protože výsledné dekadické číslo může mít obrovské množství možností (podle parametru $P$). K~omezení můžeme využít uniformní vzory (obrázek \ref{fig:lbpvzory}). Pro parametr $P=8$, získáme 59 vzorů. 
+Výhoda této metody je její rychlý a~snadný výpočet a~odolnost vůči různým osvětlením. Na druhou stranu je těžší na trénování, protože výsledné dekadické číslo může mít obrovské množství možností (podle parametru $P$). K~omezení lze využít uniformní vzory (obrázek \ref{fig:lbpvzory}). Pro parametr $P=8$, získáme 59 vzorů. 
 
 \begin{figure}[H]
 \centering
@@ -209,7 +209,7 @@ Výhoda této metody je její rychlý a~snadný výpočet a~odolnost vůči růz
 \end{figure}
 
 \subsubsection*{HOG + LBP}
-Kombinace techniky histogramů orientovaných gradientů a~lokálního binárního vzoru tvoří nový způsob, jak vytvořit sadu příznaků. Ta je schopna zvládnout i~částečnou okluzi. Jak autoři publikace \cite{hoglpb} zmiňují, jeden detektor slouží ke globálnímu skenování obrazu a~druhý detektor pro konkrétní oblasti. Oba jsou naučeny z~trénovacích dat lineárního klasifikátoru SVM. Pro každé nejednoznačné skenovací oknko se vytvoří pravděpodobnosti okluze dle odezvy každého bloku HOG příznaku na globální detektor (obrázek \ref{fig:hoglbp}). Tyto pravděpodobnosti okluze se dále segmentují metodou Mean shift \cite{meanshift1, meanshift2}. Segmentovaná část okna s~větší negativní odpovědí je označena jako okludovaná část. Pokud je indikována okluze s~vysokou pravděpodobností v~nějakém skenovacím okně, část detektorů je aplikována na oblasti bez okluze k~dosažení konečné klasifikace aktuálního skenovacího okna. 
+Kombinace techniky histogramů orientovaných gradientů a~lokálního binárního vzoru tvoří nový způsob, jak vytvořit sadu příznaků. Ta je schopna zvládnout i~částečnou okluzi. Jak autoři publikace \cite{hoglpb} zmiňují, jeden detektor slouží ke globálnímu skenování obrazu a~druhý detektor pro konkrétní oblasti. Oba jsou naučeny z~trénovacích dat lineárního klasifikátoru SVM. Pro každé nejednoznačné skenovací okno se vytvoří pravděpodobnosti okluze dle odezvy každého bloku HOG příznaku na globální detektor (obrázek \ref{fig:hoglbp}). Tyto pravděpodobnosti okluze se dále segmentují metodou Mean shift \cite{meanshift1, meanshift2}. Segmentovaná část okna s~větší negativní odpovědí je označena jako okludovaná část. Pokud je indikována okluze s~vysokou pravděpodobností v~nějakém skenovacím okně, část detektorů je aplikována na oblasti bez okluze k~dosažení konečné klasifikace aktuálního skenovacího okna. 
 
 \begin{figure}[H]
 \centering
@@ -219,7 +219,7 @@ Kombinace techniky histogramů orientovaných gradientů a~lokálního binární
 \end{figure}
 
 \subsubsection*{HOG + LUV}
-Tato metodika \cite{hogluv} využívá histogram orientovaných gradientů a~LUV kanály obrazů pro extrakci příznaků. Kanály RGB vzorku se převedou na kanály LUV. Z~každého kanálu se samostatně vypočtou příznaky, tento převod ilustruje obrázek \ref{fig:luv}. Tyto příznaky můžeme spojit do jednoho vektoru příznaků nebo využít jen některé z~nich. Kanál $L$ je složka luminiscence (jas) a~kanály $UV$ značí sytost barev. 
+Tato metodika \cite{hogluv} využívá histogram orientovaných gradientů a~LUV kanály obrazů pro extrakci příznaků. Kanály RGB vzorku se převedou na kanály LUV. Z~každého kanálu se samostatně vypočtou příznaky. Tento převod ilustruje obrázek \ref{fig:luv}. Zmíněné příznaky můžeme spojit do jednoho vektoru příznaků nebo využít jen některé z~nich. Kanál $L$ je složka luminiscence (jas) a~kanály $UV$ značí sytost barev. 
 
 \begin{figure}[H]
 \centering
@@ -246,7 +246,7 @@ Tato metodika \cite{hogluv} využívá histogram orientovaných gradientů a~LUV
 Další možností detekce chodců v~obraze je substrakce pozadí, díky které můžeme extrahovat dynamické části v~obraze. Použitím této metodiky kombinované například s~přístupem založeným na příznacích, můžeme získat rychlý a~optimální detektor.
 
 \subsubsection*{Mixtura Gaussiánů}
-Mixtura Gaussiánů (\textit{MOG - Gaussian mixture model background subtraction}) \cite{mog:zivkovic} je metoda substrakce pozadí. Je to široce používaná technika pro generování masky popředí pomocí statických kamer. Jak už jde poznat z~názvu, algoritmus vypočítává masku popředí odečtením referenčního modelu od aktuálního snímku. Referenční model většinou bývá první snímek videosekvence. Dále se na masku aplikuje prahování, čím se vyfiltruje přebytečný šum v~masce, tento postup zobrazuje obrázek \ref{mog_scheme}.
+Mixtura Gaussiánů (\textit{MOG - Gaussian mixture model background subtraction}) \cite{mog:zivkovic} je metoda substrakce pozadí. Je to široce používaná technika pro generování masky popředí pomocí statických kamer. Jak již lze poznat z~názvu, algoritmus vypočítává masku popředí odečtením referenčního modelu od aktuálního snímku. Referenční model většinou bývá první snímek videosekvence. Dále se na masku aplikuje prahování, čímž se vyfiltruje přebytečný šum v~masce. Tento postup zobrazuje obrázek \ref{mog_scheme}.
 
 Skládá se ze dvou hlavních kroků:
  \begin{enumerate}
@@ -254,7 +254,7 @@ Skládá se ze dvou hlavních kroků:
     \item{aktualizace pozadí.}
  \end{enumerate}
  V~prvním kroku je vypočítán model pozadí, zatímco v~druhém kroku je tento model aktualizován, aby se přizpůsobil možným změnám ve scéně \cite{openCV:MOG}.
-Jeho chování a~citlivost detekce lze ovlivnit nastavením parametrů, jeho novější verze v~knihovně OpenCV pak disponuje i~parametrem pro detekci stínů v~obraze.
+Jeho chování a~citlivost detekce lze ovlivnit nastavením parametrů. Jeho novější verze v~knihovně OpenCV pak disponuje i~parametrem pro detekci stínů v~obraze.
 \begin{figure}[H]
   \centering
   \includegraphics[width=14cm]{figures/mog_scheme}
@@ -262,7 +262,7 @@ Jeho chování a~citlivost detekce lze ovlivnit nastavením parametrů, jeho nov
   \label{mog_scheme}
 \end{figure}
 
-Tento přístup, jak je výše zmíněno jen oddělí dynamické popředí od statického, proto je vhodné získat tyto dynamické oblasti například konvexním obalem.
+Tento přístup, jak je výše zmíněno jen oddělí dynamické popředí od statického, proto je vhodné získat zmíněné dynamické oblasti například konvexním obalem.
 
 \subsubsection*{Konvexní obal}
 Konvexní obal (\textit{Convex hull}), je metoda sloužící k~obalování pixelů v~prahovém obraze. Funkce z~OpenCV používá Sklanskýho algoritmus \cite{openCV:sklansky} a~má složitost  $O(N \log(N))$. Vstupem je množina bodů uložená v~matici nebo vektoru a~výstupem je vektor indexů nebo vektor bodů. Tyto body, které vytvářejí právě zmiňovaný konvexní obal se nakreslí do obrazu.
@@ -300,11 +300,11 @@ Jinými slovy, se jedná o~diskriminační klasifikátor formálně definovaný 
 \label{fig:svm}
 \end{figure}
 
-Implementaci SVM můžeme nalézt v~již existujících knihovnách jako jsou například LIBSVM \cite{libsvm}, kernlab \cite{kernlab}, scikit-learn \cite{scikit-learn}, SVMLight \cite{svmlight} a~další. V~následující části bude popsána knihovna LIBSVM, na které je založena implementace v~ knihovnách OpenCV a~v~Dlib.  
+Implementaci SVM lze nalézt v~již existujících knihovnách, jako jsou například LIBSVM \cite{libsvm}, kernlab \cite{kernlab}, scikit-learn \cite{scikit-learn}, SVMLight \cite{svmlight} a~další. V~následující části bude popsána knihovna LIBSVM, na které je založena implementace v~ knihovnách OpenCV a~v~Dlib.  
 
 Tato knihovna byla napsána v~roce 2001 \cite{libsvm} a~stále se vyvíjí. Podporuje různé formulace SVM pro odhady klasifikace, regrese a~distribuce.
 
-\paragraph*{$C$--Support vektorová klasifikace (C--SVC)} 
+\paragraph*{$C$--Support vektorová klasifikace ($C$--SVC)} 
 Umožnuje nedokonalé oddělení tříd pro $n$--tříd ($n > 2$) s~postihovým multiplikátorem $C$, pro odlehlé hodnoty ($C > 0$). \cite{csvmclass}
 
 \paragraph*{$\nu$--Support vektorová klasifikace ($\nu$--SVC)} 
@@ -314,7 +314,7 @@ $n$--třídní klasifikace s~možností nedokonalé separace. Tato klasifikace p
 Distribution Estimation (One-class SVM), jak již název sám o~sobě napovídá všechny trénovací data pocházejí z~jedné třídy, SVM vytvoří hranici, která odděluje třídu od zbývající části. \cite{oneclasssvm}
 
 \paragraph*{$\varepsilon$--Support vektorová regrese ($\varepsilon$--SVR)} 
-Vzdálenost mezi vektory příznaků a~rozdělovací nadrovinou musí být menší než mez tolerance, $\varepsilon$. Pro odlehlé hodnoty opět použijeme multiplikátor $C$. Musí tedy platit: $C > 0$ a~$\varepsilon > 0$. \cite{svrsvm}
+Vzdálenost mezi vektory příznaků a~rozdělovací nadrovinou musí být menší než mez tolerance $\varepsilon$. Pro odlehlé hodnoty opět použijeme multiplikátor $C$. Musí tedy platit: $C > 0$ a~$\varepsilon > 0$. \cite{svrsvm}
 
 \paragraph*{$\nu$--Support vektorová regrese ($\nu$--SVR)} 
 Tato klasifikace je podobná jako $\varepsilon$--SVR. Na místo $\varepsilon$ se použije parametr $\nu \in (0;1\rangle$. \cite{nusvmsvrclass}
@@ -405,7 +405,7 @@ SVM je výsledek práce několika lidí po mnoho let. První algoritmus této pr
 \end{figure}
 
 \subsubsection*{Kaskádové klasifikátory} % @TODO
-Kaskádový klasifikátor se skládá z~více slabších klasifikátorů umístěných v~kaskádách za sebou. Požadavky na tento druh klasifikátoru byla rychlost detekce, aby mohl být implementován na procesorech s~nižším výkonem, například v~kamerách nebo v~telefonech. Princip tohoto klasifikátoru je velice jednoduchý. Klasifikátor na první vrstvě může vyfiltrovat většinu negativních oken. Na druhé vrstvě se mohou odfiltrovat \uv{těžší} negativní okna, která přežila z~první vrstvy a~tak dále. Subokno, které přežije všechny vrstvy bude označeno jako pozitivní detekce. Příklad řetězce kaskádového klasifikátoru je ilustrován na obrázku \ref{fig:ccpipeline}, kde $K1$--$KN$ je klasifikátor první až $n$--té vrstvy.
+Kaskádový klasifikátor se skládá z~více slabších klasifikátorů umístěných v~kaskádách za sebou. Požadavky na tento druh klasifikátoru byly rychlost detekce, aby mohl být implementován na procesorech s~nižším výkonem, například v~kamerách nebo v~telefonech. Princip tohoto klasifikátoru je velice jednoduchý. Klasifikátor na první vrstvě může vyfiltrovat většinu negativních oken. Na druhé vrstvě se mohou odfiltrovat \uv{těžší} negativní okna, která přežila z~první vrstvy a~tak dále. Subokno, které přežije všechny vrstvy, bude označeno jako pozitivní detekce. Příklad řetězce kaskádového klasifikátoru je ilustrován na obrázku \ref{fig:ccpipeline}, kde $K1$--$KN$ je klasifikátor první až $n$--té vrstvy.
 
 Klasifikátory si mezi sebou předávají všechny informace o~vstupním obraze. Tímto kaskádovým vyhodnocováním se může redukovat čas, nutný pro detekci v~daném obraze. Prvním takovým klasifikátorem byl detektor obličeje Viola--Jones \cite{violajones}.  
 \begin{figure}[H]
@@ -416,30 +416,30 @@ Klasifikátory si mezi sebou předávají všechny informace o~vstupním obraze.
 \end{figure}
 
 \subsubsection*{AdaBoost}
-\textbf{AdaBoost}, neboli Adaptive Boosting, byl představen v~práci od Freund a~Schapire \cite{adaboost}. Tento klasifikátor kombinuje slabé klasifikátory k~vytvoření jednoho silného klasifikátoru. V~kombinaci více klasifikátorů s~výběrem trénovací sady v~každé iteraci algoritmu a~přidělení správné váhy na konci trénování, docílíme klasifikátoru s~dobrou přesností. Klasifikátory v~tomto řetězci, které mají klasifikační přesnost menší než 50\% jsou ohodnoceny zápornou vahou. Váhou nula jsou ohodnoceny klasifikátory, které mají přesnost 50\%. Pouze ty, co mají přesnost vyšší než 50\% jsou přínosné do této kombinace a~můžeme hovořit o~zesílení (boosting) klasifikace. 
+\textbf{AdaBoost}, neboli Adaptive Boosting, byl představen v~práci od Freund a~Schapire \cite{adaboost}. Tento klasifikátor kombinuje slabé klasifikátory k~vytvoření jednoho silného klasifikátoru. V~kombinaci více klasifikátorů s~výběrem trénovací sady v~každé iteraci algoritmu a~přidělení správné váhy na konci trénování, docílíme klasifikátoru s~dobrou přesností. Klasifikátory v~tomto řetězci, které mají klasifikační přesnost menší než 50\%, jsou ohodnoceny zápornou vahou. Váhou nula jsou ohodnoceny klasifikátory, které mají přesnost 50\%. Pouze ty, keré mají přesnost vyšší než 50\%, jsou přínosné do této kombinace a~můžeme hovořit o~zesílení (boosting) klasifikace. 
 
 \subsection{Deep learning}
-Deep learning neboli hluboké učení, známé také jako hierarchické učení, je sbírka algoritmů používaných ve strojovém učení. Používají se k~modelování abstrakcí na vysoké úrovni v~datech za pomocí modelových architektur, které se skládají s~několika nelineárních transformací. Hluboké učení je součástí široké skupiny metod používané pro strojové učení, které jsou založeny na učení reprezentace dat. Hluboké strukturované učení může být:
+Deep learning neboli hluboké učení, známé také jako hierarchické učení, je sbírka algoritmů používaných ve strojovém učení. Používají se k~modelování abstrakcí na vysoké úrovni v~datech za pomocí modelových architektur, které se skládají z~několika nelineárních transformací. Hluboké učení je součástí široké skupiny metod používané pro strojové učení, které jsou založeny na učení reprezentace dat. Hluboké strukturované učení může být:
 \begin{itemize}
   \item{\textbf{Kontrolované (s~učitelem)} - všechna data jsou kategorizovaná do tříd, algoritmy se učí předpovídat výstup ze vstupních dat.}
   \item{\textbf{Částečně kontrolované} - data jsou částečně kategorizovaná do tříd. Pří tomto přístupu učení lze využít kombinaci kontrolovaného a~nekontrolovaného přístupu učení.}
   \item{\textbf{Nekontrolované (bez učitele)} - data nejsou kategorizovaná do tříd, algoritmy se učí ze struktury vstupních dat.}
 \end{itemize}
-Hluboké učení je specifický přístup použitý k~budování a~učení neuronových sítí, které jsou považovány za velmi spolehlivé rozhodovací uzly. Jestliže vstupní data algoritmu procházejí řadou nelinearit a~nelineárních transformací, tak tento algoritmus je považován za \uv{deep} algoritmus. 
+Hluboké učení je specifický přístup, použitý k~budování a~učení neuronových sítí, které jsou považovány za velmi spolehlivé rozhodovací uzly. Jestliže vstupní data algoritmu procházejí řadou nelinearit a~nelineárních transformací, tak tento algoritmus je považován za \uv{deep} algoritmus. 
 
 Odstraňuje také ruční identifikaci příznaků (obrázek \ref{fig:ml_vs_ann}) z~dat a~místo toho se spoléhá na jakýkoliv trénovací proces, které má za úkol zjistit užitečné vzory ve vstupních příkladech. To dělá neuronovou síť jednodušší a~rychlejší, a~může přinést lepší výsledky než z~oblasti umělé inteligence.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=.85\linewidth]{figures/ml_vs_ann}
-\caption{Hlavním rozdílem mezi strojovým a~hlubokým učením je, že u~strojového se příznaky musí extrahovat manuálně. \cite{fig:mlvsann}}
+\caption{Hlavním rozdílem mezi strojovým a~hlubokým učením je ten, že u~strojového se příznaky musí extrahovat manuálně. \cite{fig:mlvsann}}
 \label{fig:ml_vs_ann}
 \end{figure}
 
 \subsubsection*{Neuronové sítě}
 Neuronové sítě (\textit{ANN} - Artificial Neural Network) jsou inspirované lidským mozkem \cite{ann}, který je složený z~různých vzájemně propojených vrstev neuronů, kde každý z~nich přijímá informaci z~předchozího, zpracovává tuto informaci a~odesílá jí do dalšího neuronu, dokud není přijat konečný výstup. Může se jednat o~výstup s~danou kategorií, jestliže se jedná o~kontrolované učení nebo o~určitá kritéria v~případě nekontrolovaného učení.
 
-Výhodou ANN nad ostatními strojovými učícími strategiemi, jako je například SVM je ten, že ANN je pravděpodobnostní klasifikátor umožňující klasifikaci více tříd. To znamená, že může zajistit více než jeden objekt v~obraze, na rozdíl od SVM klasifikátoru, který je pravděpodobnostní binární klasifikátor. Příklad topologie neuronové sítě je na obrázku \ref{fig:ann}. 
+Výhodou ANN nad ostatními strojovými učícími strategiemi, jako je například SVM je to, že ANN je pravděpodobnostní klasifikátor umožňující klasifikaci více tříd. To znamená, že může zajistit více než jeden objekt v~obraze, na rozdíl od SVM klasifikátoru, který je pravděpodobnostní binární klasifikátor. Příklad topologie neuronové sítě je na obrázku \ref{fig:ann}. 
 \begin{figure}[H]
 \centering
 \includegraphics[width=.87\linewidth]{figures/ann.pdf}
@@ -454,12 +454,12 @@ Typickým příkladem neuronové sítě je vícevrstvý perceptron (ANN--MLP). T
   \item{\textbf{Výstupní vrstva} - tato vrstva musí také vždy existovat v~topologii sítě, ovšem počet uzlů v~tomto případě bude definován vybranou neuronovou sítí. Pokud detekujeme na obrázku pouze jeden objekt, bude mít vrstva jen jeden uzel (lineární regrese) a~bude vracet hodnotu definující pravděpodobnost konkrétního objektu v~rozmezí $[-1,1]$.}
 \end{itemize}
 
-Vysoká dimenze vstupního vektoru zvyšuje přesnost výsledků, ovšem také zvyšuje výpočetní náklady. Dalším rozhodnutím je použití aktivační funkce pro skrytou vrstvu, která umožnuje přizpůsobit nelineární hypotézy a~získat lepší detekci vzoru v~závislosti na poskytnutých datech. Běžná volba aktivační funkce pro vícevrstvý perceptron je Sigmoid, ale může být použita funkce tanh nebo ReLU. Při hlubším pohledu na skrytou vrstvu můžeme říct, že všechny neurony se chovají podobně. Hodnoty jsou získávány z~předchozí vrstvy, sečteny s~určitými váhami a~hodnotou zkreslení.
+Vysoká dimenze vstupního vektoru zvyšuje přesnost výsledků, ovšem na druhou stranu zvyšuje výpočetní náklady. Dalším rozhodnutím je použití aktivační funkce pro skrytou vrstvu, která umožnuje přizpůsobit nelineární hypotézy a~získat lepší detekci vzoru v~závislosti na poskytnutých datech. Běžná volba aktivační funkce pro vícevrstvý perceptron je Sigmoid, ale může být použita funkce tanh nebo ReLU. Při hlubším pohledu na skrytou vrstvu lze říct, že všechny neurony se chovají podobně. Hodnoty jsou získávány z~předchozí vrstvy, sečteny s~určitými váhami a~hodnotou zkreslení.
 Suma těchto hodnot je transformována pomocí aktivační funkce, která se může také lišit pro různé neurony.
 
 
 \subsubsection*{Konvoluční neuronové sítě}
-Další možností je použití konvoluční neuronové sítě (\textit{CNN} - Convolution neural network) \cite{lenet}. Tyto sítě jsou speciálním druhem vícevrstvých neuronových sítí a~jsou navrženy tak, aby rozpoznaly vizuální vzory přímo z~pixelu obrazu s~minimálním předzpracováním. Mohou rozpoznat vzory s~extrémní variabilitou (například ručně psané znaky) a~odolnost k~vůči deformacím a~jednoduchým geometrickým transformacím. Název \uv{Konvoluční neuronové sítě} naznačuje, že síť využívá matematickou operaci zvanou konvoluce alespoň v~jedné jejich vrstvě.
+Další možností je použití konvoluční neuronové sítě (\textit{CNN} - Convolution neural network) \cite{lenet}. Tyto sítě jsou speciálním druhem vícevrstvých neuronových sítí a~jsou navrženy tak, aby rozpoznaly vizuální vzory přímo z~pixelu obrazu s~minimálním předzpracováním. Mohou rozpoznat vzory s~extrémní variabilitou (například ručně psané znaky) a~odolnost vůči deformacím a~jednoduchým geometrickým transformacím. Název \uv{Konvoluční neuronové sítě} naznačuje, že síť využívá matematickou operaci zvanou konvoluce alespoň v~jedné jejich vrstvě.
 
 Nejznámější a~nejvíce používanou konvoluční neuronovou sítí jsou modely LeNet \cite{lenet}.
 Hlavní kroky LeNet sítě jsou:
