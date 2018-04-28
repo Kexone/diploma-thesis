@@ -1,5 +1,5 @@
 % Nejprve uvedeme tridu dokumentu s volbami
-\documentclass[czech,master,public,dept460,male,cpdeclaration,oneside,hidelinks]{diploma}
+\documentclass[czech,master,public,dept460,male,oneside,hidelinks]{diploma}
 % Dalsi doplnujici baliky maker
 \usepackage{float}
 \usepackage{amsmath}
@@ -13,6 +13,9 @@
 \usepackage{subfig}     % makra pro "podobrazky" a "podtabulky"
 \usepackage{tikz}       % makra pro kresleni
 \usepackage{etoolbox}
+\usepackage{multirow}
+\usepackage{dirtree}
+\usepackage[export]{adjustbox}
 
 \makeatletter   
 \let\oldcite\cite
@@ -20,6 +23,41 @@
 \apptocmd{\listoffigures}{\let\cite\oldcite}{}{}
 \makeatother
 \usetikzlibrary{arrows,positioning,plotmarks,decorations.markings,decorations.pathmorphing,backgrounds,fit,positioning,shapes.symbols,chains}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{dred}{rgb}{0.545,0,0}
+\definecolor{dblue}{rgb}{0,0,0.545}
+\definecolor{lgrey}{rgb}{0.99,0.99,0.99}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6 }
+\lstdefinelanguage{cpp}{
+      backgroundcolor=\color{lgrey},  
+      basicstyle=\footnotesize \ttfamily \color{black} \bfseries,   
+      breakatwhitespace=false,       
+      breaklines=true,               
+      captionpos=b,                   
+      commentstyle=\color{dkgreen},   
+      deletekeywords={for},          
+      escapeinside={\%*}{*)},                  
+      frame=single,                  
+      language=C++,                
+      keywordstyle=\color{purple},  
+      morekeywords={vector, Size ,string, Rect,HOGDescriptor,size_t,Mat,}, 
+      identifierstyle=\color{black},
+      stringstyle=\color{blue},      
+      numbers=left,                 
+      numbersep=5pt,                  
+      numberstyle=\tiny\color{black}, 
+      rulecolor=\color{black},        
+      showspaces=false,               
+      showstringspaces=false,        
+      showtabs=false,                
+      stepnumber=1,                   
+      tabsize=5,                     
+      title=\lstname,                 
+    }
+
+
+
 \input{includes/_meta}
 
 % Zacatek dokumentu
@@ -44,4 +82,5 @@
 \input{includes/references.tex}
 
 \appendix
+\input{includes/_appendix.tex}
 \end{document}
