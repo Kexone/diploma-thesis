@@ -12,6 +12,9 @@
 #include <dlib/opencv/cv_image.h>
 #include "../settings.h"
 
+/**
+* class TrainFHog
+*/
 class TrainFHog
 {
 public: 

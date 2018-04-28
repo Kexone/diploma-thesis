@@ -7,6 +7,9 @@
 #include <opencv2/highgui.hpp>
 #include "../settings.h"
 
+/**
+* class ConvexHull
+*/
 class ConvexHull
 {
 public:

@@ -37,7 +37,7 @@ public:
 	* @param frame
 	* @param rects vector of rectangles
 	*/
-	void detect(cv::Mat& frame, std::vector < cv::Rect > &rects);
+	void detect(cv::Mat& frame, std::vector < cv::Rect > &rects, std::vector < float > &distances);
 
 	/**
 	* @brief This detection method is for testing, it gets vector of matrix and sets true or false predicate

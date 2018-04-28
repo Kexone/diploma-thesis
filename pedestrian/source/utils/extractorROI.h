@@ -6,7 +6,6 @@
 #include <iostream>
 #include <opencv2/videostab/ring_buffer.hpp>
 
-//#include <windows.h>
 
 /**
  * class ExtractorROI
@@ -102,7 +101,7 @@ private:
 	* @param event
 	* @param x mouse coord
 	* @param y mouse coord
-	* @param userData
+	* @param userdata
 	*/
 	static void onMouse(int event, int x, int y, int, void* userdata);
 

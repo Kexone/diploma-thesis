@@ -29,8 +29,10 @@ hogFinalTreshold=0.95
 hogMeanshiftGrouping=0
 hogGroupTreshold=2
 hogEps=0.8
+hogMinArea=4999
 
-// HOF detectMultiScale on cropped images
+// HOG detectMultiScale on cropped images
+cropHogBlurFilter=(0,0)
 cropHogHitTreshold=0.878
 cropHogWinStride=(4,4)
 cropHogPadding=(2,2)
@@ -41,6 +43,13 @@ cropHogGroupTreshold=1
 cropHogEps=0.82
 cropHogMinArea=4999
 
+//FHOG classic
+fhogMinArea=4999
+fhogAdjustTreshold=0.2222
+
+//FHOG on cropped images
+cropFhogMinArea=6000
+cropFhogAdjustTreshold=0
 
 //TRAIN PARAMS
 maxIterations=1000
@@ -51,17 +60,18 @@ epsilon=1e-3 //1.e-6 //
 coef0=0.0
 degree=3
 gamma=0.0001
-paramNu=0.6
-paramP=0.1
-paramC=0.05
+paramNu=0.3
+paramP=0.02
+paramC=0.0625
  
 //samplesPos=samples/posSamples.txt
 //samplesNeg=samples/negSamples.txt
-samplesPos=samples/listPosTestMin.txt
-samplesNeg=samples/negSamples1.txt
+samplesPos=samples/sudipDas.txt
+samplesNeg=samples/negative/neg3000.txt
 
-samplesPosTest=mySamples/pos3k.txt
-samplesNegTest=mySamples/neg4000.txt
+
+samplesPosTest=mySamples/testingImg/pos.txt
+samplesNegTest=mySamples/testingImg/neg.txt
 classifierName2Train=KONFIGURACE_
 
 

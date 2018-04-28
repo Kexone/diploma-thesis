@@ -9,7 +9,7 @@
 /**
  *  class SvmTest
  *  
- *  Testing SVM classificator 
+ *  Testing OpenCV SVM classificator 
  */
 class SvmTest
 {

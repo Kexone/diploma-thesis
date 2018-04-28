@@ -1,0 +1,79 @@
+// this file is setted for cctv4.mp4 (VGA)
+// CONF_sudipDas.txt_negDam9000.txt__C0.050000_G0.000100_2000_SVM103_double_2000.yml
+
+//mog settings
+mogHistory=90 //115
+mogThresh=9
+mogDetectShadows=1
+
+//convex hull settings
+cvxHullExtSize=10
+cvxHullExtTimes=4
+cvxHullThresh=180 //180
+cvxHullMaxValue=1 //255
+
+//global size settings (test, train, detection) 
+pedSize=(48,96)
+//pedSize=(64,128)
+blockSize=16
+cellSize=8
+strideSize=8
+
+// HOG detectMultiScale on full frame
+hogBlurFilter=(0,0)
+hogHitTreshold=0.3
+hogWinStride=(8,8)
+hogPadding=(2,2)
+hogScale=1.03
+hogFinalTreshold=1.2
+hogMeanshiftGrouping=0
+hogGroupTreshold=0
+hogEps=0.75
+hogMinArea=0
+
+
+// HOG detectMultiScale on cropped images
+cropHogBlurFilter=(0,0)
+cropHogHitTreshold=0
+cropHogWinStride=(4,4)
+cropHogPadding=(0,0)
+cropHogScale=1.03
+cropHogFinalTreshold=1.0
+cropHogMeanshiftGrouping=0
+cropHogGroupTreshold=0
+cropHogEps=0.59
+cropHogMinArea=0
+
+//FHOG classic
+fhogMinArea=4999
+fhogAdjustTreshold=0.2222
+
+//FHOG on cropped images
+cropFhogMinArea=6000
+cropFhogAdjustTreshold=0
+
+//TRAIN PARAMS
+maxIterations=1000
+termCriteria=3  // CV_TERMCRIT_ITER + CV_TERMCRIT_EPS
+kernel=0 // cv::ml::SVM::LINEAR = 0. RBF = 2, INTER = 5
+type=103 // cv::ml::SVM::C_SVC = 100 NU_SVC = 101, ONE_CLASS=102, EPS_SVR=103, NU_SVR=104
+epsilon=1e-3 //1.e-6 //
+coef0=0.0
+degree=3
+gamma=0.0001
+paramNu=0.6
+paramP=0.1
+paramC=0.05
+ 
+//samplesPos=samples/posSamples.txt
+//samplesNeg=samples/negSamples.txt
+samplesPos=samples/new/daimlerM3.txt
+samplesNeg=samples/negative/neg3000.txt
+
+samplesPosTest=mySamples/testingImg/pos.txt
+samplesNegTest=mySamples/testingImg/neg.txt
+classifierName2Train=KONFIGURACE_
+
+
+dilationSize=3
+erosionSize=2

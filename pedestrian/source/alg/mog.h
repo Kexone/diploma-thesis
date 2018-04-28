@@ -14,7 +14,7 @@ public:
 	 */
 	void processMat(cv::Mat &frame);
 private:
-    cv::Ptr< cv::BackgroundSubtractor > pMOG1;  //MOG  Background subtractor
+   // cv::Ptr< cv::BackgroundSubtractor > pMOG1;  //MOG  Background subtractor
     cv::Ptr< cv::BackgroundSubtractor > pMOG2; //MOG2 Background subtractor
 };
 

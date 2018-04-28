@@ -66,19 +66,9 @@ void TrainFHog::throwInvalidBoxErrorMessage( const std::string& dataset_filename
 
 void TrainFHog::train() try
 {
-
-	const std::string parser = "dataset/training.xml";
-	const std::string samplesPath = "dataset/imgSamples.txt";
+	const std::string parser = "D:/dlib/tools/imglab/build/Release/training.xml";
 
 	dlib::array<dlib::array2d<unsigned char> > images;
-	
-
-	//std::fstream sampleFile(samplesPath);
-	std::string oSample;
-	//while (sampleFile >> oSample) {
-		//dlib::cv_image<TrainFHog::pixel_type> cvTmp(sampleFile);
-		//dlib::matrix<TrainFHog::pixel_type> test = dlib::mat(cvTmp);
-	//	dstList.push_back(test);
 
 	std::vector<std::vector<dlib::rectangle> > objectLocations, ignore;
 	ignore =	load_image_dataset(images, objectLocations, parser);
@@ -86,8 +76,6 @@ void TrainFHog::train() try
 	std::cout << "Number of images loaded: " << images.size() << std::endl;
 	std::cout << "Number of obj loaded: " << objectLocations[0].size() << std::endl;
 
-	const unsigned int numFolds = images.size();
-	
 	std::vector< int > labels;
 	typedef dlib::scan_fhog_pyramid<dlib::pyramid_down<6> > image_scanner_type;
 	const unsigned long targetSize= 96 * 48;
@@ -96,13 +84,12 @@ void TrainFHog::train() try
 	pickBestWindowSize(objectLocations, width, height, targetSize);
 	scanner.set_detection_window_size(width, height);
 	dlib::structural_object_detection_trainer<image_scanner_type> trainer(scanner);
-
-
+	
 	trainer.be_verbose();
-	trainer.set_c(0.15625);    // 0.15625
+	trainer.set_c(100);    // 0.15625
 	trainer.set_epsilon(0.001); // 0.001   91.6 %
 	trainer.set_num_threads(8);
-	
+	//trainer.set_loss_per_false_alarm(1.2);
 	const unsigned long upsample_amount = 0;
 	std::vector<std::vector<dlib::rectangle> > removed;
 	removed = remove_unobtainable_rectangles(trainer, images, objectLocations);
@@ -116,12 +103,18 @@ void TrainFHog::train() try
 	std::vector<std::vector<dlib::rectangle>> rects;
 		
 	randomize_samples(images, objectLocations);
-
-//	std::cout << numFolds << "-fold cross validation (precision,recall,AP): "
-	//	<< cross_validate_object_detection_trainer(trainer, images, objectLocations, ignore, numFolds) << std::endl;
-
-	dlib::serialize("pedDet.svm") << trainer.train(images,objectLocations,ignore);
+	auto trained = trainer.train(images, objectLocations, ignore);
+	
+	dlib::serialize("pedDet100.svm") << trained;
 	std::cout << "DONE" << std::endl;
+	//	typedef dlib::structural_object_detection_trainer<image_scanner_type> probabilistic_funct_type;
+	//	typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
+	//auto learned_pfunct;
+	//std::vector < int >  label;
+	//label.insert(label.begin(), images.size(), 1.0);
+	//auto learned_pfunct = train_probabilistic_decision_function(trainer,images,label,3);
+	//std::cout << "out " << learned_pfunct(images[1]);
+	
 }
 catch (std::exception e)
 {
@@ -131,21 +124,18 @@ catch (std::exception e)
 void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 {
 	typedef dlib::matrix < double, 1980, 1 > sample_type;
-	typedef dlib::radial_basis_kernel< sample_type > kernel_type;
+	typedef dlib::linear_kernel< sample_type > kernel_type;
 	std::vector < sample_type > samples;
 	std::vector < double > flLabels;
-	dlib::svm_c_trainer < kernel_type > trainer;
+	dlib::svr_linear_trainer< kernel_type > trainer;
 
-	for (int y = 0; y < trainMat.rows; y++)
-	{
+	for (int y = 0; y < trainMat.rows; y++)	{
 		sample_type samp;
 
-		for (int x = 0; x < trainMat.cols; x++)
-		{
+		for (int x = 0; x < trainMat.cols; x++)	{
 			double val = 0.0;
 			val = trainMat.at<float>(y, x);
 			samp(x) = val;
-
 		}
 		samples.push_back(samp);
 		flLabels.push_back(labels[y]);
@@ -156,18 +146,15 @@ void TrainFHog::train(cv::Mat trainMat, std::vector<int> labels) try
 	typedef dlib::probabilistic_decision_function<kernel_type> probabilistic_funct_type;
 	typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
 	pfunct_type learned_pfunct;
-	//trainer.set_kernel(kernel_type(0.15625));
-	//trainer.set_nu(0.15625);
-//	trainer.set_epsilon(0.001);
-	//trainer.
-	trainer.set_c_class1(3.16228);
-	trainer.set_c_class2(3.16228);
-	trainer.set_kernel(kernel_type(0.0316228));
-
-//	learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 3);
-	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
-//	dlib::serialize(_namefile) << learned_pfunct;
-//	dlib::serialize(_namefile) <<  trainer.train(samples, flLabels);
+	trainer.set_epsilon_insensitivity(0.001);
+	trainer.set_epsilon(0.001);
+	trainer.set_c(10); //0.01054
+	trainer.set_max_iterations(2000);
+	auto trained = trainer.train(samples, flLabels);
+	//learned_pfunct.function = train_probabilistic_decision_function(trainer, samples, flLabels, 5);
+	//std::cout << "out " <<  learned_pfunct(samples[1]) << std::endl;
+	dlib::decision_function<kernel_type> df = trainer.train(samples, flLabels);
+	dlib::serialize("trained.dat") << trained;
 	std::cout << "DONE" << std::endl;
 }
 catch (std::exception& e)
