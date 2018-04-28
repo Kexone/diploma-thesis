@@ -8,7 +8,8 @@
 \SubmissionDate{30. dubna 2018}
 
 % Pokud nechceme nikomu dekovat makro zapoznamkujeme.
-\Thanks{Rád bych na tomto místě poděkoval všem, kteří mi s~prací pomohli, protože bez nich by tato práce nevznikla.}
+\Thanks{Na tomto místě bych rád poděkoval Ing. Radovanu Fuskovi, Ph.D. za jeho odborné rady, trpělivost a~ochotu se mnou konzultovat veškeré problémy. Dále bych rád poděkoval svým přátelům a~rodině za psychickou podporu. Bez nich by tato práce určitě nevznikla.}
+%\Thanks{Rád bych na tomto místě poděkoval všem, kteří mi s~prací pomohli, protože bez nich by tato práce nevznikla.}
 
 % Zadame cestu a jmeno souboru ci nekolika souboru s digitalizovanou podobou zadani prace.
 % Pokud toto makro zapoznamkujeme sazi se stranka s upozornenim.
@@ -16,7 +17,8 @@
 
 % Zadame soubor s digitalizovanou podobou prohlaseni autora zaverecne prace.
 % Pokud toto makro zapoznamkujeme sazi se cisty text prohlaseni.
-%\AuthorDeclarationImageFile{figures/AuthorDeclaration.jpg}
+
+%%\AuthorDeclarationImageFile{figures/AuthorDeclaration.jpg}
 
 %\ThesisAccessRestriction{Zde vložte text dohodnutého omezení přístupu k Vaší práci, chránící například firemní know-how. Zde vložte text dohodnutého omezení přístupu k Vaší práce, chránící například firemní know-how. A zavazujete se, že:
 %\begin{enumerate}
@@ -33,28 +35,35 @@
 % Pokud toto makro zapoznamkujeme sazi se cisty text souhlasu.
 %\CooperatingPersonsDeclarationImageFile{Figures/CoopPersonDeclaration.jpg}
 
-\CzechAbstract{Cílem práce je prozkoumat dosavadní techniky rozpoznávání chodců v~obrazech.  Primárním cílem práce je otestovat a~pokusit se optimalizovat tyto rozpoznávácí algoritmy na vybraných embedded zařízeních. K~rozpoznávání byly použity knihovny OpenCV a~Dlib. Použité algoritmy jsou popsány v~textu. Součástí práce je také srovnání úspěšnosti a~rychlosti jednotlivých detektorů. }
+\CzechAbstract{Detekce chodců v~posledních letech přitahuje velkou pozornost, a~to hlavně v~rámci bezpečnostních aplikacích. Například jí lze využít v~bezpečnostních kamerách na veřejně dostupných místech nebo v~automobilových systémech, které díky tomu mohou zabránit nebezpečí. Pro detekci se dají použít čím dál rozšířenější embedded systémy, jako je například Raspberry PI. Jsou to malé a~dobře dostupné počítače, které mohou být umístěné takřka kdekoliv. Primárním cílem práce je otestovat a~pokusit se optimalizovat rozpoznávací techniky pro taková zařízení. Detekci chodců v~obrazech řeší například histogram orientovaných gradientů, zkráceně HOG. Optimalizaci algoritmu zajišťuje substrakce pozadí, která tento proces značně urychluje. V rámci této práce jsou tyto algoritmy popsány. Dále zde budou popsány další možné dosavadní techniky detekce chodců v~obrazech. Součástí práce je také srovnání úspěšnosti a~rychlosti detektoru na vybraných zařízeních.}
 
-\CzechKeywords{detekce chodců, embbeded systémy, optimalizace}
+\CzechKeywords{detekce chodců, embbeded systémy, optimalizace, substrakce pozadí}
 
-\EnglishAbstract{The goal of work is to explore the existing techniques of pedestrian detection in scenes. The primary objective of the thesis is to test and attempt to optimize these detection algorithms on selected embedded devices. For detection were used the OpenCV and Dlib libraries. The algorithms used are described in the text. Part of the thesis is also a~comparison of the successful and speed of individual detectors.}
+\EnglishAbstract{Pedestrian detection has attracted great attention in recent years, especially in safety applications. For example, it can be used in security cameras in public places or in automotive systems, which can prevent potential accidents. For detection, embedded systems such as Raspberry PI can be used. These are small and affordable computers that can be placed almost anywhere. The goal of the thesis is to test and attempt to optimize the recognition techniques for such devices. Pedestrian detection in images processing is solved, for example, by Histograms of Oriented Gradients, abbreviated as HOG. Optimization of the algorithm is ensures by background subtraction, which greatly accelerates detection process. These algorithms are throughly described in this thesis. Further pedestrian detection techniques will be described her. Part of the thesis is also a~comparison of detector rate and speed on selected devices.}
 
-\EnglishKeywords{Pedestrian Detection, Embedded Systems, optimalization}
+\EnglishKeywords{Pedestrian Detection, Embedded Systems, optimalization, background subtraction}
 
+\AddAcronym{AUC}{Area Under Curve}
 \AddAcronym{ALG}{Algoritmus}
 \AddAcronym{API}{Application Programming Interface - rozhraní pro programování aplikací}
 \AddAcronym{ARM}{Advanced RISC Machine - architektura počítačů s~nízkou elektrickou spotřebou energie}
 \AddAcronym{C++}{Programovací jazyk C Plus Plus}
+\AddAcronym{CPU}{Central Processing Unit - Centrální procesorová jednotka}
 \AddAcronym{Dlib}{Otevřená cross-platform knihovna pro zpracování obrazu a~strojového učení}
 \AddAcronym{FPS}{Frames per second - Počet snímků za sekundu}
+\AddAcronym{FPR}{False Positie Rate}
 \AddAcronym{IoT}{Internet of Things - Internet věcí}
 \AddAcronym{MMX}{Multi Media Extension, multimediální technologie vytvořené firmou Intel}
 \AddAcronym{NEON}{Pokročilé rozšíření architektury SIMD pro procesory ARM Cortex-A a~Cortex-R52 }
 \AddAcronym{OpenCV}{Otevřená knihovna pro zpracování obrazu a~strojového učení}
 \AddAcronym{RGB}{Red Green Blue - barevný prostor složený ze tří barevných kanálů}
+\AddAcronym{ROC}{Receiver operating characteristic}
 \AddAcronym{SIMD}{Single Instruction Multiple Data - typ počítačové architektury}
 \AddAcronym{SSE}{Streaming SIMD Extensions je instrukční sada typu SIMD}
 \AddAcronym{SVM}{Support vector machines}
+\AddAcronym{TPR}{True Positive Rate}
 \AddAcronym{XML}{Extensible Markup Language}
 \AddAcronym{YML}{YAML Ain't Markup Language}
+
+
 
