@@ -69,6 +69,7 @@ paramC=0.0625
 samplesPos=samples/sudipDas.txt
 samplesNeg=samples/negative/neg3000.txt
 
+
 samplesPosTest=mySamples/testingImg/pos.txt
 samplesNegTest=mySamples/testingImg/neg.txt
 classifierName2Train=KONFIGURACE_
