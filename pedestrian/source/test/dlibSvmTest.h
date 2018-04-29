@@ -12,9 +12,9 @@
 #include <dlib/global_optimization.h>
 
 /**
-*  class DlibSvmTest
+*  @class DlibSvmTest
 *
-*  Testing Dlib SVM classificator
+*  @brief Testing Dlib SVM classificator
 */
 class DlibSvmTest
 {
@@ -32,6 +32,12 @@ private:
 	std::vector < double > _labels;
 	std::vector < sample_type > _samples;
 
+	/**
+	* @brief Testing C SVM
+	*
+	* @param vec array of results
+	* @param type type of svm
+	*/
 	void writeResult2File(double *vec, int type);
 	/**
 	* @brief Testing C SVM

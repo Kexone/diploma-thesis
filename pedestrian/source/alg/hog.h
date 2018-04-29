@@ -8,7 +8,9 @@
 #include "../media/croppedimage.h"
 
 /**
- * class Hog
+ * @class Hog
+ * 
+ * @brief this class is used for detection pedestrian by openCV Hog
  */
 class Hog
 {
@@ -28,6 +30,7 @@ public:
 	*
 	* @param frame the vector of cropped images
 	* @param rects vector of vectors rectangles
+	* @param distances vector of vectors floats for calc distances for every ROI part
 	*/
     void detect(std::vector< CroppedImage > &frame, std::vector< std::vector < cv::Rect > > &rects, std::vector < std::vector < float > > &distances);
 
@@ -36,6 +39,7 @@ public:
 	*
 	* @param frame
 	* @param rects vector of rectangles
+	* @param rects vector of distances for calc distances for every ROI part
 	*/
 	void detect(cv::Mat& frame, std::vector < cv::Rect > &rects, std::vector < float > &distances);
 

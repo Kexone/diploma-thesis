@@ -6,9 +6,9 @@
 #include "../utils/utils.h"
 #include "../settings.h"
 /**
- * class CombinedTrainHog
+ * @class CombinedTrainHog
  * 
- * This class combining calculated features from OpenCV HOG to Dlib SVM classification training
+ *@brief This class combining calculated features from OpenCV HOG to Dlib SVM classification training
  */
 class CombinedTrainHog : public TrainHog, TrainFHog
 {

@@ -7,7 +7,9 @@
 #include <ctime> 
 
 /**
-* class TestingPipeline
+* @class TestingPipeline
+* 
+* @brief testing function can running test in pipeline on embedded devices
 */
 class TestingPipeline
 {

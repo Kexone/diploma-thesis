@@ -5,7 +5,9 @@
 #include <opencv2/videoio.hpp>
 
 /**
- * class VideoStream
+ * @class VideoStream
+ * 
+ * @brief store information about videostream
  */
 class VideoStream
 {

@@ -63,12 +63,6 @@ void Pipeline::executeImages(std::string testSamplesPath)
        processStandaloneImage(frame,i++);
 	   if (Settings::showVideoFrames)
 		   cv::imshow("Result", _localFrame);
-	   //cv::waitKey(10);
-	   //std::stringstream ss;
-	   //ss << "pic/mat_" << i << ".jpg";
-	   //cv::imwrite(ss.str(), _localFrame);
-	   //ss.str("");
-	   //ss.clear();
     }
 	saveResults();
 //    cv::destroyWindow("Result");
@@ -98,7 +92,6 @@ void Pipeline::execute(int cameraFeed = 99)
 		cv::imshow("Result", _localFrame);
 		cv::waitKey(10);
     }
-  //  cv::destroyWindow("Test");
 }
 
 // Execute for video stream
@@ -195,8 +188,6 @@ void Pipeline::mogAndHog(cv::Mat &frame, int cFrame)
 void Pipeline::pureHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
-	//preprocessing(frame);
-
 	std::vector < cv::Rect > foundRect;
 	std::vector < float > distances;
 
@@ -237,8 +228,6 @@ void Pipeline::mogAndFHog(cv::Mat &frame, int cFrame)
 void Pipeline::pureFHoG(cv::Mat &frame, int cFrame)
 {
 	_localFrame = frame.clone();
-	//preprocessing(frame);
-
 	std::vector < cv::Rect > foundRect;
 
 	_fhog.detect(frame, foundRect);
@@ -274,12 +263,11 @@ void Pipeline::preprocessing(cv::Mat& frame)
 	cv::cvtColor(frame, frame, CV_BGR2GRAY);
 	cv::medianBlur(frame, frame,5); //GOOD
 
-//	cv::Mat dst(frame.size(), CV_8UC1);
-//	cv::bilateralFilter(frame, dst,10, 1, 1, cv::BORDER_DEFAULT); //TO SLOW
-//	dst.copyTo(frame);
-
+	//	cv::Mat dst(frame.size(), CV_8UC1);
+	//	cv::bilateralFilter(frame, dst,10, 1, 1, cv::BORDER_DEFAULT); //TOO SLOW
+	//	dst.copyTo(frame);
 	//	cv::GaussianBlur(frame, frame, cv::Size(3,3),3.0,2.5 , cv::BORDER_DEFAULT);
-	//cv::blur(frame, frame, cv::Size(3,3)); //medianBlur
+	//	cv::blur(frame, frame, cv::Size(3,3)); //medianBlur
 }
 
 void Pipeline::dilateErode(cv::Mat& frame)
@@ -290,7 +278,6 @@ void Pipeline::dilateErode(cv::Mat& frame)
 
 void Pipeline::draw2mat(std::vector < std::vector < cv::Rect > > &rect)
 {
-//	assert(!test.empty());
 #if MY_DEBUG
 	if (!trained[test].empty())
 		cv::rectangle(_localFrame, trained[test][0], cv::Scalar(255, 0, 0), 3);

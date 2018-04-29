@@ -8,7 +8,9 @@
 #include "../settings.h"
 
 /**
-* class ConvexHull
+* @class ConvexHull
+* 
+* @brief class working with Convex Hull from openCV
 */
 class ConvexHull
 {

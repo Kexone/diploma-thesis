@@ -13,7 +13,9 @@
 #include "../settings.h"
 
 /**
-* class TrainFHog
+* @class TrainFHog
+* 
+* @brief Train class for FHoG
 */
 class TrainFHog
 {

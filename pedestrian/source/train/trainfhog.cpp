@@ -106,15 +106,7 @@ void TrainFHog::train() try
 	auto trained = trainer.train(images, objectLocations, ignore);
 	
 	dlib::serialize("pedDet100.svm") << trained;
-	std::cout << "DONE" << std::endl;
-	//	typedef dlib::structural_object_detection_trainer<image_scanner_type> probabilistic_funct_type;
-	//	typedef dlib::normalized_function<probabilistic_funct_type> pfunct_type;
-	//auto learned_pfunct;
-	//std::vector < int >  label;
-	//label.insert(label.begin(), images.size(), 1.0);
-	//auto learned_pfunct = train_probabilistic_decision_function(trainer,images,label,3);
-	//std::cout << "out " << learned_pfunct(images[1]);
-	
+	std::cout << "DONE" << std::endl;	
 }
 catch (std::exception e)
 {

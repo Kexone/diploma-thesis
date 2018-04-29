@@ -3,6 +3,12 @@
 #include <vector>
 #include "../3dparty/de/DifferentialEvolution.h"
 #include "svmTest.h"
+
+/**
+* @class DiffEvoTest
+* 
+* @brief Testing SVM via Differential Evolution
+*/
 class DiffEvoTest : public de::IOptimizable
 {
 public:

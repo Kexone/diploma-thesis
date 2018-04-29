@@ -99,7 +99,7 @@ public:
 	}
 
 	/**
-	 * @brief This method parsing image by sliding window to samples to train
+	 * @brief This method crops the imags in sliding window to samples for train (size is defined in external settings file)
 	 *
 	 * @param path path to samples
 	 * @param folder folder where save parsed images

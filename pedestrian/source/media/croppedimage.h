@@ -4,7 +4,7 @@
 #include "opencv2/imgcodecs.hpp"
 
 /**
- * Struct CroppedImage
+ * @struct CroppedImage
  * 
  * @brief This struct serves for save clipping from frame and his offsets
  */

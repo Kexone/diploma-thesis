@@ -7,9 +7,9 @@
 #include "svmTest.h"
 
 /**
- *  class TestClass
+ *  @class TestClass
  *  
- *  Class for testing classificator
+ * @brief  Class for testing classificator
  */
 class TestClass
 {
@@ -28,10 +28,32 @@ private:
 	double c;
 
 	std::stringstream ss;
-
+	
+	/**
+	* @brief Cross validation for openCV SVM
+	*
+	*/
 	void crossTestingSvm();
+
+	/**
+	* @brief Cross validation for openCV SVM
+	*
+	*/
 	void crossTestingDlibSvm();
+
+	/**
+	* @brief Testing for openCV SVM
+	*
+	*/
 	void testingSvm();
+
+	/**
+	* @brief Evaluation function for testing SVM
+	* 
+	* @param groundTruthFile path to GT file
+	* @param resultsFilePath path to output of prediction of SVM
+	* 
+	*/
 	void evaluate(std::string groundTruthFile, std::string resultsFilePath);
 	
 	/**

@@ -34,12 +34,12 @@ void ConvexHull::wrapObjects(cv::Mat srcGray, std::vector< cv::Rect > &rects)
 		cv::Rect rectangle = extendContours(filteredHulls[i]);
 		rects.push_back(rectangle);
 		//cv::RNG rng(12345);
-      //  cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-    //    cv::drawContours(convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
-      //  cv::drawContours(convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+        //cv::Scalar color = cv::Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		//cv::drawContours(_convexHullImage, contours, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
+		//cv::drawContours(_convexHullImage, filteredHulls, i, color, 1, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
     }
-  //  imshow("Hull demo", convexHullImage);
-  //  convexHullImage.release();
+		//imshow("Hull demo", _convexHullImage);
+		//_convexHullImage.release();
 
 	if(rects.size() > 1)
 	{

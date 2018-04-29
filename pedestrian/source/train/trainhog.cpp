@@ -93,7 +93,7 @@ void TrainHog::train(bool saveData, bool trainTwice)
 	if (trainTwice)
 	{
 		cv::Size pos_image_size = posSamplesLst[0].size();
-		std::cout << "Testing trained detector on negative images.this may take a few minutes...";
+		std::cout << "Testing trained detector on negative images..";
 		cv::HOGDescriptor my_hog;
 		my_hog.winSize = pos_image_size;
 		std::vector<cv::Rect > locations;
@@ -172,8 +172,7 @@ void TrainHog::calcMatForTraining(cv::Mat& trainMat, std::vector<int> &labels, b
 	convertSamples2Mat(gradientLst, trainMat);
 }
 
-// From https://github.com/opencv/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/samples/cpp/train_HOG.cpp#L134
-cv::Mat get_hogdescriptor_visu(const cv::Mat& color_origImg, std::vector<float>& descriptorValues, const cv::Size & size)
+cv::Mat TrainHog::get_hogdescriptor_visu(const cv::Mat& color_origImg, std::vector<float>& descriptorValues, const cv::Size & size)
 {
 	const int DIMX = size.width;
 	const int DIMY = size.height;

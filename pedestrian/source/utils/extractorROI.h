@@ -71,7 +71,7 @@ private:
 	void process(int cFrame);
 
 	/**
-	 * @brief Show frame with rectangle (if rectangle available)
+	 * @brief Show frame with rectangles (if any rectangle available)
 	 */
 	void showImage();
 

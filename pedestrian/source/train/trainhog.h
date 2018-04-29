@@ -13,6 +13,8 @@
 
 /**
  * class TrainHog
+ * 
+ * @brief training class for OpenCV HoG
  */
 class TrainHog
 {
@@ -43,6 +45,15 @@ private:
 	void saveLabeledMat(cv::Mat data, std::vector< int > labels);
 
 	void getSvmDetector(const cv::Ptr<cv::ml::SVM>& svm, std::vector< float > & hog_detector);
+	/**
+	 * @brief Function for showing calculated gradients on image
+	 * From https://github.com/opencv/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/samples/cpp/train_HOG.cpp#L134
+	 *
+	 *@param color_origImg matrix
+	 *@param descriptorValues vector of calculated descriptors
+	 *@param size size of mat
+	 */
+	cv::Mat get_hogdescriptor_visu(const cv::Mat& color_origImg, std::vector<float>& descriptorValues, const cv::Size & size);
 
     std::string classifierName;
 	cv::Size pedestrianSize;
@@ -98,6 +109,7 @@ public:
 	* @brief  This method load samples and prepare them for alone train classificator
 	*
 	* @saveData condition for save trained matrix and her labels
+	* @trainTwice condition for double train (bootstraping)
 	*/
     void train(bool saveData = false, bool trainTwice = false);
 

@@ -7,9 +7,9 @@
 #include "../alg/hog.h"
 
 /**
- *  class SvmTest
+ * @class SvmTest
  *  
- *  Testing OpenCV SVM classificator 
+ * @brief Testing OpenCV SVM classificator 
  */
 class SvmTest
 {
