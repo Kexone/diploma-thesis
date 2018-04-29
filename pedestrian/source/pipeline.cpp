@@ -31,13 +31,16 @@ Pipeline::Pipeline(std::string svmPath, int algType): _vs(nullptr)
 
 #if MY_DEBUG
 std::vector< std::vector<cv::Rect> > trained;
-std::vector< std::vector<cv::Rect> > tested;
+//std::vector< std::vector<cv::Rect> > tested;
 int test;
 #endif
 
 //	Execute for images
 void Pipeline::executeImages(std::string testSamplesPath)
 {
+#if MY_DEBUG
+	loadRects(Settings::nameTrainedFile, trained);
+#endif
 	assert(!testSamplesPath.empty());
 	cv::Mat frame;
 	std::fstream sampleFile(testSamplesPath);
@@ -50,7 +53,9 @@ void Pipeline::executeImages(std::string testSamplesPath)
 			sampleFile.close();
             break;
         }
-		
+#if MY_DEBUG
+		test = i;
+#endif
 		_rects2Eval.resize(i + 1);
 #if CALC_DIST
 		_distances.resize(i+1);
@@ -58,12 +63,12 @@ void Pipeline::executeImages(std::string testSamplesPath)
        processStandaloneImage(frame,i++);
 	   if (Settings::showVideoFrames)
 		   cv::imshow("Result", _localFrame);
-	   cv::waitKey(10);
-	   std::stringstream ss;
-	   ss << "pic/mat_" << i << ".jpg";
-	   cv::imwrite(ss.str(), _localFrame);
-	   ss.str("");
-	   ss.clear();
+	   //cv::waitKey(10);
+	   //std::stringstream ss;
+	   //ss << "pic/mat_" << i << ".jpg";
+	   //cv::imwrite(ss.str(), _localFrame);
+	   //ss.str("");
+	   //ss.clear();
     }
 	saveResults();
 //    cv::destroyWindow("Result");
@@ -109,7 +114,7 @@ void Pipeline::execute(std::string cameraFeed)
 
 #if MY_DEBUG
 	loadRects(Settings::nameTrainedFile, trained);
-	loadRects(Settings::nameFile, tested);
+	//loadRects(Settings::nameFile, tested);
 #endif
 
 	for (int i = 0; ; i++)	{
@@ -127,7 +132,7 @@ void Pipeline::execute(std::string cameraFeed)
 		if (!trained[i].empty()) { //CROPPING PEDESTRIAN FROM GROUND TRUTH
 			cv::Rect cropPed = cv::Rect(trained[i][0].tl().x - 0, trained[i][0].tl().y - 10, 64, 128);
 			char imgName[30];
-			std::sprintf(imgName, "bad/posSample_%d.jpg", i);
+			std::sprintf(imgName, "roi/posSample_%d.jpg", i);
 			cv::Mat cropped(frame(trained[i][0]));
 			cv::imwrite(imgName, cropped);
 		}
@@ -308,7 +313,9 @@ void Pipeline::draw2mat(std::vector < cv::Rect > &rect)
 		cv::rectangle(_localFrame, rect[i], cv::Scalar(0, 255, 0), 3);
 #if MY_DEBUG
 		if (!trained[test].empty()) {//@DEBUG
-			cv::rectangle(_localFrame, rect[i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
+			for(uint t = 0; t < trained[test].size(); t++ )
+			cv::rectangle(_localFrame, trained[test][t], cv::Scalar(255, 0, 0), 2);
+			//cv::rectangle(_localFrame, rect[i] & trained[test][0], cv::Scalar(255, 0, 0), 3);
 		}
 #endif
 	}

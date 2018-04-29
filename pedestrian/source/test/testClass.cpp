@@ -18,9 +18,9 @@ void TestClass::initTesting()
 {
 	int type;
 	std::cout << " 1) CROSS VALIDATION OpenCV SVM  \n 2) CROSS VALIDATION Dlib SVM \n 3) TESTING OpenCV SVM" << std::endl;
-//	std::cout << "Selection: ";
-	//std::cin >> type;
-	type = 3; //@todo
+	std::cout << "Selection: ";
+	std::cin >> type;
+
 	if(type == 1)
 		crossTestingSvm();
 	if (type == 2)
@@ -75,7 +75,6 @@ void TestClass::crossTestingDlibSvm()
 
 void TestClass::testingSvm()
 {
-
 		std::string svmPath =  "KONF_15.yml" ;
 		std::string samples[] = { "bad/fHD.txt" };
 		Hog hog = Hog(svmPath);
@@ -97,25 +96,18 @@ void TestClass::testingSvm()
 				int value = 0;
 				float distance = 0.0;
 				cv::resize(frame, frame, Settings::pedSize);
-				cv::Rect r = cv::Rect(0, 0, Settings::pedSize.width, Settings::pedSize.height);
-				//r.x += (frame.cols - r.width) / 2;
-			//	r.y += (frame.rows - r.height) / 2;
-			//	cv::imshow("Test", frame(r));
-		//		cv::waitKey(0);
 				value = cvRound(hog.predict(frame));
 				distance = hog.getDistance(frame);
 				predict.push_back(value);
 				distances.push_back(distance);
-				//	std::cout << static_cast<float>(value) << std::endl;
 				frame.release();
 			}
 		}
-		std::string output = "bad/results/predicted_fHD.txt";
-		std::string output2 = "bad/results/distances_fHD.txt";
+		std::string output = "bad/results/predicted_fHD.txt"; //PREDICT
+		std::string output2 = "bad/results/distances_fHD.txt"; //DISTANCES
 		std::ofstream output_file(output);
 		std::ofstream output_file2(output2);
-		for (int a = 0; a < predict.size(); a++)
-		{
+		for (int a = 0; a < predict.size(); a++)	{
 			output_file << predict[a] << std::endl;
 			output_file2 << distances[a] << std::endl;
 		}
@@ -123,92 +115,6 @@ void TestClass::testingSvm()
 		output_file2.close();
 		std::cout << "RESULT FOR: " << output << std::endl;
 		evaluate("bad/GT_fHD.txt", output);
-
-		int iterations[] = {1200, 2000};
-		for (int i : iterations)
-		{
-			Settings::maxIterations = i;
-			//std::cout << "____ "<< i << " max iter" << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
-			double paramsC[] = { 0.05 };
-			double paramsP[] = { 0.1 };
-			std::string negSamplesFiles[] = {  "negDam9000.txt" };
-
-			for (auto paramC : paramsC) {
-				for (auto paramP : paramsP) {
-				for (auto negSample : negSamplesFiles) {
-					Settings::paramC = paramC;
-					Settings::paramP = paramP;
-					Settings::classifierName2Train = "CON_B_"  + negSample + "_" + "_C" + std::to_string(Settings::paramC) + "_P" + std::to_string(Settings::paramP) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_double" + "_" + std::to_string(i);
-					//Settings::classifierName2Train = "C_"  + std::to_string(i);
-					Settings::samplesNeg = "samples/negative/" + negSample;
-					std::cout << Settings::classifierName2Train << std::endl;
-					std::cout << " / " << Settings::samplesNeg << std::endl;
-					TrainHog trainHog;
-					trainHog.train(false);
-					std::string svmPath = Settings::classifierName2Train + ".yml";
-					std::string samples[] = { Settings::samplesPosTest, Settings::samplesNegTest };
-					Hog hog = Hog(svmPath);
-					std::vector < int > predict;
-					std::vector < float > distances;
-
-					for (auto typeSample : samples) {
-						cv::Mat frame;
-						std::fstream sampleFile(typeSample);
-						std::string oSample;
-						while (sampleFile >> oSample) {
-							frame = cv::imread(oSample);
-							if (frame.empty()) {
-								std::cout << "eerr " << oSample << std::endl;
-								sampleFile.close();
-								break;
-							}
-							int value = 0;
-							float distance = 0.0;
-							cv::resize(frame, frame, Settings::pedSize);
-							//cv::Point center = cv::Point(frame.cols / 2, frame.rows / 2);
-							//int x = center.x - Settings::pedSize.width / 2;
-							//int y = center.y - Settings::pedSize.height / 2;
-						//	cv::Rect r = cv::Rect(x, y, Settings::pedSize.width, Settings::pedSize.height);
-						//	cv::imshow("im", frame);
-							//cv::waitKey(0);
-							value = cvRound(hog.predict(frame));
-							distance = hog.getDistance(frame);
-							predict.push_back(value);
-							distances.push_back(distance);
-							//	std::cout << static_cast<float>(value) << std::endl;
-							frame.release();
-						}
-					}
-					std::string output = "./mySamples/ot/predicted_" +negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::paramNu) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + ".txt";
-					std::string output2 = "./mySamples/ot/distances_"+ negSample + "_" + std::to_string(Settings::paramC) + "_" + std::to_string(Settings::paramNu) + "_" + std::to_string(Settings::maxIterations) + "_SVM" + std::to_string(Settings::type) + "_" + ".txt";
-					std::ofstream output_file(output);
-					std::ofstream output_file2(output2);
-				//	std::ostream_iterator<int> output_iterator(output_file, "\n");
-				//	std::ostream_iterator<float> output_iterator2(output_file2, "\n");
-				//	std::copy(predict.begin(), predict.end(), output_iterator);
-				//	std::copy(distances.begin(), distances.end(), output_iterator2);
-			//		std::cout << predict.size() << std::endl;
-			//		std::cout << distances.size() << std::endl;
-					//std::ofstream f("somefile.txt");
-					for (int a = 0; a < predict.size(); a++)
-					{
-						output_file << predict[a] << std::endl;
-						output_file2 << distances[a] << std::endl;
-					}
-					output_file.close();
-					output_file2.close();
-				//	for (std::vector<int>::const_iterator pr = predict.begin(); pr != predict.end(); ++pr) {
-					//	output_file << *pr << '\n';
-				//	}
-					///for (std::vector<float>::const_iterator di = distances.begin(); di != distances.end(); ++di) {
-						//output_file2 << *di << '\n';
-					//}
-					std::cout << "RESULT FOR: " << output << std::endl;
-					evaluate("mySamples/testingImg/GT.txt", output);
-				}
-				}
-			}
-	}
 }
 
 void TestClass::randomTest()

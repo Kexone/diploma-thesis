@@ -21,14 +21,14 @@ strideSize=8
 
 // HOG detectMultiScale on full frame
 hogBlurFilter=(5,5)
-hogHitTreshold=0.36
+hogHitTreshold=0.76
 hogWinStride=(4,4)
 hogPadding=(16,16)
-hogScale=1.59
-hogFinalTreshold=0.35
+hogScale=1.6
+hogFinalTreshold=0.799
 hogMeanshiftGrouping=0
 hogGroupTreshold=1
-hogEps=0.25
+hogEps=0.40
 hogMinArea=5000
 
 // HOG detectMultiScale on cropped images
